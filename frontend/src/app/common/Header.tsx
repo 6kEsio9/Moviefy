@@ -18,10 +18,10 @@ import AdbIcon from "@mui/icons-material/Adb";
 import SearchBar from "./SearchBar";
 
 const pages = ["Home", "Movies"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Profile", "Logout"];
 const nonAuthSettings = ["Login", "Register"];
 
-let auth = false;
+let auth = true;
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -134,9 +134,9 @@ function Header() {
             <SearchBar></SearchBar>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src={auth ? "pfp" : ""} />
               </IconButton>
             </Tooltip>
             <Menu

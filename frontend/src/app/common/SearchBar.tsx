@@ -159,6 +159,7 @@ export default function PrimarySearchAppBar() {
             <StyledInputBase
               placeholder="Search movie or user"
               inputProps={{ "aria-label": "search" }}
+              style={{ width: "100%" }}
             />
           </Search>
         </Toolbar>
