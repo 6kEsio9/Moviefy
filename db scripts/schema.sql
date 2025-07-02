@@ -63,10 +63,6 @@ CREATE TABLE title_principals (
     PRIMARY KEY (tconst, ordering)
 );
 
-CREATE TABLE user (
-  
-);
-
 CREATE TABLE title_ratings (
     tconst TEXT PRIMARY KEY REFERENCES title_basics(tconst) ON DELETE CASCADE,
     averageRating INTEGER,

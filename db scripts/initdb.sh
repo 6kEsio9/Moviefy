@@ -2,14 +2,14 @@
 
 DB_HOST="moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com"
 DB_PORT="5432"
-DB_NAME=""
-DB_USER=""
-DB_PASSWORD=""
+DB_NAME="moviefy"
+DB_USER="moviefy"
+DB_PASSWORD="hJMQzdBH7nMybpb9z6O2"
 
 export PGPASSWORD="$DB_PASSWORD"
 
-echo "Applying schema..."
-psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f schema.sql
+echo "Applying db schema"
+#psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f schema.sql
 
 # title_basics
 echo "Importing title_basics..."
