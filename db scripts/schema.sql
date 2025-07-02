@@ -16,7 +16,7 @@ CREATE TABLE title_basics (
 
 CREATE TABLE name_basics (
     nconst TEXT PRIMARY KEY,
-    primaryName TEXT NOT NULL,
+    primaryName TEXT ,
     birthYear INTEGER ,
     deathYear INTEGER ,
     primaryProfession TEXT[],

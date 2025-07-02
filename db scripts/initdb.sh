@@ -1,5 +1,8 @@
 # !/bin/bash
 
+#export PGPASSWORD="hJMQzdBH7nMybpb9z6O2"
+#psql -h moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com -p 5432 -U moviefy -d moviefy
+
 DB_HOST="moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com"
 DB_PORT="5432"
 DB_NAME="moviefy"
@@ -8,12 +11,25 @@ DB_PASSWORD="hJMQzdBH7nMybpb9z6O2"
 
 export PGPASSWORD="$DB_PASSWORD"
 
+echo "resetting db"
+psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" <<EOSQL
+DROP TABLE IF EXISTS 
+    title_basics, 
+    name_basics, 
+    posters,
+    title_akas, 
+    title_crew, 
+    title_episode, 
+    title_principals, 
+    title_ratings CASCADE;
+EOSQL
+
 echo "Applying db schema"
-#psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f schema.sql
+psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f schema.sql
 
 # title_basics
 echo "Importing title_basics..."
-tail -n +2 "db tsv files/title.basics.tsv" |
+./awkTest.sh "db tsv files/title.basics.tsv" 9 |
   psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "
 COPY title_basics FROM STDIN WITH (
     FORMAT csv,
@@ -24,7 +40,7 @@ COPY title_basics FROM STDIN WITH (
 
 # name_basics
 echo "Importing name_basics..."
-tail -n +2 "db tsv files/name.basics.tsv" |
+./awkTest.sh "db tsv files/name.basics.tsv" 5 6 |
   psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "
 COPY name_basics FROM STDIN WITH (
     FORMAT csv,
@@ -35,7 +51,7 @@ COPY name_basics FROM STDIN WITH (
 
 # title_akas
 echo "Importing title_akas..."
-tail -n +2 "db tsv files/title.akas.tsv" |
+./awkTest.sh "db tsv files/title.akas.tsv" 6 7 |
   psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "
 COPY title_akas FROM STDIN WITH (
     FORMAT csv,
@@ -46,7 +62,7 @@ COPY title_akas FROM STDIN WITH (
 
 # title_crew
 echo "Importing title_crew..."
-tail -n +2 "db tsv files/title.crew.tsv" |
+./awkTest.sh "db tsv files/title.crew.tsv" 2 3 |
   psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "
 COPY title_crew FROM STDIN WITH (
     FORMAT csv,
