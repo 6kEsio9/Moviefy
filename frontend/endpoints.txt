@@ -1,0 +1,8 @@
+'/'
+'/auth'
+'/logout'
+'/home'
+'/movies'
+'/movies/{id}'
+'/movies/{id}/reviews'
+'/profile/{id}'

@@ -20,9 +20,9 @@ import Link from "next/link";
 
 const pages = ["Home", "Movies"];
 const settings = ["Profile", "Logout"];
-const nonAuthSettings = ["Login", "Register"];
+const nonAuthSettings = ["Sign in"];
 
-let auth = true;
+let auth = false;
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(

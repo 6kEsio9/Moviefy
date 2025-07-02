@@ -1,5 +1,5 @@
-import Movie from "./Movie";
+import MoviesPage from "../components/Movies/Movies";
 
 export default function Movies() {
-  return <h1>Movies</h1>;
+  return <MoviesPage></MoviesPage>;
 }
