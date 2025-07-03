@@ -1,5 +1,5 @@
-import { Box, Container, Divider, Stack, Typography, Grid, Link } from "@mui/material"
-import ScrollableImageList from "./ScrollableImageList";
+import { Container, Divider, Stack} from "@mui/material"
+import GenreSelection from "./GenreSection"
 
 export default function HomePage() {
   //for testing
@@ -15,7 +15,19 @@ export default function HomePage() {
     {
       src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
       id: 3
-    }
+    },
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 4
+    },
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 5
+    },
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 6
+    },
   ]
 
   return (
@@ -25,25 +37,10 @@ export default function HomePage() {
         divider={<Divider orientation="horizontal"/>}
         spacing={2}
       >
-        <Box>
-          <Typography variant="h5">Top 10 Movies</Typography>
-          <ScrollableImageList images={images}/>
-        </Box>
-        <Grid container spacing={2}>
-            <Typography variant="h5" sx={{color:'GrayText'}}>Action</Typography>
-            <Link href="/movies" underline="none">
-              <Typography>{"MORE"}</Typography>
-            </Link>
-            <ScrollableImageList images={images}/>
-        </Grid>
-        <Box>
-            <Typography variant="h5" sx={{color:'GrayText'}}>Horror</Typography>
-            <ScrollableImageList images={images}/>
-        </Box>
-        <Box>
-            <Typography variant="h5" sx={{color:'GrayText'}}>Comedy</Typography>
-            <ScrollableImageList images={images}/>
-        </Box>
+        <GenreSelection images={images} genre="Top 10 Movies" textColor="black" moreRedirect="/movies?order=popular"/>
+        <GenreSelection images={images} genre="Action"/>
+        <GenreSelection images={images} genre="Horror"/>
+        <GenreSelection images={images} genre="Comedy"/>
       </Stack>
     </Container>
   )
