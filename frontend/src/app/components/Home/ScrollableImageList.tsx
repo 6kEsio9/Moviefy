@@ -48,7 +48,7 @@ export default function ScrollableImageList({
               scrollBehavior: 'smooth',
               gap: 2,
               padding: 1,
-              '&::-webkit-scrollbar': { display: 'none' },
+              scrollbarWidth: "none"
             }}
           >
             {images.map((item, index) => (

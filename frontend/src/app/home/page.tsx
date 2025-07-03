@@ -1,5 +1,5 @@
 import { Container, Divider, Stack} from "@mui/material"
-import GenreSelection from "./GenreSection"
+import GenreSelection from "../components/Home/GenreSection"
 
 export default function HomePage() {
   //for testing
@@ -31,7 +31,7 @@ export default function HomePage() {
   ]
 
   return (
-    <Container>
+    <Container sx={{marginTop: "15px", marginBottom: "15px"}}>
       <Stack
         direction="column"
         divider={<Divider orientation="horizontal"/>}
