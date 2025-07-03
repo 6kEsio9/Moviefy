@@ -6,11 +6,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-interface GenreProps {
-  handleClickGenre: (genre: string) => void;
-}
-
-export default function Genre({ handleClickGenre }: GenreProps) {
+export default function Genre() {
   const [openGenre, setOpenGenre] = React.useState(false);
 
   const genres = ["Horror", "Sci-Fi", "Comedy", "Fantasy"];
@@ -27,7 +23,7 @@ export default function Genre({ handleClickGenre }: GenreProps) {
       <Collapse in={openGenre} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {genres.map((x) => (
-            <ListItemButton onClick={() => handleClickGenre(x)} key={x}>
+            <ListItemButton key={x}>
               <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
             </ListItemButton>
           ))}

@@ -30,10 +30,12 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
       }}
     >
       <Link href={`/movies/${id}`} style={{ textDecoration: "none" }}>
-        <div style={{ position: "relative" }}>
+        <div
+          style={{ position: "relative" }}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
           <CardMedia
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
             component="img"
             image={imageUrl}
             alt={title}

@@ -5,19 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Trending from "./Trending";
 import Filters from "./Filters/Filters";
 
-interface SidebarProps {
-  handleClickPopular: () => void;
-  handleClickGenre: (genre: string) => void;
-  handleClickYear: (year: string) => void;
-  handleClickAge: (age: string) => void;
-}
-
-export default function NestedList({
-  handleClickPopular,
-  handleClickGenre,
-  handleClickYear,
-  handleClickAge,
-}: SidebarProps) {
+export default function NestedList({}) {
   return (
     <List
       sx={{
@@ -30,14 +18,10 @@ export default function NestedList({
       aria-labelledby="nested-list-subheader"
     >
       <ListItemButton>
-        <ListItemText onClick={handleClickPopular} primary="Popular" />
+        <ListItemText primary="Popular" />
       </ListItemButton>
       <Trending />
-      <Filters
-        handleClickGenre={handleClickGenre}
-        handleClickYear={handleClickYear}
-        handleClickAge={handleClickAge}
-      />
+      <Filters />
     </List>
   );
 }

@@ -10,17 +10,7 @@ import Genre from "./Genre";
 import Year from "./Year";
 import AgeRating from "./AgeRating";
 
-interface FiltersProps {
-  handleClickGenre: (genre: string) => void;
-  handleClickYear: (year: string) => void;
-  handleClickAge: (age: string) => void;
-}
-
-export default function Filters({
-  handleClickGenre,
-  handleClickYear,
-  handleClickAge,
-}: FiltersProps) {
+export default function Filters() {
   const [openFilters, setOpenFilters] = React.useState(false);
 
   const handleClickFilters = () => {
@@ -35,9 +25,9 @@ export default function Filters({
       </ListItemButton>
       <Collapse in={openFilters} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Genre handleClickGenre={handleClickGenre} />
-          <Year handleClickYear={handleClickYear} />
-          <AgeRating handleClickAge={handleClickAge} />
+          <Genre />
+          <Year />
+          <AgeRating />
         </List>
       </Collapse>
     </>

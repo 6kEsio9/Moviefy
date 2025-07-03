@@ -6,11 +6,7 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-interface YearProps {
-  handleClickYear: (year: string) => void;
-}
-
-export default function Year({ handleClickYear }: YearProps) {
+export default function Year() {
   const [openYear, setOpenYear] = React.useState(false);
 
   const handleClickOpenYear = () => {
@@ -28,7 +24,7 @@ export default function Year({ handleClickYear }: YearProps) {
       <Collapse in={openYear} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {years.map((x) => (
-            <ListItemButton key={x} onClick={() => handleClickYear(x)}>
+            <ListItemButton key={x}>
               <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
             </ListItemButton>
           ))}

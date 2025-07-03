@@ -6,18 +6,15 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-interface AgeRatingProps {
-  handleClickAge: (age: string) => void;
-}
-
-export default function AgeRating({ handleClickAge }: AgeRatingProps) {
+export default function AgeRating() {
   const [openAge, setOpenAge] = React.useState(false);
 
   const handleClickOpenAge = () => {
     setOpenAge(!openAge);
   };
 
-  const ages = [">18", "<18"];
+  const ages = ["<18", ">18"];
+
   return (
     <>
       <ListItemButton onClick={handleClickOpenAge}>
@@ -27,7 +24,7 @@ export default function AgeRating({ handleClickAge }: AgeRatingProps) {
       <Collapse in={openAge} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {ages.map((x) => (
-            <ListItemButton key={x} onClick={() => handleClickAge(x)}>
+            <ListItemButton key={x}>
               <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
             </ListItemButton>
           ))}
