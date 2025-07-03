@@ -15,6 +15,8 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
+  const [hover, setHover] = React.useState(false);
+
   return (
     <Card
       sx={{
@@ -28,16 +30,36 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
       }}
     >
       <Link href={`/movies/${id}`} style={{ textDecoration: "none" }}>
-        <CardMedia
-          component="img"
-          image={imageUrl}
-          alt={title}
-          style={{
-            width: "100%",
-            height: "400px",
-            objectFit: "contain",
-          }}
-        />
+        <div style={{ position: "relative" }}>
+          <CardMedia
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            component="img"
+            image={imageUrl}
+            alt={title}
+            style={{
+              width: "100%",
+              height: "400px",
+              objectFit: "contain",
+              filter: hover ? "brightness(50%)" : "",
+              transition: "filter 0.25s ease-in",
+            }}
+          />
+          {hover && (
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                textAlign: "center",
+                top: "40%",
+                color: "white",
+                fontSize: "250%",
+              }}
+            >
+              {title}
+            </div>
+          )}
+        </div>
       </Link>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">

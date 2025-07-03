@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 import Sidebar from "./Sidebar/Sidebar";
+import { useSearchParams } from "next/navigation";
 
 type Movie = {
   id: number;
@@ -17,6 +18,9 @@ type Movie = {
 export default function MoviesPage() {
   const [originalMovies, setOriginalMovies] = useState<Movie[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
+
+  const searchParams = useSearchParams();
+  const genres = searchParams.get("genre");
 
   useEffect(() => {
     setMovies([
@@ -158,7 +162,7 @@ export default function MoviesPage() {
   }, []);
 
   const handleClickPopular = () => {
-    let result = [...movies];
+    let result = [...originalMovies];
 
     result.sort((a, b) => {
       if (a.avgRating === b.avgRating) {
