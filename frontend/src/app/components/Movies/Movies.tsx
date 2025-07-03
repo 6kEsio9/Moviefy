@@ -4,26 +4,208 @@ import { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 import Sidebar from "./Sidebar/Sidebar";
 
-import Link from "next/link";
-
 type Movie = {
   id: number;
   title: string;
   imageUrl: string;
+  year: number;
+  avgRating: number;
+  genre: string;
+  ageRating: number;
 };
 
 export default function MoviesPage() {
+  const [originalMovies, setOriginalMovies] = useState<Movie[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
     setMovies([
-      { id: 0, title: "Tennet", imageUrl: "/images/tennet.jpeg" },
-      { id: 1, title: "Tennet", imageUrl: "/images/tennet.jpeg" },
-      { id: 2, title: "Tennet", imageUrl: "/images/tennet.jpeg" },
-      { id: 3, title: "Tennet", imageUrl: "/images/tennet.jpeg" },
-      { id: 4, title: "Tennet", imageUrl: "/images/tennet.jpeg" },
+      {
+        id: 0,
+        title: "Tennet",
+        imageUrl: "/images/tennet.jpeg",
+        year: 2005,
+        avgRating: 5,
+        genre: "Action",
+        ageRating: 16,
+      },
+      {
+        id: 1,
+        title: "Cars",
+        imageUrl: "/images/cars.jpeg",
+        year: 2010,
+        avgRating: 4,
+        genre: "Fantasy",
+        ageRating: 3,
+      },
+      {
+        id: 2,
+        title: "Game Of Thrones",
+        imageUrl: "/images/gameOfThrones.jpeg",
+        year: 2015,
+        avgRating: 2,
+        genre: "Fantasy",
+        ageRating: 18,
+      },
+      {
+        id: 3,
+        title: "Inglourious Basterds",
+        imageUrl: "/images/inglouriousBasterds.jpeg",
+        year: 2009,
+        avgRating: 1,
+        genre: "Comedy",
+        ageRating: 16,
+      },
+      {
+        id: 4,
+        title: "Interstellar",
+        imageUrl: "/images/interstellar.jpeg",
+        year: 2004,
+        avgRating: 3,
+        genre: "Sci-Fi",
+        ageRating: 12,
+      },
+      {
+        id: 5,
+        title: "Star Wars",
+        imageUrl: "/images/starWars.jpeg",
+        year: 1999,
+        avgRating: 4,
+        genre: "Sci-Fi",
+        ageRating: 12,
+      },
+      {
+        id: 6,
+        title: "Taxi",
+        imageUrl: "/images/taxi.jpeg",
+        year: 2012,
+        avgRating: 5,
+        genre: "Comedy",
+        ageRating: 12,
+      },
+    ]);
+    setOriginalMovies([
+      {
+        id: 0,
+        title: "Tennet",
+        imageUrl: "/images/tennet.jpeg",
+        year: 2005,
+        avgRating: 5,
+        genre: "Action",
+        ageRating: 16,
+      },
+      {
+        id: 1,
+        title: "Cars",
+        imageUrl: "/images/cars.jpeg",
+        year: 2010,
+        avgRating: 4,
+        genre: "Fantasy",
+        ageRating: 3,
+      },
+      {
+        id: 2,
+        title: "Game Of Thrones",
+        imageUrl: "/images/gameOfThrones.jpeg",
+        year: 2015,
+        avgRating: 2,
+        genre: "Fantasy",
+        ageRating: 18,
+      },
+      {
+        id: 3,
+        title: "Inglourious Basterds",
+        imageUrl: "/images/inglouriousBasterds.jpeg",
+        year: 2009,
+        avgRating: 1,
+        genre: "Comedy",
+        ageRating: 16,
+      },
+      {
+        id: 4,
+        title: "Interstellar",
+        imageUrl: "/images/interstellar.jpeg",
+        year: 2004,
+        avgRating: 3,
+        genre: "Sci-Fi",
+        ageRating: 12,
+      },
+      {
+        id: 5,
+        title: "Star Wars",
+        imageUrl: "/images/starWars.jpeg",
+        year: 1999,
+        avgRating: 4,
+        genre: "Sci-Fi",
+        ageRating: 12,
+      },
+      {
+        id: 6,
+        title: "Taxi",
+        imageUrl: "/images/taxi.jpeg",
+        year: 2012,
+        avgRating: 5,
+        genre: "Comedy",
+        ageRating: 12,
+      },
     ]);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      setMovies(originalMovies);
+    };
+  }, []);
+
+  const handleClickPopular = () => {
+    let result = [...movies];
+
+    result.sort((a, b) => {
+      if (a.avgRating === b.avgRating) {
+        return a.title.localeCompare(b.title);
+      } else {
+        return b.avgRating - a.avgRating;
+      }
+    });
+
+    setMovies(result);
+  };
+
+  const handleClickGenre = (genre: string) => {
+    let result = [...originalMovies];
+
+    result = result.filter((x) => x.genre === genre);
+
+    setMovies(result);
+  };
+
+  const handleClickYear = (year: string) => {
+    let result = [...movies];
+
+    result.sort((a, b) => {
+      if (a.year === b.year) return a.title.localeCompare(b.title);
+      if (year === "Oldest") {
+        return a.year - b.year;
+      } else {
+        return b.year - a.year;
+      }
+    });
+
+    setMovies(result);
+  };
+
+  const handleClickAge = (age: string) => {
+    let result = [...originalMovies];
+    result = result.filter((x) => {
+      if (age === ">18") {
+        return x.ageRating >= 18;
+      } else {
+        return x.ageRating < 18;
+      }
+    });
+
+    setMovies(result);
+  };
 
   return (
     <>
@@ -36,7 +218,12 @@ export default function MoviesPage() {
           gap: "20px",
         }}
       >
-        <Sidebar></Sidebar>
+        <Sidebar
+          handleClickPopular={handleClickPopular}
+          handleClickGenre={handleClickGenre}
+          handleClickYear={handleClickYear}
+          handleClickAge={handleClickAge}
+        ></Sidebar>
         <div id="movies-sidebar"></div>
         <div
           id="movies-list"
@@ -51,16 +238,12 @@ export default function MoviesPage() {
           {movies.length > 0 ? (
             movies.map((movie) => {
               return (
-                <Link
-                  href={`/movies/${movie.id}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <MovieCard
-                    key={movie.id}
-                    title={movie.title}
-                    imageUrl={movie.imageUrl}
-                  />
-                </Link>
+                <MovieCard
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  imageUrl={movie.imageUrl}
+                />
               );
             })
           ) : (

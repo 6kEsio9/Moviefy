@@ -6,13 +6,15 @@ import CardMedia from "@mui/material/CardMedia";
 import CardActions from "@mui/material/CardActions";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import RatingLine from "./RatingLine";
+import Link from "next/link";
 
 interface MovieCardProps {
+  id: number;
   title: string;
   imageUrl: string;
 }
 
-export default function MovieCard({ title, imageUrl }: MovieCardProps) {
+export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
   return (
     <Card
       sx={{
@@ -25,16 +27,18 @@ export default function MovieCard({ title, imageUrl }: MovieCardProps) {
         m: "15px 15px 15px 15px",
       }}
     >
-      <CardMedia
-        component="img"
-        image={imageUrl}
-        alt={title}
-        style={{
-          width: "100%",
-          height: "400px",
-          objectFit: "contain",
-        }}
-      />
+      <Link href={`/movies/${id}`} style={{ textDecoration: "none" }}>
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={title}
+          style={{
+            width: "100%",
+            height: "400px",
+            objectFit: "contain",
+          }}
+        />
+      </Link>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <RatingLine />

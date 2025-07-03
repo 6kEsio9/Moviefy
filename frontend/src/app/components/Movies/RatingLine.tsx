@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 
 export default function RatingLine() {
-  const [value, setValue] = React.useState<number | null>(2);
+  const [value, setValue] = React.useState<number | null>(0);
 
   return (
     <Box sx={{ "& > legend": { mt: 2 } }}>

@@ -13,6 +13,18 @@ export default function Trending() {
     setOpenTrending(!openTrending);
   };
 
+  const movies = [
+    { id: 0, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2005 },
+    { id: 1, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2010 },
+    { id: 2, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2015 },
+    { id: 3, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2009 },
+    { id: 4, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2004 },
+    { id: 5, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 1999 },
+    { id: 6, title: "Tennet", imageUrl: "/images/tennet.jpeg", year: 2012 },
+  ];
+
+  const handleClickYear = () => {};
+
   return (
     <>
       <ListItemButton onClick={handleClickTrending}>

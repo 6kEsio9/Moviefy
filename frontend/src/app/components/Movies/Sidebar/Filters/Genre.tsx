@@ -6,32 +6,31 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-export default function Genre() {
+interface GenreProps {
+  handleClickGenre: (genre: string) => void;
+}
+
+export default function Genre({ handleClickGenre }: GenreProps) {
   const [openGenre, setOpenGenre] = React.useState(false);
 
-  const handleClickGenre = () => {
+  const genres = ["Horror", "Sci-Fi", "Comedy", "Fantasy"];
+
+  const handleClickOpenGenre = () => {
     setOpenGenre(!openGenre);
   };
   return (
     <>
-      <ListItemButton onClick={handleClickGenre}>
+      <ListItemButton onClick={handleClickOpenGenre}>
         <ListItemText sx={{ pl: 2 }} primary="Genre" />
         {openGenre ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={openGenre} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Horror" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Sci-Fi" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Romance" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Fantasy" />
-          </ListItemButton>
+          {genres.map((x) => (
+            <ListItemButton onClick={() => handleClickGenre(x)} key={x}>
+              <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
+            </ListItemButton>
+          ))}
         </List>
       </Collapse>
     </>

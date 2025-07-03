@@ -6,27 +6,32 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-export default function Year() {
+interface YearProps {
+  handleClickYear: (year: string) => void;
+}
+
+export default function Year({ handleClickYear }: YearProps) {
   const [openYear, setOpenYear] = React.useState(false);
 
-  const handleClickYear = () => {
+  const handleClickOpenYear = () => {
     setOpenYear(!openYear);
   };
 
+  const years = ["Oldest", "Newest"];
+
   return (
     <>
-      <ListItemButton onClick={handleClickYear}>
+      <ListItemButton onClick={handleClickOpenYear}>
         <ListItemText sx={{ pl: 2 }} primary="Year" />
         {openYear ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={openYear} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Oldest" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemText sx={{ pl: 4 }} primary="Newest" />
-          </ListItemButton>
+          {years.map((x) => (
+            <ListItemButton key={x} onClick={() => handleClickYear(x)}>
+              <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
+            </ListItemButton>
+          ))}
         </List>
       </Collapse>
     </>
