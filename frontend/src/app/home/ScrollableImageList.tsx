@@ -2,9 +2,10 @@
 import { useRef } from "react";
 import { Box, IconButton, ImageListItem } from "@mui/material"
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material"
+import Link from "next/link";
 
 interface ScrollableImageListProps {
-  images: string[];
+  images: { src: string; id: number; }[];
   scrollAmount?: number;
 }
 
@@ -50,9 +51,11 @@ export default function ScrollableImageList({
               '&::-webkit-scrollbar': { display: 'none' },
             }}
           >
-            {images.map((src, index) => (
-              <ImageListItem key={index} sx={{ maxWidth: 200, flex: '0 0 auto' }}>
-                <img src={src} alt={`img-${index}`} loading="lazy" />
+            {images.map((item, index) => (
+              <ImageListItem key={index} sx={{ maxWidth: 200, maxHeight: 300, flex: '0 0 auto'}}>
+                <Link href={`/movies/${item.id}`}>
+                  <img src={item.src} alt={`img-${index}`} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                </Link>
               </ImageListItem>
             ))}
           </Box>

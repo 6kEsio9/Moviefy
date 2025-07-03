@@ -1,20 +1,21 @@
-import { Box, Container, Divider, Stack, Typography } from "@mui/material"
+import { Box, Container, Divider, Stack, Typography, Grid, Link } from "@mui/material"
 import ScrollableImageList from "./ScrollableImageList";
 
 export default function HomePage() {
   //for testing
   const images = [
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg',
-    'https://images.all4ed.org/wp-content/uploads/2019/07/2x3-light-placeholder-683x1024.jpg'
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 1
+    },
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 2
+    },
+    {
+      src: 'https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      id: 3
+    }
   ]
 
   return (
@@ -28,10 +29,13 @@ export default function HomePage() {
           <Typography variant="h5">Top 10 Movies</Typography>
           <ScrollableImageList images={images}/>
         </Box>
-        <Box>
+        <Grid container spacing={2}>
             <Typography variant="h5" sx={{color:'GrayText'}}>Action</Typography>
+            <Link href="/movies" underline="none">
+              <Typography>{"MORE"}</Typography>
+            </Link>
             <ScrollableImageList images={images}/>
-        </Box>
+        </Grid>
         <Box>
             <Typography variant="h5" sx={{color:'GrayText'}}>Horror</Typography>
             <ScrollableImageList images={images}/>
