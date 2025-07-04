@@ -4,7 +4,7 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 
 import * as MovieService from "../services/MovieService";
 
-type Movie = {
+export type Movie = {
   id: number;
   title: string;
   imageUrl: string;

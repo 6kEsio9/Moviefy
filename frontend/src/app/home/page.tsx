@@ -1,40 +1,10 @@
+'use client'
 import { Container, Divider, Stack } from "@mui/material";
 import GenreSelection from "../components/Home/GenreSection";
+import { useMovies } from "@/app/hooks/useMovies";
 
 export default function HomePage() {
-  //for testing
-  const images = [
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 1,
-    },
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 2,
-    },
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 3,
-    },
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 4,
-    },
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 5,
-    },
-    {
-      title: "Title",
-      src: "https://m.media-amazon.com/images/M/MV5BMTU0ZjZlYTUtYzIwMC00ZmQzLWEwZTAtZWFhMWIwYjMxY2I3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-      id: 6,
-    },
-  ];
+  const { movies } = useMovies();
 
   return (
     <Container sx={{ marginTop: "15px", marginBottom: "15px" }}>
@@ -44,14 +14,14 @@ export default function HomePage() {
         spacing={2}
       >
         <GenreSelection
-          images={images}
+          movies={movies}
           genre="Top 10 Movies"
           textColor="black"
           moreRedirect="/movies?order=popular"
         />
-        <GenreSelection images={images} genre="Action" />
-        <GenreSelection images={images} genre="Horror" />
-        <GenreSelection images={images} genre="Comedy" />
+        <GenreSelection movies={movies} genre="Action" />
+        <GenreSelection movies={movies} genre="Horror" />
+        <GenreSelection movies={movies} genre="Comedy" />
       </Stack>
     </Container>
   );

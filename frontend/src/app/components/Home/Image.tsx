@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 interface ImageProps {
-  item: { title: string; id: number; src: string };
+  item: { title: string; id: number; imageUrl: string };
   index: number;
 }
 
@@ -16,7 +16,7 @@ export default function Image({ item, index }: ImageProps) {
       onMouseLeave={() => setHover(false)}
     >
       <img
-        src={item.src}
+        src={item.imageUrl}
         alt={`img-${index}`}
         loading="lazy"
         style={{

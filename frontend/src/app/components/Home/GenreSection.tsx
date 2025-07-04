@@ -1,15 +1,16 @@
 import { Grid, Typography, Link } from "@mui/material"
 import ScrollableImageList from "./ScrollableImageList"
+import { Movie } from "@/app/contexts/MovieContext";
 
 interface GenreSelectionProps{
-  images: { src: string; id: number; }[];
+  movies: Movie[];
   genre: string;
   textColor?: string;
   moreRedirect?: string
 }
 
 export default function GenreSelection({
-  images,
+  movies,
   genre,
   textColor="GrayText",
   moreRedirect = ''
@@ -20,7 +21,7 @@ export default function GenreSelection({
       <Link href={moreRedirect !== '' ? moreRedirect : `movies?genre=${genre.toLowerCase()}`} underline="none">
         <Typography sx={{position: "relative", top: "7px"}}>{"MORE"}</Typography>
       </Link>
-      <ScrollableImageList images={images}/>
+      <ScrollableImageList movies={movies}/>
     </Grid>
   )
 }
