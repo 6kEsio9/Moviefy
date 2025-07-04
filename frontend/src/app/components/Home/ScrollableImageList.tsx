@@ -1,17 +1,18 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Box, IconButton, ImageListItem } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { Movie } from "@/app/contexts/MovieContext";
 
 import Image from "./Image";
 
 interface ScrollableImageListProps {
-  images: { title: string; src: string; id: number }[];
+  movies: Movie[];
   scrollAmount?: number;
 }
 
 export default function ScrollableImageList({
-  images,
+  movies,
   scrollAmount = 300,
 }: ScrollableImageListProps) {
   const scrollRef = useRef<HTMLInputElement>(null);
@@ -51,12 +52,12 @@ export default function ScrollableImageList({
           scrollbarWidth: "none",
         }}
       >
-        {images.map((item, index) => (
+        {movies.map((movie, index) => (
           <ImageListItem
             key={index}
             sx={{ maxWidth: 200, maxHeight: 300, flex: "0 0 auto" }}
           >
-            <Image item={item} index={index} />
+            <Image item={movie} index={index} />
           </ImageListItem>
         ))}
       </Box>
