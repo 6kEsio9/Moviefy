@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "./Loading";
 import MovieCard from "./MovieCard";
 import Sidebar from "./Sidebar/Sidebar";
 
@@ -43,7 +44,7 @@ export default function MoviesPage() {
               );
             })
           ) : (
-            <p>No movies found.</p>
+            <Loading />
           )}
         </div>
       </div>
