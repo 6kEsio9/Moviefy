@@ -3,22 +3,17 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 import * as MovieService from "../services/MovieService";
-
-export type Movie = {
-  id: number;
-  title: string;
-  imageUrl: string;
-  year: number;
-  avgRating: number;
-  genre: string;
-  ageRating: number;
-};
+import { Movie } from "../services/MovieService";
 
 export type MovieContextType = {
   movies: Movie[];
+  setMovies: (value: Movie[]) => void;
 };
 
-export const MovieContext = createContext<MovieContextType>({ movies: [] });
+export const MovieContext = createContext<MovieContextType>({
+  movies: [],
+  setMovies: () => {},
+});
 
 export function MovieProvider({ children }: { children: ReactNode }) {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -31,6 +26,8 @@ export function MovieProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <MovieContext.Provider value={{ movies }}>{children}</MovieContext.Provider>
+    <MovieContext.Provider value={{ movies, setMovies }}>
+      {children}
+    </MovieContext.Provider>
   );
 }

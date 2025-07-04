@@ -65,7 +65,7 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
       </Link>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <RatingLine />
+          <RatingLine movieId={id} />
         </IconButton>
       </CardActions>
     </Card>
