@@ -13,6 +13,11 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
+import * as MovieService from "../../../services/MovieService";
+
+import { Movie } from "@/app/contexts/MovieContext";
+import SearchMenu from "./SearchMenu";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -148,10 +153,35 @@ export default function PrimarySearchAppBar() {
     </Menu>
   );
 
+  const [input, setInput] = React.useState("");
+  const [debouncedInput, setDebouncedInput] = React.useState("");
+  const [movies, setMovies] = React.useState<Movie[]>([]);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedInput(input);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [input]);
+
+  React.useEffect(() => {
+    if (debouncedInput) {
+      const result = MovieService.search(debouncedInput);
+      setMovies(result);
+    }
+  }, [debouncedInput]);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ boxShadow: "none" }}>
-        <Toolbar>
+        <Toolbar sx={{ display: "block", mr: "20px", mt: "15px" }}>
           <Search style={{ width: "100%" }}>
             <SearchIconWrapper>
               <SearchIcon />
@@ -160,8 +190,12 @@ export default function PrimarySearchAppBar() {
               placeholder="Search movie or user"
               inputProps={{ "aria-label": "search" }}
               style={{ width: "100%" }}
+              onChange={handleSearch}
             />
           </Search>
+          {movies.length > 0 && debouncedInput && (
+            <SearchMenu movies={movies} />
+          )}
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
