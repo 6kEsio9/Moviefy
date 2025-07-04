@@ -1,18 +1,22 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { renderReviewStars } from "./RenderFunctions";
+import { Rating } from "@/app/services/MovieService";
+import { getUser } from "@/app/services/AuthService";
 
 interface ReviewProps {
-  review: {pfp: string, username: string, rating: number, review: string};
+  review: Rating;
 }
 
 export default function Review({review}: ReviewProps){
+  const user = getUser(review.userId);
+
   return(
     <Grid container direction={"row"} spacing={2} sx={{margin: 2}}>
       <Grid>
-        <img src={review.pfp} style={{borderRadius: "100%", width: "50px"}}/>
-        <Typography sx={{position: "relative", left:"20px", top: "20px"}}>{review.review}</Typography>  
+        <img src={user?.pfp} style={{borderRadius: "100%", width: "50px"}}/>
+        <Typography sx={{position: "relative", left:"20px", top: "20px"}}>{review.comment}</Typography>  
       </Grid>
-      <Typography>{review.username}</Typography>
+      <Typography>{user?.username}</Typography>
       {renderReviewStars(review.rating)}
     </Grid>
   )

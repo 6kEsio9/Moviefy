@@ -1,23 +1,16 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { renderCastOrCrew } from "./RenderFunctions";
+import { Movie } from "@/app/services/MovieService";
 
 interface MovieInfoProps{
-  movie: {
-    title: string;
-    year: number;
-    director: string;
-    cast: string[];
-    crew: string[]
-    poster: string;
-    summary: string;
-  }
+  movie: Movie
 }
 
 export default function MovieInfo({movie}: MovieInfoProps){
   return(
     <Grid container sx={{marginRight: "15%", marginLeft: "15%"}}>
       <Grid size={3}>
-        <img src={movie.poster} style={{height:"400px"}}/>
+        <img src={movie.imageUrl} style={{height:"400px"}}/>
       </Grid>
       <Grid size={9}>
         <Grid>

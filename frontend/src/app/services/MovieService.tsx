@@ -2,6 +2,12 @@ import * as AuthService from "./AuthService";
 
 const url = "";
 
+export type Rating = {
+  userId: number;
+  rating: number;
+  comment: string;
+}
+
 export type Movie = {
   id: number;
   title: string;
@@ -10,7 +16,11 @@ export type Movie = {
   avgRating: number;
   genre: string;
   ageRating: number;
-  ratings: { userId: number; rating: number; comment: string }[];
+  summary: string;
+  director: string;
+  cast: string[];
+  crew: string[];
+  ratings: Rating[];
 };
 
 const movies = [
@@ -22,6 +32,10 @@ const movies = [
     avgRating: 5,
     genre: "Action",
     ageRating: 16,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [],
   },
   {
@@ -32,6 +46,10 @@ const movies = [
     avgRating: 4,
     genre: "Fantasy",
     ageRating: 3,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
   {
@@ -42,6 +60,10 @@ const movies = [
     avgRating: 2,
     genre: "Fantasy",
     ageRating: 18,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
   {
@@ -52,6 +74,10 @@ const movies = [
     avgRating: 1,
     genre: "Comedy",
     ageRating: 16,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
   {
@@ -62,6 +88,10 @@ const movies = [
     avgRating: 3,
     genre: "Sci-Fi",
     ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
   {
@@ -72,6 +102,10 @@ const movies = [
     avgRating: 4,
     genre: "Sci-Fi",
     ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
   {
@@ -82,6 +116,10 @@ const movies = [
     avgRating: 5,
     genre: "Comedy",
     ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
 ];
