@@ -1,5 +1,3 @@
-import * as AuthService from "./AuthService";
-
 const url = "";
 
 export type Movie = {

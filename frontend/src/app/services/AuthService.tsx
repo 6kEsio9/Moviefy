@@ -1,6 +1,6 @@
 const url = "";
 
-type User = {
+export type User = {
   id: number;
   username: string;
   bio: string;
@@ -20,7 +20,7 @@ const users: User[] = [
     bio: "I like watching movies",
     pfp: "/images/pfp.jpeg",
     watchList: {
-      watched: [3],
+      watched: [3, 0, 1],
       isWatching: [4],
       willWatch: [5],
     },

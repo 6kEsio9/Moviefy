@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { Avatar, Box, Typography } from "@mui/material";
+import { User } from "@/app/services/AuthService";
+import Edit from "./Edit";
 
-export default function Header() {
+interface HeaderParams {
+  currentUser: User | undefined;
+  profileUser: User | undefined;
+}
+
+export default function Header({ currentUser, profileUser }: HeaderParams) {
   return (
     <Box className="flex flex-col items-center mb-6">
-      <Avatar src="/images/pfp.jpeg" sx={{ width: 120, height: 120, mb: 2 }} />
-      <Typography variant="h5">Username</Typography>
+      <Avatar src={profileUser?.pfp} sx={{ width: 120, height: 120, mb: 2 }} />
+      <Typography variant="h5">{profileUser?.username}</Typography>
       <Typography variant="body1" color="text.secondary">
-        Bio
+        {profileUser?.bio}
       </Typography>
+      {currentUser === profileUser && <Edit />}
     </Box>
   );
 }

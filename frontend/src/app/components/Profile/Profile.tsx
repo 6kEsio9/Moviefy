@@ -6,14 +6,21 @@ import { useMovies } from "@/app/hooks/useMovies";
 import Header from "./Header";
 import TabsButtons from "./TabsButtons";
 
+import * as AuthService from "../../services/AuthService";
+import { useParams } from "next/navigation";
+
 export default function ProfilePage() {
   const { movies, setMovies } = useMovies();
 
+  const currentUser = AuthService.getUser(0);
+
+  const userId = useParams().id;
+  const profileUser = AuthService.getUser(+userId!);
+
   return (
     <Box sx={{ p: 4 }}>
-      <Header />
-      {/* Tabs */}
-      <TabsButtons />
+      <Header currentUser={currentUser} profileUser={profileUser} />
+      <TabsButtons profileUser={profileUser} />
     </Box>
   );
 }
