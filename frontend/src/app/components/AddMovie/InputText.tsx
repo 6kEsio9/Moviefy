@@ -7,7 +7,7 @@ interface InputTextProps {
   type?: string;
   multiline?: boolean;
   width?: number;
-}
+} 
 
 export default function InputText({
   label,
