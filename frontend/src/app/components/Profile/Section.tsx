@@ -1,15 +1,23 @@
-import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import { Box, Card, Grid, Typography } from "@mui/material";
 
 import { Movie } from "../../services/MovieService";
-import * as MovieService from "../../services/MovieService";
+import Link from "next/link";
+import CardButtons from "./SectionButtons";
+import { User } from "@/app/services/AuthService";
+
+interface SectionProps {
+  title: string;
+  movies: Movie[] | undefined;
+  currentUser: User | undefined;
+  profileUser: User | undefined;
+}
 
 export default function Section({
   title,
   movies,
-}: {
-  title: string;
-  movies: Movie[] | undefined;
-}) {
+  currentUser,
+  profileUser,
+}: SectionProps) {
   return (
     <Box mb={4}>
       <Typography variant="h6" mb={2}>
@@ -28,18 +36,22 @@ export default function Section({
                 sx={{ width: "150px" }}
                 {...({} as any)}
               >
-                <Card sx={{ height: "300px" }}>
-                  <img
-                    src={movie.imageUrl}
-                    alt={movie.title}
-                    style={{ width: "100%", height: 200, objectFit: "cover" }}
+                <Card sx={{ height: "320px" }}>
+                  <Link
+                    href={`/movies/${movie.id}`}
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <img
+                      src={movie.imageUrl}
+                      alt={movie.title}
+                      style={{ width: "100%", height: 200, objectFit: "cover" }}
+                    />
+                  </Link>
+                  <CardButtons
+                    movie={movie}
+                    currentUser={currentUser}
+                    profileUser={profileUser}
                   />
-                  <CardContent>
-                    <Typography variant="subtitle1">{movie.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {movie.year}
-                    </Typography>
-                  </CardContent>
                 </Card>
               </Grid>
             ) : null

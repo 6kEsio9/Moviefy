@@ -24,7 +24,7 @@ const users: User[] = [
       isWatching: [4],
       willWatch: [5],
     },
-    reviews: [],
+    reviews: [1, 2, 3, 4, 5, 6],
   },
   {
     id: 1,
@@ -36,7 +36,7 @@ const users: User[] = [
       isWatching: [4],
       willWatch: [5],
     },
-    reviews: [0, 1, 2], //movie ids
+    reviews: [0],
   },
 ];
 export function getUser(id: number) {

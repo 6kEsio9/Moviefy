@@ -4,12 +4,17 @@ import Section from "./Section";
 import { User } from "@/app/services/AuthService";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "@/app/services/MovieService";
+import Reviews from "./Reviews";
 
 interface TabsButtonsProps {
+  currentUser: User | undefined;
   profileUser: User | undefined;
 }
 
-export default function TabsButtons({ profileUser }: TabsButtonsProps) {
+export default function TabsButtons({
+  currentUser,
+  profileUser,
+}: TabsButtonsProps) {
   const [tab, setTab] = useState(0);
 
   const [watched, setWatched] = useState<Movie[]>([]);
@@ -46,28 +51,29 @@ export default function TabsButtons({ profileUser }: TabsButtonsProps) {
       <Box mt={4}>
         {tab === 0 && (
           <Box>
-            <Section title="🎬 Watched" movies={watched} />
-            <Section title="⏳ Is Watching" movies={isWatching} />
-            <Section title="📌 Will Watch" movies={willWatch} />
+            <Section
+              title="🎬 Watched"
+              movies={watched}
+              currentUser={currentUser}
+              profileUser={profileUser}
+            />
+            <Section
+              title="⏳ Is Watching"
+              movies={isWatching}
+              currentUser={currentUser}
+              profileUser={profileUser}
+            />
+            <Section
+              title="📌 Will Watch"
+              movies={willWatch}
+              currentUser={currentUser}
+              profileUser={profileUser}
+            />
           </Box>
         )}
 
         {tab === 1 && (
-          <Box>
-            {/* {user.reviews.map((r, i) => {
-                  const movie = getMovieById(r.movieId);
-                  if (!movie) return null;
-                  return (
-                    <Card key={i} sx={{ mb: 2 }}>
-                      <CardContent>
-                        <Typography variant="h6">{movie.title}</Typography>
-                        <Rating value={r.rating} readOnly />
-                        <Typography variant="body2">{r.comment}</Typography>
-                      </CardContent>
-                    </Card>
-                  );
-                })} */}
-          </Box>
+          <Reviews currentUser={currentUser} profileUser={profileUser} />
         )}
       </Box>
     </>

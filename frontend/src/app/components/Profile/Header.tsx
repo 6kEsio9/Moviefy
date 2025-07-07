@@ -16,7 +16,7 @@ export default function Header({ currentUser, profileUser }: HeaderParams) {
       <Typography variant="body1" color="text.secondary">
         {profileUser?.bio}
       </Typography>
-      {currentUser === profileUser && <Edit />}
+      {currentUser?.id === profileUser?.id && <Edit />}
     </Box>
   );
 }

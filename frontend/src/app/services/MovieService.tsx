@@ -20,7 +20,7 @@ const movies = [
     avgRating: 5,
     genre: "Action",
     ageRating: 16,
-    ratings: [],
+    ratings: [{ userId: 1, rating: 3, comment: "Great movie!" }],
   },
   {
     id: 1,
@@ -76,6 +76,17 @@ const movies = [
     id: 6,
     title: "Taxi",
     imageUrl: "/images/taxi.jpeg",
+    year: 2012,
+    avgRating: 5,
+    genre: "Comedy",
+    ageRating: 12,
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+  },
+  {
+    id: 7,
+    title: "No Game No Life Zero",
+    imageUrl:
+      "//upload.wikimedia.org/wikipedia/en/3/3d/No_Game%2C_No_Life_Zero_poster.jpg",
     year: 2012,
     avgRating: 5,
     genre: "Comedy",
