@@ -6,6 +6,7 @@ interface InputTextProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   multiline?: boolean;
+  width?: number;
 }
 
 export default function InputText({
@@ -14,12 +15,13 @@ export default function InputText({
   onChange,
   type = 'text',
   multiline = false,
+  width = 500
 }: InputTextProps) {
   return (
     <Box sx={{ mb: 2}}>
       <Typography>{label}</Typography>
       <FormControl>
-        <TextField sx={{width: 500}}
+        <TextField sx={{width: width}}
           variant="outlined"
           value={value}
           onChange={onChange}

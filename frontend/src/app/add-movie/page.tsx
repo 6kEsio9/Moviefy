@@ -12,37 +12,46 @@ const possibleGenres = [
 ]
 
 export default function AddMoviePage(){
-  const handleGenreChange = (event: SelectChangeEvent<typeof genreList>) => {
+  const handleGenreChange = (event: SelectChangeEvent<typeof genre>) => {
     const {
       target: { value },
     } = event;
-    setGenreList(
+    setGenre(
       typeof value === 'string' ? value.split(',') : value,
     );
   };
 
   const submitMovie = () => {
-    console.log(title, summary, year, genreList, cast, crew)
+    console.log(title, summary, year, genre, cast, crew)
 }
 
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [year, setYear] = useState('');
-  const [genreList, setGenreList] = useState<string[]>([]);
+  const [genre, setGenre] = useState<string[]>([]);
   const [cast, setCast] = useState<string[]>([]);
   const [crew, setCrew] = useState<string[]>([]);
+  const [poster, setPoster] = useState('');
 
   return(
     <div style={{marginTop: "40px", marginLeft: "40px"}}>
       <Typography variant="h2">Add Movie</Typography>
       <Grid container direction={"row"} sx={{mt: "40px", mb: "15px", ml: "100px"}}>
         <Grid size={3}>
-          <Button>
-            <Box width={300} height={450} sx={{border: 1, borderRadius: "20px", borderColor:"gray"}} alignContent={"center"}>
-              <Image fontSize="large"/>
-              <Typography>Add Poster</Typography>
-            </Box>
-          </Button>
+          <Box width={300} height={450} sx={{border: 1, borderRadius: "20px", borderColor:"gray"}} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+            {poster === '' ? 
+              <Image fontSize="large"/> : 
+              <img src={poster} style={{width: 300, height: 450}}/>
+            }
+          </Box>
+          <div style={{marginTop: "15px"}}>
+            <InputText
+              label="Poster Image URL"
+              value={poster}
+              onChange={(e) => setPoster(e.target.value)}
+              width={300}
+            />
+          </div>
         </Grid>
         <Grid size={4}>
           <InputText
@@ -63,7 +72,7 @@ export default function AddMoviePage(){
           />
           <Typography>Genres</Typography>
           <GenreSelect
-            value={genreList}
+            value={genre}
             onChange={handleGenreChange}
             possibleGenres={possibleGenres}
           />
