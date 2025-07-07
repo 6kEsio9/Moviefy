@@ -4,20 +4,15 @@ import { Movie } from "../../services/MovieService";
 import Link from "next/link";
 import CardButtons from "./SectionButtons";
 import { User } from "@/app/services/AuthService";
+import { useAuth } from "@/app/hooks/useAuth";
 
 interface SectionProps {
   title: string;
   movies: Movie[] | undefined;
-  currentUser: User | undefined;
   profileUser: User | undefined;
 }
 
-export default function Section({
-  title,
-  movies,
-  currentUser,
-  profileUser,
-}: SectionProps) {
+export default function Section({ title, movies, profileUser }: SectionProps) {
   return (
     <Box mb={4}>
       <Typography variant="h6" mb={2}>
@@ -47,11 +42,7 @@ export default function Section({
                       style={{ width: "100%", height: 200, objectFit: "cover" }}
                     />
                   </Link>
-                  <CardButtons
-                    movie={movie}
-                    currentUser={currentUser}
-                    profileUser={profileUser}
-                  />
+                  <CardButtons movie={movie} profileUser={profileUser} />
                 </Card>
               </Grid>
             ) : null

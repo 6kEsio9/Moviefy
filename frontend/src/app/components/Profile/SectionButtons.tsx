@@ -4,26 +4,27 @@ import Button from "@mui/material/Button";
 import { Movie } from "@/app/services/MovieService";
 import { useState } from "react";
 import { User } from "@/app/services/AuthService";
+import { useAuth } from "@/app/hooks/useAuth";
 
 interface CardButtonsProps {
   movie: Movie;
-  currentUser: User | undefined;
   profileUser: User | undefined;
 }
 
 export default function SectionButtons({
-  currentUser,
   profileUser,
   movie,
 }: CardButtonsProps) {
   const [hover, setHover] = useState(false);
+
+  const { user, setUser } = useAuth();
 
   return (
     <CardContent
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {currentUser?.id === profileUser?.id && hover ? (
+      {user?.id === profileUser?.id && hover ? (
         <div>
           <Button
             variant="contained"

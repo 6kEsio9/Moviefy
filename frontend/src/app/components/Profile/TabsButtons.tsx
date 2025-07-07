@@ -7,14 +7,10 @@ import * as MovieService from "@/app/services/MovieService";
 import Reviews from "./Reviews";
 
 interface TabsButtonsProps {
-  currentUser: User | undefined;
   profileUser: User | undefined;
 }
 
-export default function TabsButtons({
-  currentUser,
-  profileUser,
-}: TabsButtonsProps) {
+export default function TabsButtons({ profileUser }: TabsButtonsProps) {
   const [tab, setTab] = useState(0);
 
   const [watched, setWatched] = useState<Movie[]>([]);
@@ -54,27 +50,22 @@ export default function TabsButtons({
             <Section
               title="🎬 Watched"
               movies={watched}
-              currentUser={currentUser}
               profileUser={profileUser}
             />
             <Section
               title="⏳ Is Watching"
               movies={isWatching}
-              currentUser={currentUser}
               profileUser={profileUser}
             />
             <Section
               title="📌 Will Watch"
               movies={willWatch}
-              currentUser={currentUser}
               profileUser={profileUser}
             />
           </Box>
         )}
 
-        {tab === 1 && (
-          <Reviews currentUser={currentUser} profileUser={profileUser} />
-        )}
+        {tab === 1 && <Reviews profileUser={profileUser} />}
       </Box>
     </>
   );
