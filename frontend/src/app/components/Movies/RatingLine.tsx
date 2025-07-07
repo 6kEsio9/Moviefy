@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import { useMovies } from "@/app/hooks/useMovies";
-import * as AuthService from "@/app/services/AuthService";
+import { useAuth } from "@/app/hooks/useAuth";
 
 interface RatingLineProps {
   movieId: number;
@@ -12,7 +12,7 @@ export default function RatingLine({ movieId }: RatingLineProps) {
   const [value, setValue] = React.useState<number | null>(0);
   const { movies, setMovies } = useMovies();
 
-  const user = AuthService.getUser(0);
+  const { user, setUser } = useAuth();
 
   React.useEffect(() => {
     const movieIndex = movies.findIndex((x) => x.id === movieId);
