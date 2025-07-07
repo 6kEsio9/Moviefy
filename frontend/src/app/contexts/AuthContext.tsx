@@ -13,6 +13,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: {
     id: -1,
     username: "",
+    email: "",
     bio: "",
     pfp: "",
     watchList: { watched: [], isWatching: [], willWatch: [] },
@@ -25,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>({
     id: -1,
     username: "",
+    email: "",
     bio: "",
     pfp: "",
     watchList: { watched: [], isWatching: [], willWatch: [] },
