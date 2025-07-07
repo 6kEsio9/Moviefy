@@ -17,12 +17,11 @@ import AdbIcon from "@mui/icons-material/Adb";
 
 import SearchBar from "./SearchBar";
 import Link from "next/link";
+import { useAuth } from "@/app/hooks/useAuth";
 
 const pages = ["Home", "Movies"];
 const settings = ["Profile", "Logout"];
 const nonAuthSettings = ["Sign in"];
-
-let auth = false;
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -46,6 +45,8 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const { user, setUser } = useAuth();
 
   return (
     <AppBar position="static">
@@ -125,7 +126,7 @@ function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src={auth ? "pfp" : ""} />
+                <Avatar alt="Remy Sharp" src={user ? "pfp" : ""} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -144,11 +145,11 @@ function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {auth
+              {user
                 ? settings.map((setting) => (
                     <Link
                       key={setting}
-                      href={`/${setting.toLowerCase()}/authid`}
+                      href={`/${setting.toLowerCase()}/${user.id}`}
                       style={{ textDecoration: "none", color: "black" }}
                     >
                       <MenuItem onClick={handleCloseUserMenu}>

@@ -14,9 +14,11 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
 import * as MovieService from "../../../services/MovieService";
+import * as AuthService from "../../../services/AuthService";
 
-import { Movie } from "@/app/contexts/MovieContext";
+import { Movie } from "../../../services/MovieService";
 import SearchMenu from "./SearchMenu";
+import { User } from "@/app/services/AuthService";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -156,6 +158,7 @@ export default function PrimarySearchAppBar() {
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
   const [movies, setMovies] = React.useState<Movie[]>([]);
+  const [users, setUsers] = React.useState<User[]>([]);
 
   React.useEffect(() => {
     const handler = setTimeout(() => {
@@ -169,8 +172,11 @@ export default function PrimarySearchAppBar() {
 
   React.useEffect(() => {
     if (debouncedInput) {
-      const result = MovieService.search(debouncedInput);
-      setMovies(result);
+      const resultMovies = MovieService.search(debouncedInput);
+      setMovies(resultMovies);
+
+      const resultUsers = AuthService.search(debouncedInput);
+      setUsers(resultUsers);
     }
   }, [debouncedInput]);
 
@@ -193,8 +199,8 @@ export default function PrimarySearchAppBar() {
               onChange={handleSearch}
             />
           </Search>
-          {movies.length > 0 && debouncedInput && (
-            <SearchMenu movies={movies} />
+          {(movies.length > 0 || users.length > 0) && debouncedInput && (
+            <SearchMenu movies={movies} users={users} />
           )}
         </Toolbar>
       </AppBar>

@@ -1,5 +1,3 @@
-import * as AuthService from "./AuthService";
-
 const url = "";
 
 export type Rating = {
@@ -36,7 +34,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [],
+    ratings: [{ userId: 1, rating: 3, comment: "Great movie!" }],
   },
   {
     id: 1,
@@ -120,6 +118,17 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+  },
+  {
+    id: 7,
+    title: "No Game No Life Zero",
+    imageUrl:
+      "//upload.wikimedia.org/wikipedia/en/3/3d/No_Game%2C_No_Life_Zero_poster.jpg",
+    year: 2012,
+    avgRating: 5,
+    genre: "Comedy",
+    ageRating: 12,
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
 ];
