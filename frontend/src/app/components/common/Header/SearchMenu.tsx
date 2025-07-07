@@ -4,14 +4,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import { Movie } from "@/app/contexts/MovieContext";
+import { Movie } from "@/app/services/MovieService";
 import Link from "next/link";
+import { User } from "@/app/services/AuthService";
 
 interface SearchMenuProps {
   movies: Movie[];
+  users: User[];
 }
 
-export default function SearchMenu({ movies }: SearchMenuProps) {
+export default function SearchMenu({ movies, users }: SearchMenuProps) {
   return (
     <List
       sx={{
@@ -25,6 +27,17 @@ export default function SearchMenu({ movies }: SearchMenuProps) {
         overflowY: "auto",
       }}
     >
+      {movies.length > 0 && (
+        <div
+          style={{
+            width: "90%",
+            fontFamily: "sans-serif",
+            marginLeft: "15px",
+          }}
+        >
+          Movies
+        </div>
+      )}
       {movies.map((x) => (
         <Link
           style={{ textDecoration: "none", color: "black" }}
@@ -41,6 +54,37 @@ export default function SearchMenu({ movies }: SearchMenuProps) {
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={x.title} secondary={`Premiere: ${x.year}`} />
+          </ListItem>
+        </Link>
+      ))}
+      {users.length > 0 && (
+        <div
+          style={{
+            width: "90%",
+            fontFamily: "sans-serif",
+            marginLeft: "15px",
+          }}
+        >
+          Users
+        </div>
+      )}
+
+      {users.map((x) => (
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          href={`/profile/${x.id}`}
+        >
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <img
+                  style={{ width: "100%", height: "100%" }}
+                  src={x.pfp}
+                  alt={x.username}
+                ></img>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={x.username} />
           </ListItem>
         </Link>
       ))}
