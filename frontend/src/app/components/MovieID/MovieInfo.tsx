@@ -1,6 +1,7 @@
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { renderCastOrCrew } from "./RenderFunctions";
 import { Movie } from "@/app/services/MovieService";
+import { Star } from "@mui/icons-material";
 
 interface MovieInfoProps{
   movie: Movie
@@ -8,11 +9,11 @@ interface MovieInfoProps{
 
 export default function MovieInfo({movie}: MovieInfoProps){
   return(
-    <Grid container sx={{marginRight: "15%", marginLeft: "15%"}}>
+    <Grid container>
       <Grid size={3}>
         <img src={movie.imageUrl} style={{height:"400px"}}/>
       </Grid>
-      <Grid size={9}>
+      <Grid size={6}>
         <Grid>
           <Grid container direction="row" alignItems="center" spacing={10}>
             <Box>
@@ -44,6 +45,11 @@ export default function MovieInfo({movie}: MovieInfoProps){
           </Grid>
         </Grid>
       </Grid>
+      <Grid size={3} justifyItems={"center"} sx={{alignContent:"center", top: "20%", right: "20%"}}>
+        <Typography variant="h3">Average Rating</Typography>
+        <Typography variant="h3">{movie.avgRating}<Star/></Typography>
+      </Grid>
+
     </Grid>
   )
 }
