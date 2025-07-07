@@ -9,7 +9,7 @@ import AuthButton from "./AuthButton";
 import SearchMenuLanding from "./SearchMenuLanding";
 
 import * as MovieService from "../../../services/MovieService";
-import { Movie } from "@/app/contexts/MovieContext";
+import { Movie } from "@/app/services/MovieService"
 
 export default function Landing() {
   const [input, setInput] = React.useState("");

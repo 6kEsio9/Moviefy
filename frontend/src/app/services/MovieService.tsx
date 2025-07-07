@@ -129,6 +129,10 @@ const movies = [
     avgRating: 5,
     genre: "Comedy",
     ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
 ];
