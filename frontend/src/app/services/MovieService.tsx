@@ -4,7 +4,7 @@ export type Rating = {
   userId: number;
   rating: number;
   comment: string;
-}
+};
 
 export type Movie = {
   id: number;
@@ -24,7 +24,7 @@ export type Movie = {
 const movies = [
   {
     id: 0,
-    title: "Tennet",
+    title: "Tenet",
     imageUrl: "/images/tennet.jpeg",
     year: 2005,
     avgRating: 5,
@@ -129,6 +129,25 @@ const movies = [
     avgRating: 5,
     genre: "Comedy",
     ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+  },
+  {
+    id: 8,
+    title: "Pokemon: Firered Version",
+    imageUrl:
+      "https://imdb.com/title/tt0433620/mediaviewer/rm3435339521/?ref_=tt_ov_i",
+    year: 2012,
+    avgRating: 5,
+    genre: "Comedy",
+    ageRating: 12,
+    summary: "Interesting movie",
+    director: "John Doe",
+    cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
+    crew: [],
     ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
   },
 ];

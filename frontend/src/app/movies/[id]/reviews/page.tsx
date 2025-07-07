@@ -1,3 +1,5 @@
+import ReviewsPage from "@/app/components/MovieID/Reviews/ReviewsPage";
+
 export default function Review() {
-  return <h1>Movie review</h1>;
+  return <ReviewsPage />;
 }
