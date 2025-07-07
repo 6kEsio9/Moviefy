@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	queries "moviefy/main/helper"
 	"os"
 	"time"
 
@@ -23,35 +24,34 @@ type MovieBasics struct {
 	genres         []string
 }
 
-func getMovieSearchReslt(searchString string) ([]MovieBasics, error) {
-	/*
-	   	SELECT tconst, primarytitle, startyear, genres
-	   FROM title_basics
-	   WHERE
-	   to_tsvector('english', COALESCE(primarytitle, ' ')) @@ websearch_to_tsquery('english', 'capitan')
-	   LIMIT 10;
-	*/
-	sql := `
-        SELECT tconst, primarytitle, startyear, genres
-        FROM title_basics
-        WHERE 
-            to_tsvector('english', primarytitle || ' ' || genres) @@ 
-            websearch_to_tsquery('english', $1)
-        ORDER BY 
-            ts_rank(
-                to_tsvector('english', primarytitle || ' ' || genres),
-                websearch_to_tsquery('english', $1)
-            ) DESC
-        LIMIT 10
-    `
+type DB struct {
+	*pgxpool.Pool
+}
 
-	rows, err := r.db.Query(context.Background(), sql, searchString)
+var MovieDB *DB
+const 
+
+/*
+SELECT tb.primaryTitle, averageRating, numVotes, tb.startyear, tb.tconst, tb.titletype FROM title_ratings AS tr INNER JOIN title_basics AS tb ON tr.
+tconst = tb.tconst WHERE tr.numVotes > 10000 AND tb.titleType = 'movie' ORDER BY tr.averageRating DESC LIMIT 10 ;
+*/
+func (db *DB) getMovieSearchReslt(searchString string, offset int, limit int) ([]MovieBasics, error) {
+
+	rows, err := db.Query(context.Background(), queries.MovieSearchQuery, searchString, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("search query failed: %w", err)
 	}
 	defer rows.Close()
 
 	var movies []MovieBasics
+	/*
+	  tconst,
+	  primarytitle,
+	  numVotes,
+	  fts_rank,
+	  fuzzy_rank,
+	  source
+	* */
 	for rows.Next() {
 		var m MovieBasics
 		err := rows.Scan(&m.ID, &m.Title, &m.Description, &m.ReleaseYear, &m.Rating)
@@ -89,6 +89,10 @@ func main() {
 	config.MaxConnIdleTime = time.Minute * 30
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
+
+	MovieDB = &DB{pool}
+	MovieDB.getMovieSearchReslt
+
 	if err != nil {
 		log.Fatalf("Unable to create connection pool: %v\n", err)
 	}

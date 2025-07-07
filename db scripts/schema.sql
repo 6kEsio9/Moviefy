@@ -11,7 +11,8 @@ CREATE TABLE title_basics (
     startYear INTEGER ,
     endYear INTEGER ,
     runtimeMinutes INTEGER ,
-    genres TEXT[]
+    genres TEXT[],
+    omdbid TEXT UNIQUE,
 );
 
 CREATE TABLE name_basics (
@@ -24,7 +25,7 @@ CREATE TABLE name_basics (
 );
 
 CREATE TABLE title_akas (
-    titleId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
+    titleId TEXT ,
     ordering INTEGER NOT NULL,
     title TEXT NOT NULL,
     region TEXT,
@@ -36,16 +37,48 @@ CREATE TABLE title_akas (
 );
 
 CREATE TABLE title_crew (
-    tconst TEXT PRIMARY KEY REFERENCES title_basics(tconst) ON DELETE CASCADE,
+    tconst TEXT PRIMARY KEY ,
     directors TEXT[] ,
     writers TEXT[]
 );
 
 CREATE TABLE title_episode (
-    tconst TEXT PRIMARY KEY REFERENCES title_basics(tconst) ON DELETE CASCADE,
-    parentTconst TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
-    seasonNumber INTEGER NOT NULL ,
-    episodeNumber INTEGER NOT NULL
+    tconst TEXT PRIMARY KEY,
+    parentTconst TEXT,
+    seasonNumber INTEGER,
+    episodeNumber INTEGER
+);
+
+CREATE TABLE image_ids (
+   image_id TEXT PRIMARY KEY,
+   object_id TEXT,
+  object_type TEXT,
+  image_version TEXT
+);
+
+CREATE TABLE image_licenses(
+    image_id TEXT PRIMARY KEY REFERENCES image_ids(image_id) ON DELETE CASCADE,
+  source TEXT,
+  license_id TEXT,
+  author TEXT
+);
+
+CREATE TABLE trailers(
+  trailer_id TEXT ,
+  key TEXT,
+  movie_id TEXT REFERENCES title_basics(omdbid) ON DELETE CASCADE,
+  language TEXT,
+  source TEXT
+);
+
+CREATE TABLE movie_abstracts (
+  movie_id TEXT PRIMARY KEY REFERENCES title_basics(omdbid) ON DELETE CASCADE,
+  abstract TEXT
+);
+
+CREATE TABLE movie_links (
+  tconst TEXT,
+  movie_id TEXT
 );
 
 CREATE TABLE posters (
@@ -54,9 +87,9 @@ CREATE TABLE posters (
 );
 
 CREATE TABLE title_principals (
-    tconst TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
+    tconst TEXT ,
     ordering INTEGER NOT NULL,
-    nconst TEXT REFERENCES name_basics(nconst) ON DELETE CASCADE,
+    nconst TEXT ,
     category TEXT NOT NULL,
     job TEXT,
     characters TEXT,
@@ -65,7 +98,7 @@ CREATE TABLE title_principals (
 
 CREATE TABLE title_ratings (
     tconst TEXT PRIMARY KEY REFERENCES title_basics(tconst) ON DELETE CASCADE,
-    averageRating INTEGER,
+    averageRating DECIMAL(3,1),
     numVotes INTEGER
 );
 

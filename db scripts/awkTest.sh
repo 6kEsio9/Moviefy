@@ -1,5 +1,7 @@
 # !/bin/bash
 
+#awk -F',' '$1=="imdbmovie" {print $(NF-1) $NF}' db\ tsv\ files/movie_links.csv
+
 if [ "$#" -lt 2 ]; then
   echo "Usage: $0 <tsv_file> [<column_number1>, ...] "
   exit 1
