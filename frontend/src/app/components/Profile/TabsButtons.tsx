@@ -4,7 +4,7 @@ import Section from "./Section";
 import { User } from "@/app/services/AuthService";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "@/app/services/MovieService";
-import Reviews from "./Reviews";
+import Reviews from "./Reviews/ReviewsTab";
 
 interface TabsButtonsProps {
   profileUser: User | undefined;

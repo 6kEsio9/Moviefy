@@ -16,16 +16,17 @@ import {
   Button,
 } from "@mui/material";
 import { useAuth } from "@/app/hooks/useAuth";
+import ReviewsPageItem from "./ReviewsPageItem";
 
 export default function ReviewsPage() {
   const { user, setUser } = useAuth();
-  const [ratings, setRatings] = useState<MovieService.Rating[]>([]);
+  const [ratings, setRatings] = useState<MovieService.Review[]>([]);
 
   const params = useParams().id;
   const movie = MovieService.getMovie(+params!);
 
   useEffect(() => {
-    const movieRatings = movie?.ratings;
+    const movieRatings = movie?.reviews;
     setRatings(movieRatings!);
   }, []);
 
@@ -122,45 +123,8 @@ export default function ReviewsPage() {
           minWidth: "300px",
         }}
       >
-        {ratings.map((x) => (
-          <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
-            <CardContent
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <Box sx={{ display: "flex" }}>
-                <Avatar
-                  src={AuthService.getUser(x.userId)?.pfp}
-                  sx={{ width: 60, height: 60, mr: 2 }}
-                />
-                <Box>
-                  <Typography variant="h6">
-                    {AuthService.getUser(x.userId)?.username}
-                  </Typography>
-                  <Rating value={x.rating} readOnly />
-                  {x?.comment && (
-                    <Typography variant="body2">{x.comment}</Typography>
-                  )}
-                </Box>
-              </Box>
-
-              {user?.id === x.userId && (
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                  <Button
-                    variant="contained"
-                    sx={{ fontSize: "10px", width: "120px" }}
-                  >
-                    Edit comment
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    sx={{ fontSize: "10px", width: "120px" }}
-                  >
-                    Remove
-                  </Button>
-                </Box>
-              )}
-            </CardContent>
-          </Card>
+        {ratings.map((review) => (
+          <ReviewsPageItem review={review} />
         ))}
       </div>
     </div>
