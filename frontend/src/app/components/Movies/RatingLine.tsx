@@ -51,7 +51,6 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     const updatedMovies = [...movies];
     updatedMovies[movieIndex] = ratedMovie;
 
-    user?.reviews.includes(movie.id) ? "" : user?.reviews.push(movie.id);
     setMovies(updatedMovies);
 
     //movieservice.rate(userid, movieid, rating, comment);

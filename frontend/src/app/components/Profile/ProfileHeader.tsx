@@ -12,14 +12,29 @@ export default function ProfileHeader() {
   const userId = useParams().id;
   const profileUser = AuthService.getUser(+userId!);
 
-  return (
-    <Box className="flex flex-col items-center mb-6">
-      <Avatar src={profileUser?.pfp} sx={{ width: 120, height: 120, mb: 2 }} />
-      <Typography variant="h5">{profileUser?.username}</Typography>
-      <Typography variant="body1" color="text.secondary">
-        {profileUser?.bio}
-      </Typography>
-      {user?.id === profileUser?.id && <Edit />}
-    </Box>
-  );
+  if (profileUser?.id === user?.id) {
+    return (
+      <Box className="flex flex-col items-center mb-6">
+        <Avatar src={user?.pfp} sx={{ width: 120, height: 120, mb: 2 }} />
+        <Typography variant="h5">{user?.username}</Typography>
+        <Typography variant="body1" color="text.secondary">
+          {user?.bio}
+        </Typography>
+        <Edit />
+      </Box>
+    );
+  } else {
+    return (
+      <Box className="flex flex-col items-center mb-6">
+        <Avatar
+          src={profileUser?.pfp}
+          sx={{ width: 120, height: 120, mb: 2 }}
+        />
+        <Typography variant="h5">{profileUser?.username}</Typography>
+        <Typography variant="body1" color="text.secondary">
+          {profileUser?.bio}
+        </Typography>
+      </Box>
+    );
+  }
 }
