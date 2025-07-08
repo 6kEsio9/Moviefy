@@ -28,7 +28,7 @@ export default function EditProfile() {
 
     console.log(user);
 
-    redirect(`/profile/${user?.id}`);
+    // redirect(`/profile/${user?.id}`);
   };
 
   return (

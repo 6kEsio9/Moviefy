@@ -15,11 +15,9 @@ import {
   Rating,
   Button,
 } from "@mui/material";
-import { useAuth } from "@/app/hooks/useAuth";
 import ReviewsPageItem from "./ReviewsPageItem";
 
 export default function ReviewsPage() {
-  const { user, setUser } = useAuth();
   const [ratings, setRatings] = useState<MovieService.Review[]>([]);
 
   const params = useParams().id;
@@ -124,7 +122,7 @@ export default function ReviewsPage() {
         }}
       >
         {ratings.map((review) => (
-          <ReviewsPageItem review={review} />
+          <ReviewsPageItem key={review.userId} review={review} />
         ))}
       </div>
     </div>

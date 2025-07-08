@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import Section from "./Section";
-import { User } from "@/app/services/AuthService";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "@/app/services/MovieService";
 import Reviews from "./Reviews/ReviewsTab";
+import { useParams } from "next/navigation";
 
-interface TabsButtonsProps {
-  profileUser: User | undefined;
-}
+import * as AuthService from "../../services/AuthService";
 
-export default function TabsButtons({ profileUser }: TabsButtonsProps) {
+export default function TabsButtons() {
   const [tab, setTab] = useState(0);
+
+  const userId = useParams().id;
+  const profileUser = AuthService.getUser(+userId!);
 
   const [watched, setWatched] = useState<Movie[]>([]);
   const [isWatching, setIsWatching] = useState<Movie[]>([]);

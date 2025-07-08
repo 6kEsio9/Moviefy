@@ -25,7 +25,7 @@ export default function MovieDetails() {
 
       <WatchlistButtons />
 
-      <ReviewList ratings={movie.ratings} />
+      <ReviewList reviews={movie.reviews} />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}

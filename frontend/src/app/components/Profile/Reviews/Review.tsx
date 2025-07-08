@@ -12,6 +12,7 @@ import EditReviews from "./EditReviews";
 import { Movie } from "@/app/services/MovieService";
 import { User } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
+import Link from "next/link";
 
 interface ReviewProps {
   movie: Movie;
@@ -33,10 +34,19 @@ export default function Review({ movie, profileUser }: ReviewProps) {
             sx={{ width: 60, height: 60, mr: 2 }}
           />
           <Box>
-            <Typography variant="h6">{movie?.title}</Typography>
+            <Link
+              href={`/movies/${movie.id}`}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <Typography variant="h6">{movie?.title}</Typography>
+            </Link>
             <Rating value={movieRating?.rating} readOnly />
             {edit ? (
-              <EditReviews comment={movieRating?.comment} setEdit={setEdit} />
+              <EditReviews
+                comment={movieRating?.comment}
+                setEdit={setEdit}
+                movie={movie}
+              />
             ) : (
               <Typography variant="body2">{movieRating?.comment}</Typography>
             )}
