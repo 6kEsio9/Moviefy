@@ -1,7 +1,12 @@
-import LogoutPage from "@/app/components/Logout/Logout";
+"use client";
+
+import { useAuth } from "@/app/hooks/useAuth";
 import { redirect } from "next/navigation";
 
 export default function Logout() {
-  <LogoutPage />;
+  const { user, setUser } = useAuth();
+
+  setUser(undefined);
+
   redirect("/");
 }
