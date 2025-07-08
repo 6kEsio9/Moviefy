@@ -18,10 +18,10 @@ export default function InputText({
   width = 500
 }: InputTextProps) {
   return (
-    <Box sx={{ mb: 2}}>
+    <Box sx={{ mb: 2}} minWidth={300}>
       <Typography>{label}</Typography>
-      <FormControl>
-        <TextField sx={{width: width}}
+      <FormControl fullWidth>
+        <TextField
           variant="outlined"
           value={value}
           onChange={onChange}
