@@ -2,14 +2,14 @@
 import { Button, Grid } from "@mui/material";
 import MovieInfo from "@/app/components/MovieID/MovieInfo";
 import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
-import { getMovieId } from "@/app/components/MovieID/GetIdFromUrl";
 import { getMovie } from "@/app/services/MovieService";
 import ReviewList from "@/app/components/MovieID/Reviews/ReviewList";
 import Link from "next/link";
 import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
+import { useParams } from "next/navigation";
 
 export default function MovieDetails() {
-  const movie = getMovie(getMovieId())!;
+  const movie = getMovie(+useParams().id!)!;
 
   return (
     <Grid

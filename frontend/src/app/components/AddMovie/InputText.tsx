@@ -6,7 +6,6 @@ interface InputTextProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   multiline?: boolean;
-  width?: number;
 } 
 
 export default function InputText({
@@ -15,10 +14,9 @@ export default function InputText({
   onChange,
   type = 'text',
   multiline = false,
-  width = 500
 }: InputTextProps) {
   return (
-    <Box sx={{ mb: 2}} minWidth={300}>
+    <Box mb={2} minWidth={300}>
       <Typography>{label}</Typography>
       <FormControl fullWidth>
         <TextField

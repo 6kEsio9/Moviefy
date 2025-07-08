@@ -15,9 +15,9 @@ export default function ReviewList({ ratings }: ReviewListProps) {
         </Typography>
 
         <Grid container direction={"column"} spacing={3}>
-          {ratings.map((review) => {
+          {ratings.map((review, index) => {
             return (
-              <div>
+              <div key={index}>
                 <Divider orientation="horizontal" />
                 <Review review={review} />
               </div>
