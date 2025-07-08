@@ -134,7 +134,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
+    ratings: [],
   },
   {
     id: 8,
@@ -149,7 +149,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
+    ratings: [],
   },
 ];
 
