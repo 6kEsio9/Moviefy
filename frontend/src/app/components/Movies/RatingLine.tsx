@@ -18,7 +18,7 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     const movieIndex = movies.findIndex((x) => x.id === movieId);
     const movie = movies[movieIndex];
 
-    const updatedRatings = [...movie.ratings];
+    const updatedRatings = [...movie.reviews];
 
     const userIndex = updatedRatings.findIndex((x) => x.userId === user!.id);
 
