@@ -16,45 +16,42 @@ import Link from "next/link";
 
 interface ReviewProps {
   movie: Movie;
-  profileUser: User;
+  profileUser: User | undefined;
 }
 
 export default function Review({ movie, profileUser }: ReviewProps) {
   const { user, setUser } = useAuth();
   const [edit, setEdit] = useState(false);
 
-  const movieRating = movie?.reviews.find((x) => x.userId === profileUser.id);
+  const movieRating = movie?.reviews.find((x) => x.userId === profileUser?.id);
   console.log(movieRating);
 
-  return (
-    <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
-      <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex" }}>
-          <Avatar
-            src={profileUser?.pfp}
-            sx={{ width: 60, height: 60, mr: 2 }}
-          />
-          <Box>
-            <Link
-              href={`/movies/${movie.id}`}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              <Typography variant="h6">{movie?.title}</Typography>
-            </Link>
-            <Rating value={movieRating?.rating} readOnly />
-            {edit ? (
-              <EditReviews
-                comment={movieRating?.comment}
-                setEdit={setEdit}
-                movie={movie}
-              />
-            ) : (
-              <Typography variant="body2">{movieRating?.comment}</Typography>
-            )}
+  if (user?.id === profileUser?.id) {
+    return (
+      <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
+        <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex" }}>
+            <Avatar src={user?.pfp} sx={{ width: 60, height: 60, mr: 2 }} />
+            <Box>
+              <Link
+                href={`/movies/${movie.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Typography variant="h6">{movie?.title}</Typography>
+              </Link>
+              <Rating value={movieRating?.rating} readOnly />
+              {edit ? (
+                <EditReviews
+                  comment={movieRating?.comment}
+                  setEdit={setEdit}
+                  movie={movie}
+                />
+              ) : (
+                <Typography variant="body2">{movieRating?.comment}</Typography>
+              )}
+            </Box>
           </Box>
-        </Box>
 
-        {user?.id === profileUser.id && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Button
               variant="contained"
@@ -70,8 +67,39 @@ export default function Review({ movie, profileUser }: ReviewProps) {
               Remove
             </Button>
           </Box>
-        )}
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  } else {
+    return (
+      <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
+        <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex" }}>
+            <Avatar
+              src={profileUser?.pfp}
+              sx={{ width: 60, height: 60, mr: 2 }}
+            />
+            <Box>
+              <Link
+                href={`/movies/${movie.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Typography variant="h6">{movie?.title}</Typography>
+              </Link>
+              <Rating value={movieRating?.rating} readOnly />
+              {edit ? (
+                <EditReviews
+                  comment={movieRating?.comment}
+                  setEdit={setEdit}
+                  movie={movie}
+                />
+              ) : (
+                <Typography variant="body2">{movieRating?.comment}</Typography>
+              )}
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  }
 }
