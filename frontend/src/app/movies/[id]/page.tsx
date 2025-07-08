@@ -27,9 +27,9 @@ export default function MovieDetails() {
 
       <WatchlistButtons />
 
-      <ReviewWriteField/>
+      <ReviewList reviews={movie.reviews} />
 
-      <ReviewList ratings={movie.ratings} />
+      <ReviewWriteField />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}

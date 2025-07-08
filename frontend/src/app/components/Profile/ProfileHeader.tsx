@@ -1,15 +1,16 @@
 import React from "react";
 import { Avatar, Box, Typography } from "@mui/material";
-import { User } from "@/app/services/AuthService";
 import Edit from "./Edit";
 import { useAuth } from "@/app/hooks/useAuth";
+import { useParams } from "next/navigation";
 
-interface HeaderParams {
-  profileUser: User | undefined;
-}
+import * as AuthService from "../../services/AuthService";
 
-export default function ProfileHeader({ profileUser }: HeaderParams) {
+export default function ProfileHeader() {
   const { user, setUser } = useAuth();
+
+  const userId = useParams().id;
+  const profileUser = AuthService.getUser(+userId!);
 
   return (
     <Box className="flex flex-col items-center mb-6">

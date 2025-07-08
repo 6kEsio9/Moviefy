@@ -1,12 +1,12 @@
-import { Rating } from "@/app/services/MovieService";
+import { Review } from "@/app/services/MovieService";
 import { Container, Divider, Grid, Typography } from "@mui/material";
-import Review from "./Review";
+import ReviewItem from "./ReviewItem";
 
 interface ReviewListProps {
-  ratings: Rating[];
+  reviews: Review[];
 }
 
-export default function ReviewList({ ratings }: ReviewListProps) {
+export default function ReviewList({ reviews }: ReviewListProps) {
   return (
     <Grid>
       <Container>
@@ -15,11 +15,11 @@ export default function ReviewList({ ratings }: ReviewListProps) {
         </Typography>
 
         <Grid container direction={"column"} spacing={3}>
-          {ratings.map((review, index) => {
+          {reviews.map((review) => {
             return (
-              <div key={index}>
+              <div key={review.userId}>
                 <Divider orientation="horizontal" />
-                <Review review={review} />
+                <ReviewItem review={review} />
               </div>
             );
           })}
