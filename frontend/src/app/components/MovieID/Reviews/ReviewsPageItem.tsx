@@ -19,15 +19,13 @@ import { useParams } from "next/navigation";
 
 interface ReviewPageItemProps {
   review: Review;
+  movie: MovieService.Movie;
 }
 
-export default function ReviewPageItem({ review }: ReviewPageItemProps) {
+export default function ReviewPageItem({ review, movie }: ReviewPageItemProps) {
   const { user, setUser } = useAuth();
 
   const [edit, setEdit] = useState(false);
-
-  const movieId = useParams().id;
-  const movie = MovieService.getMovie(+movieId!);
 
   return (
     <Card key={review.userId} sx={{ mb: 2, position: "relative" }}>
