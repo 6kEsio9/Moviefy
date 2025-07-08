@@ -29,14 +29,14 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     if (userIndex === -1) {
       updatedRatings.push({
         userId: user!.id,
-        rating: value!,
+        rating: newValue!,
         comment: "",
         likes: 0,
       });
     } else {
       updatedRatings[userIndex] = {
         ...updatedRatings[userIndex],
-        rating: value!,
+        rating: newValue!,
       };
     }
 

@@ -24,6 +24,7 @@ export default function Review({ movie, profileUser }: ReviewProps) {
   const [edit, setEdit] = useState(false);
 
   const movieRating = movie?.reviews.find((x) => x.userId === profileUser.id);
+  console.log(movieRating);
 
   return (
     <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>

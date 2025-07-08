@@ -1,30 +1,22 @@
 import { User } from "@/app/services/AuthService";
 import * as MovieService from "../../../services/MovieService";
 
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Rating,
-  Typography,
-} from "@mui/material";
-import { useAuth } from "@/app/hooks/useAuth";
-import { useMovies } from "@/app/hooks/useMovies";
-import { useState } from "react";
-import EditReviews from "./EditReviews";
+import { Box } from "@mui/material";
+
 import Review from "./Review";
+import { useMovies } from "@/app/hooks/useMovies";
 
 interface ReviewProps {
   profileUser: User | undefined;
 }
 
 export default function Reviews({ profileUser }: ReviewProps) {
+  const { movies, setMovies } = useMovies();
+
   return (
     <Box>
       {profileUser?.reviews.map((movieId) => {
-        const movie = MovieService.getMovie(movieId);
+        const movie = movies.find((x) => x.id === movieId);
 
         return (
           <Review key={movieId} movie={movie!} profileUser={profileUser} />
