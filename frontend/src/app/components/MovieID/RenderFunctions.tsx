@@ -1,4 +1,3 @@
-import { Star } from "@mui/icons-material";
 import { Grid, Typography } from "@mui/material"
 
 export function renderCastOrCrew(cast: string[]) {
@@ -9,15 +8,4 @@ export function renderCastOrCrew(cast: string[]) {
       >{castMember}</Typography>
     })}
   </Grid>
-}
-
-export function renderReviewStars(n: number) {
-  const el = Array.from({ length: n });
-  return(
-    <div>
-    {el.map(() => (
-      <Star/>
-    ))}
-    </div>
-  )
 }

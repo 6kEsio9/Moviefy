@@ -4,6 +4,7 @@ export type Rating = {
   userId: number;
   rating: number;
   comment: string;
+  likes: number
 };
 
 export type Movie = {
@@ -34,7 +35,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 1, rating: 3, comment: "Great movie!" }],
+    ratings: [{ userId: 1, rating: 3, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 1,
@@ -48,7 +49,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 2,
@@ -62,7 +63,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 3,
@@ -76,7 +77,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 4,
@@ -90,7 +91,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 5,
@@ -104,7 +105,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 6,
@@ -118,7 +119,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 7,
@@ -133,7 +134,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
   {
     id: 8,
@@ -148,7 +149,7 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    ratings: [{ userId: 0, rating: 4, comment: "Great movie!" }],
+    ratings: [{ userId: 0, rating: 4, comment: "Great movie!", likes: 212 }],
   },
 ];
 

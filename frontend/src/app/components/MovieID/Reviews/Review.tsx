@@ -1,25 +1,41 @@
-import { Grid, Typography } from "@mui/material";
-import { renderReviewStars } from "../RenderFunctions";
-import { Rating } from "@/app/services/MovieService";
+import { Grid, IconButton, Rating, Typography } from "@mui/material";
+import * as ms from "@/app/services/MovieService";
 import { getUser } from "@/app/services/AuthService";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { useState } from "react";
 
 interface ReviewProps {
-  review: Rating;
+  review: ms.Rating;
 }
 
 export default function Review({ review }: ReviewProps) {
   const user = getUser(review.userId);
+  const [liked, setLiked] = useState(false);
+
+  const handleLike = () => {
+    setLiked(!liked)
+    
+    // change amount of likes
+  }
 
   return (
-    <Grid container direction={"row"} spacing={2} sx={{ margin: 2 }}>
+    <Grid container columnGap={5} spacing={2} sx={{ margin: 2 }}>
       <Grid>
         <img src={user?.pfp} style={{ borderRadius: "100%", width: "50px" }} />
-        <Typography sx={{ position: "relative", left: "20px", top: "20px" }}>
-          {review.comment}
-        </Typography>
       </Grid>
-      <Typography>{user?.username}</Typography>
-      {renderReviewStars(review.rating)}
+      <Grid container direction={"column"} spacing={3}>
+        <Grid container direction={"row"} spacing={2}>
+          <Typography>{user?.username}</Typography>
+          <Rating value={review.rating} readOnly/>
+        </Grid>
+        <Typography>{review.comment}</Typography>
+        <Grid container direction={"row"}>
+          <IconButton color="inherit" sx={{padding: 0}} onClick={handleLike}>
+            {liked ? <Favorite color="error"/> : <FavoriteBorder/>}
+          </IconButton>
+          <Typography>{review.likes}</Typography>
+        </Grid>
+      </Grid>
     </Grid>
   );
 }
