@@ -35,7 +35,6 @@ export default function EditReviews({
     const newMovies = movies.map((x) => (x.id === movie.id ? updatedMovie : x));
 
     setMovies(newMovies);
-
     setEdit(false);
     //fetch...
   };

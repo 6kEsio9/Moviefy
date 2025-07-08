@@ -1,39 +1,33 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import * as MovieService from "../../../services/MovieService";
-import * as AuthService from "../../../services/AuthService";
-
-import {
-  Card,
-  CardContent,
-  Box,
-  Avatar,
-  Typography,
-  Rating,
-  Button,
-} from "@mui/material";
 import ReviewsPageItem from "./ReviewsPageItem";
+import { useParams } from "next/navigation";
+import { Movie, Review } from "@/app/services/MovieService";
+import { useMovies } from "@/app/hooks/useMovies";
 
 export default function ReviewsPage() {
-  const [ratings, setRatings] = useState<MovieService.Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [movie, setMovie] = useState<Movie>();
 
-  const params = useParams().id;
-  const movie = MovieService.getMovie(+params!);
+  const { movies, setMovies } = useMovies();
+
+  const movieId = Number(useParams().id);
 
   useEffect(() => {
-    const movieRatings = movie?.reviews;
-    setRatings(movieRatings!);
-  }, []);
+    if (movies.length === 0) return;
+    const movieResult = movies.find((x) => x.id === movieId);
+    setMovie(movieResult);
+    setReviews(movieResult?.reviews!);
+  }, [movies]);
 
   const sortAscending = () => {
-    setRatings([...ratings].sort((a, b) => a.rating - b.rating));
+    setReviews([...reviews].sort((a, b) => a.rating - b.rating));
   };
 
   const sortDescending = () => {
-    setRatings([...ratings].sort((a, b) => b.rating - a.rating));
+    setReviews([...reviews].sort((a, b) => b.rating - a.rating));
   };
 
   return (
@@ -121,8 +115,8 @@ export default function ReviewsPage() {
           minWidth: "300px",
         }}
       >
-        {ratings.map((review) => (
-          <ReviewsPageItem key={review.userId} review={review} />
+        {reviews?.map((review) => (
+          <ReviewsPageItem key={review.userId} review={review} movie={movie!} />
         ))}
       </div>
     </div>
