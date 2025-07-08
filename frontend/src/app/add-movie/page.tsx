@@ -43,11 +43,11 @@ export default function AddMoviePage(){
   const [ageRating, setAgeRating] = useState('');
 
   return(
-    <div style={{marginTop: "40px", marginLeft: "40px"}}>
+    <div style={{marginTop: "40px", marginLeft: "10%"}}>
       <Typography variant="h2">Add Movie</Typography>
 
-      <Grid container direction={"row"} sx={{mt: "40px", mb: "15px", ml: "100px"}}>
-        <Grid size={3}>
+      <Grid container direction={"row"} sx={{mt: "40px", mb: "15px"}}>
+        <Grid size={3} width={300} marginRight={5}>
           <Box width={300} height={450} sx={{border: poster === '' ? 1 : 0, borderRadius: "20px", borderColor:"gray"}} display={"flex"} justifyContent={"center"} alignItems={"center"}>
             {poster === '' ? 
               <Image fontSize="large"/> : 
@@ -64,7 +64,7 @@ export default function AddMoviePage(){
           </div>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{xs: 12, md: 4}} marginRight={4}>
           <InputText
             label="Movie Title"
             value={title}
@@ -94,7 +94,7 @@ export default function AddMoviePage(){
           />
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{xs: 12, md: 4}} marginRight={4}>
           <InputText
             label="Director"
             value={director}
@@ -112,13 +112,15 @@ export default function AddMoviePage(){
             onChange={(e) => setCrew(e.target.value.split(','))}
             multiline
           />
+          <div style={{display: "flex", justifyContent: "center", marginTop:100, marginBottom: 100}}>
+            <Button
+              sx = {{fontSize: 32, backgroundColor: "#1976d2", color: "white"}}
+              onClick={submitMovie}
+            >Submit</Button>
+          </div>
         </Grid>
       </Grid>
-
-      <Button
-        sx = {{position: "absolute", bottom: 150, right: 450 , fontSize: 32, backgroundColor: "#1976d2", color: "white"}}
-        onClick={submitMovie}
-      >Submit</Button>
+      
     </div>
   )
 }

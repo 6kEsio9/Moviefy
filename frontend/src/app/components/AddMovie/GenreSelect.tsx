@@ -11,8 +11,8 @@ interface GenreSelectProps{
 
 export default function GenreSelect({value, possibleGenres, onChange}: GenreSelectProps) {
   return (
-    <Box>
-      <FormControl sx={{width: 300}}>
+    <Box mb={2}>
+      <FormControl fullWidth>
         <Select
           value={value}
           onChange={onChange}

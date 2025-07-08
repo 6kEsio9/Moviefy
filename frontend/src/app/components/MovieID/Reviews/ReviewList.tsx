@@ -9,7 +9,7 @@ interface ReviewListProps {
 export default function ReviewList({ reviews }: ReviewListProps) {
   return (
     <Grid>
-      <Container sx={{ marginTop: 5, marginBottom: 5 }}>
+      <Container>
         <Typography variant="h4" marginBottom={3}>
           Reviews
         </Typography>

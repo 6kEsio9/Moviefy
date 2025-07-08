@@ -2,22 +2,24 @@
 import { Button, Grid } from "@mui/material";
 import MovieInfo from "@/app/components/MovieID/MovieInfo";
 import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
-import { getMovieId } from "@/app/components/MovieID/GetIdFromUrl";
 import { getMovie } from "@/app/services/MovieService";
 import ReviewList from "@/app/components/MovieID/Reviews/ReviewList";
 import Link from "next/link";
+import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
+import { useParams } from "next/navigation";
 
 export default function MovieDetails() {
-  const movie = getMovie(getMovieId())!;
+  const movie = getMovie(+useParams().id!)!;
 
   return (
     <Grid
       container
+      spacing={5}
       direction={"column"}
       sx={{
         marginTop: "40px",
         marginBottom: "15px",
-        marginRight: "5%",
+        marginRight: "10%",
         marginLeft: "10%",
       }}
     >
@@ -26,6 +28,8 @@ export default function MovieDetails() {
       <WatchlistButtons />
 
       <ReviewList reviews={movie.reviews} />
+
+      <ReviewWriteField />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}
