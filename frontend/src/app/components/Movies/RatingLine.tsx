@@ -14,7 +14,11 @@ export default function RatingLine({ movieId }: RatingLineProps) {
 
   const { user, setUser } = useAuth();
 
-  React.useEffect(() => {
+  const onChangeHandler = (
+    e: React.SyntheticEvent<Element, Event>,
+    newValue: number | null
+  ) => {
+    setValue(newValue);
     const movieIndex = movies.findIndex((x) => x.id === movieId);
     const movie = movies[movieIndex];
 
@@ -23,7 +27,12 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     const userIndex = updatedRatings.findIndex((x) => x.userId === user!.id);
 
     if (userIndex === -1) {
-      updatedRatings.push({ userId: user!.id, rating: value!, comment: "" });
+      updatedRatings.push({
+        userId: user!.id,
+        rating: value!,
+        comment: "",
+        likes: 0,
+      });
     } else {
       updatedRatings[userIndex] = {
         ...updatedRatings[userIndex],
@@ -33,7 +42,7 @@ export default function RatingLine({ movieId }: RatingLineProps) {
 
     const ratedMovie = {
       ...movie,
-      ratings: updatedRatings,
+      reviews: updatedRatings,
       avgRating:
         updatedRatings.reduce((acc, r) => acc + r.rating, 0) /
         updatedRatings.length,
@@ -46,18 +55,14 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     setMovies(updatedMovies);
 
     //movieservice.rate(userid, movieid, rating, comment);
-  }, [value]);
+  };
 
   return (
     <Box sx={{ "& > legend": { mt: 2 } }}>
       <Rating
         name="simple-controlled"
         value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-          console.log(user);
-          console.log(movies);
-        }}
+        onChange={onChangeHandler}
       />
     </Box>
   );
