@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 interface ReviewProps {
   review: ms.Review;
 }
@@ -8,16 +7,38 @@ import * as ms from "@/app/services/MovieService";
 import { getUser } from "@/app/services/AuthService";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useState } from "react";
+import { useMovies } from "@/app/hooks/useMovies";
+import { useParams } from "next/navigation";
 
 export default function ReviewItem({ review }: ReviewProps) {
   const user = getUser(review.userId);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likes);
+  const { movies, setMovies } = useMovies();
+  const movie = ms.getMovie(+useParams().id!)!;
 
   const handleLike = () => {
     const newLiked = !liked;
     setLiked(newLiked);
-    setLikeCount((prevCount) => prevCount + (newLiked ? 1 : -1));
+    const newLikeCount = likeCount + (newLiked ? 1 : -1);
+    setLikeCount(newLikeCount);
+
+    const updatedReviews = movie.reviews.map((review) => {
+      if (review.userId === user?.id) {
+        return { ...review, likes: newLikeCount };
+      }
+      return review;
+    });
+    
+    const updatedMovie = {...movie, reviews: updatedReviews}
+    const updatedMovieList = movies.map((x) => {
+      if(x.id === movie.id){
+        return updatedMovie;
+      }
+      return x;
+    })
+
+    setMovies(updatedMovieList);
   };
 
   return (
