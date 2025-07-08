@@ -1,6 +1,6 @@
 # !/bin/bash
-#export PGPASSWORD="hJMQzdBH7nMybpb9z6O2"
-#psql -h moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com -p 5432 -U moviefy -d moviefy
+export PGPASSWORD="hJMQzdBH7nMybpb9z6O2"
+psql -h moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com -p 5432 -U moviefy -d moviefy
 
 DB_HOST="moviefy-db.cr6yyy0eum40.eu-north-1.rds.amazonaws.com"
 DB_PORT="5432"

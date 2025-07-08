@@ -33,7 +33,6 @@ CREATE TABLE title_akas (
     types TEXT[],
     attributes TEXT[],
     isOriginalTitle BOOLEAN,
-    PRIMARY KEY (titleId, ordering)
 );
 
 CREATE TABLE title_crew (
@@ -57,7 +56,7 @@ CREATE TABLE image_ids (
 );
 
 CREATE TABLE image_licenses(
-    image_id TEXT PRIMARY KEY REFERENCES image_ids(image_id) ON DELETE CASCADE,
+    image_id TEXT PRIMARY KEY REFERENCES image_ids(image_id) ,
   source TEXT,
   license_id TEXT,
   author TEXT
