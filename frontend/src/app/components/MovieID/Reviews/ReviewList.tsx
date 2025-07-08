@@ -18,8 +18,8 @@ export default function ReviewList({ reviews }: ReviewListProps) {
           {reviews.map((review) => {
             return (
               <div key={review.userId}>
-                <Divider orientation="horizontal" />
-                <ReviewItem review={review} />
+                <Divider orientation="horizontal"/>
+                <ReviewItem review={review}/>
               </div>
             );
           })}

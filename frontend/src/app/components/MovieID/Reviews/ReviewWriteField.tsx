@@ -1,6 +1,6 @@
 'use client'
 import { useAuth } from "@/app/hooks/useAuth";
-import { Box, Button, Rating, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Rating, TextField, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ export default function ReviewWriteField(){
   }, [])
 
   return(
-    <div>
+    <Container>
       {shouldRender ?
       <Box>
         <Typography variant="h5" color="gray">{user?.id === -1 ? "Sign in to write a review" : "Write a review"}</Typography>
@@ -30,6 +30,6 @@ export default function ReviewWriteField(){
       </Box>
       
       : <></>}
-    </div>
+    </Container>
   )
 }

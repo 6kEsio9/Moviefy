@@ -29,11 +29,6 @@ export default function ReviewItem({ review }: ReviewProps) {
             style={{ borderRadius: "100%", width: "50px" }}
           />
         </Link>
-        <Typography sx={{ position: "relative", left: "20px", top: "20px" }}>
-          {review.comment}
-        </Typography>
-
-        <img src={user?.pfp} style={{ borderRadius: "100%", width: "50px" }} />
       </Grid>
       <Grid container direction={"column"} spacing={3}>
         <Grid container direction={"row"} spacing={2}>
