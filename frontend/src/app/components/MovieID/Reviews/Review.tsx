@@ -11,11 +11,12 @@ interface ReviewProps {
 export default function Review({ review }: ReviewProps) {
   const user = getUser(review.userId);
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(review.likes)
 
   const handleLike = () => {
-    setLiked(!liked)
-    
-    // change amount of likes
+    const newLiked = !liked;
+    setLiked(newLiked);
+    setLikeCount(prevCount => prevCount + (newLiked ? 1 : -1))
   }
 
   return (
@@ -33,7 +34,7 @@ export default function Review({ review }: ReviewProps) {
           <IconButton color="inherit" sx={{padding: 0}} onClick={handleLike}>
             {liked ? <Favorite color="error"/> : <FavoriteBorder/>}
           </IconButton>
-          <Typography>{review.likes}</Typography>
+          <Typography>{likeCount}</Typography>
         </Grid>
       </Grid>
     </Grid>
