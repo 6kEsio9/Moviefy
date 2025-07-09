@@ -9,13 +9,19 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useState } from "react";
 import { useMovies } from "@/app/hooks/useMovies";
 import { useParams } from "next/navigation";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function ReviewItem({ review }: ReviewProps) {
   const user = getUser(review.userId);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likes);
   const { movies, setMovies } = useMovies();
-  const movie = ms.getMovie(+useParams().id!)!;
+
+  const movieId = Number(useParams().id);
+
+  const movie = movies.find((x) => x.id === movieId);
+
+  const currentUser = useAuth();
 
   const handleLike = () => {
     const newLiked = !liked;
@@ -23,20 +29,20 @@ export default function ReviewItem({ review }: ReviewProps) {
     const newLikeCount = likeCount + (newLiked ? 1 : -1);
     setLikeCount(newLikeCount);
 
-    const updatedReviews = movie.reviews.map((review) => {
+    const updatedReviews = movie!.reviews.map((review) => {
       if (review.userId === user?.id) {
         return { ...review, likes: newLikeCount };
       }
       return review;
     });
-    
-    const updatedMovie = {...movie, reviews: updatedReviews}
+
+    const updatedMovie = { ...movie!, reviews: updatedReviews };
     const updatedMovieList = movies.map((x) => {
-      if(x.id === movie.id){
+      if (x.id === movie!.id) {
         return updatedMovie;
       }
       return x;
-    })
+    });
 
     setMovies(updatedMovieList);
   };
@@ -46,7 +52,11 @@ export default function ReviewItem({ review }: ReviewProps) {
       <Grid>
         <Link href={`/profile/${user?.id}`}>
           <img
-            src={user?.pfp}
+            src={
+              currentUser.user?.id === user?.id
+                ? currentUser.user?.pfp
+                : user?.pfp
+            }
             style={{ borderRadius: "100%", width: "50px" }}
           />
         </Link>

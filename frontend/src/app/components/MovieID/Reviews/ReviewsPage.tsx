@@ -6,20 +6,39 @@ import ReviewsPageItem from "./ReviewsPageItem";
 import { useParams } from "next/navigation";
 import { Movie, Review } from "@/app/services/MovieService";
 import { useMovies } from "@/app/hooks/useMovies";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [movie, setMovie] = useState<Movie>();
 
   const { movies, setMovies } = useMovies();
+  const { user, setUser } = useAuth();
 
   const movieId = Number(useParams().id);
+
+  const displayOnTop = () => {
+    const userReview = reviews.find((x) => x.userId === user?.id);
+
+    const filteredReviews = reviews.filter((x) => x.userId !== user?.id);
+    const updatedReviews = [userReview!, ...filteredReviews];
+
+    setReviews(updatedReviews);
+  };
 
   useEffect(() => {
     if (movies.length === 0) return;
     const movieResult = movies.find((x) => x.id === movieId);
     setMovie(movieResult);
-    setReviews(movieResult?.reviews!);
+
+    const userReview = movieResult?.reviews!.find((x) => x.userId === user?.id);
+
+    const filteredReviews = movieResult?.reviews!.filter(
+      (x) => x.userId !== user?.id
+    );
+    const updatedReviews = [userReview!, ...filteredReviews!];
+
+    setReviews(updatedReviews);
   }, [movies]);
 
   const sortAscending = () => {
@@ -28,6 +47,10 @@ export default function ReviewsPage() {
 
   const sortDescending = () => {
     setReviews([...reviews].sort((a, b) => b.rating - a.rating));
+  };
+
+  const clearSort = () => {
+    displayOnTop();
   };
 
   return (
@@ -104,6 +127,19 @@ export default function ReviewsPage() {
             }}
           >
             Sort ↓ by rating
+          </button>
+          <button
+            onClick={clearSort}
+            style={{
+              padding: "8px 12px",
+              backgroundColor: "white",
+              color: "black",
+              border: "solid black",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Clear sort
           </button>
         </div>
       </div>

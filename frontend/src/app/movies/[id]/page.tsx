@@ -7,9 +7,14 @@ import ReviewList from "@/app/components/MovieID/Reviews/ReviewList";
 import Link from "next/link";
 import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
 import { useParams } from "next/navigation";
+import { useMovies } from "@/app/hooks/useMovies";
 
 export default function MovieDetails() {
-  const movie = getMovie(+useParams().id!)!;
+  const { movies, setMovies } = useMovies();
+
+  const movieId = Number(useParams().id);
+
+  const movie = movies.find((x) => x.id === movieId);
 
   return (
     <Grid
@@ -23,17 +28,17 @@ export default function MovieDetails() {
         marginLeft: "10%",
       }}
     >
-      <MovieInfo movie={movie} />
+      <MovieInfo movie={movie!} />
 
       <WatchlistButtons />
 
-      <ReviewList reviews={movie.reviews} />
+      <ReviewList reviews={movie!.reviews} />
 
       <ReviewWriteField />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}
-        href={`/movies/${movie.id}/reviews`}
+        href={`/movies/${movie!.id}/reviews`}
       >
         <Button variant="contained">See all reviews</Button>
       </Link>
