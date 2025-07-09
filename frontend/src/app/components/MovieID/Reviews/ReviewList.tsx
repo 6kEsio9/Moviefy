@@ -16,7 +16,7 @@ export default function ReviewList({ reviews }: ReviewListProps) {
 
         <Grid container direction={"column"} spacing={3}>
           {reviews
-            .sort((a, b) => b.likes - a.likes)
+            .sort((a, b) => b.likes.length - a.likes.length)
             .map((review) => {
               return (
                 <div key={review.userId}>

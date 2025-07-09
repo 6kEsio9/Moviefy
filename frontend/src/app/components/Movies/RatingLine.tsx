@@ -40,7 +40,7 @@ export default function RatingLine({ movieId }: RatingLineProps) {
         userId: user!.id,
         rating: newValue!,
         comment: "",
-        likes: 0,
+        likes: [],
       });
     } else {
       updatedReviews[userIndex] = {

@@ -6,7 +6,7 @@ import { Grid, IconButton, Rating, Typography } from "@mui/material";
 import * as ms from "@/app/services/MovieService";
 import { getUser } from "@/app/services/AuthService";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMovies } from "@/app/hooks/useMovies";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -14,7 +14,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 export default function ReviewItem({ review }: ReviewProps) {
   const user = getUser(review.userId);
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(review.likes);
+  const [likes, setLikes] = useState(review.likes);
   const { movies, setMovies } = useMovies();
 
   const movieId = Number(useParams().id);
@@ -23,15 +23,19 @@ export default function ReviewItem({ review }: ReviewProps) {
 
   const currentUser = useAuth();
 
+  useEffect(() => {
+    if(review.likes.includes(currentUser.user!.id))setLiked(true)
+  }, [])
+
   const handleLike = () => {
     const newLiked = !liked;
     setLiked(newLiked);
-    const newLikeCount = likeCount + (newLiked ? 1 : -1);
-    setLikeCount(newLikeCount);
+    const updatedReview = review;
+    newLiked ? updatedReview.likes.push(currentUser.user!.id) : updatedReview.likes = updatedReview.likes.filter((x) => x !== currentUser.user!.id)
 
     const updatedReviews = movie!.reviews.map((review) => {
       if (review.userId === user?.id) {
-        return { ...review, likes: newLikeCount };
+        return updatedReview;
       }
       return review;
     });
@@ -44,7 +48,7 @@ export default function ReviewItem({ review }: ReviewProps) {
       return x;
     });
 
-    setMovies(updatedMovieList);
+    setMovies(updatedMovieList as ms.Movie[]);
   };
 
   return (
@@ -71,7 +75,7 @@ export default function ReviewItem({ review }: ReviewProps) {
           <IconButton color="inherit" sx={{ padding: 0 }} onClick={handleLike}>
             {liked ? <Favorite color="error" /> : <FavoriteBorder />}
           </IconButton>
-          <Typography>{likeCount}</Typography>
+          <Typography>{review.likes.length}</Typography>
         </Grid>
       </Grid>
     </Grid>

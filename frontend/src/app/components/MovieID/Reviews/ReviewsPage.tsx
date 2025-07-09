@@ -46,11 +46,11 @@ export default function ReviewsPage() {
   }, [movies]);
 
   const sortAscending = () => {
-    setReviews([...reviews].sort((a, b) => a.likes - b.likes));
+    setReviews([...reviews].sort((a, b) => a.likes.length - b.likes.length));
   };
 
   const sortDescending = () => {
-    setReviews([...reviews].sort((a, b) => b.likes - a.likes));
+    setReviews([...reviews].sort((a, b) => b.likes.length - a.likes.length));
   };
 
   const clearSort = () => {
