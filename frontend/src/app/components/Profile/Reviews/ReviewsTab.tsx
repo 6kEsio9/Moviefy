@@ -17,6 +17,8 @@ export default function Reviews({ profileUser }: ReviewProps) {
       {profileUser?.reviews.map((movieId) => {
         const movie = movies.find((x) => x.id === movieId);
 
+        console.log(movie);
+
         return (
           <Review key={movieId} movie={movie!} profileUser={profileUser} />
         );
