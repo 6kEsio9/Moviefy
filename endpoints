@@ -76,8 +76,8 @@
 /search - GET
 -> params: movies: bool, users: bool, input: string
 <- {
-users: true => users[], movies[]
-users: false => movies[]
+users: true => [movies[], users[]]
+users: false => [movies[]]
 }
 ------------------------------
 /review
