@@ -14,11 +14,20 @@ export default function RatingLine({ movieId }: RatingLineProps) {
 
   const { user, setUser } = useAuth();
 
+  React.useEffect(() => {
+    const initialValue = movies
+      .find((x) => x.id === movieId)
+      ?.reviews.find((x) => x.userId === user?.id)?.rating;
+
+    setValue(initialValue!);
+  }, []);
+
   const onChangeHandler = (
     e: React.SyntheticEvent<Element, Event>,
     newValue: number | null
   ) => {
     setValue(newValue);
+
     const movieIndex = movies.findIndex((x) => x.id === movieId);
     const movie = movies[movieIndex];
 
@@ -61,6 +70,32 @@ export default function RatingLine({ movieId }: RatingLineProps) {
       };
 
       setUser(updatedUser);
+    }
+
+    if (!newValue) {
+      const filteredReviews = movie.reviews.filter(
+        (x) => x.userId !== user?.id
+      );
+      const filteredMovie = {
+        ...movie,
+        reviews: filteredReviews,
+        avgRating:
+          filteredReviews.reduce((acc, r) => acc + r.rating, 0) /
+          filteredReviews.length,
+      };
+      const filteredMovies = [...movies];
+      filteredMovies[movieIndex] = filteredMovie;
+
+      const filteredReviewsUser = user?.reviews!.filter((x) => x !== movieId);
+      const filteredUser = {
+        ...user!,
+        reviews: filteredReviewsUser!,
+      };
+
+      setUser(filteredUser);
+      setMovies(filteredMovies);
+
+      return;
     }
 
     setMovies(updatedMovies);
