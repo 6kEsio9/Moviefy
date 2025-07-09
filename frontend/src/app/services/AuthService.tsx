@@ -1,37 +1,63 @@
 const url = "https://localhost:(port)";
 
 export type UserTemp = {
+  token: string;
   id: string;
   username: string;
   pfp: string;
 };
 
-export async function login(formData: FormData) {
-  const req = await fetch(`${url}/login`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
+const users: UserTemp[] = [
+  {
+    token: "accessToken",
+    id: "0",
+    username: "Georgi",
+    pfp: "/images/pfp.jpeg",
+  },
+  // {
+  //   id: 1,
+  //   username: "Ivan",
+  //   email: "primerenemail1@gmail.com",
+  //   bio: "I don't like watching movies",
+  //   pfp: "/images/pfp.jpeg",
+  //   watchList: {
+  //     watched: [3],
+  //     isWatching: [4],
+  //     willWatch: [5],
+  //   },
+  //   reviews: [0],
+  // },
+];
 
-  const res = await req.json();
+export async function login(formData: Object) {
+  // const req = await fetch(`${url}/login`, {
+  //   method: "POST",
+  //   headers: {
+  //     "content-type": "application/json",
+  //   },
+  //   body: JSON.stringify(formData),
+  // });
 
-  return res;
+  // const res = await req.json();
+
+  // return res;
+  return users[0];
 }
 
-export async function register(formData: FormData) {
-  const req = await fetch(`${url}/register`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
+export async function register(formData: Object) {
+  // const req = await fetch(`${url}/register`, {
+  //   method: "POST",
+  //   headers: {
+  //     "content-type": "application/json",
+  //   },
+  //   body: JSON.stringify(formData),
+  // });
 
-  const res = await req.json();
+  // const res = await req.json();
 
-  return res;
+  // return res;
+
+  return users[0];
 }
 
 export type User = {
@@ -48,36 +74,7 @@ export type User = {
   reviews: number[];
 };
 
-const users: User[] = [
-  {
-    id: 0,
-    username: "Georgi",
-    email: "primerenemail@gmail.com",
-    bio: "I like watching movies",
-    pfp: "/images/pfp.jpeg",
-    watchList: {
-      watched: [3, 0, 1],
-      isWatching: [4],
-      willWatch: [5],
-    },
-    reviews: [1, 2, 3, 4, 5, 6],
-  },
-  {
-    id: 1,
-    username: "Ivan",
-    email: "primerenemail1@gmail.com",
-    bio: "I don't like watching movies",
-    pfp: "/images/pfp.jpeg",
-    watchList: {
-      watched: [3],
-      isWatching: [4],
-      willWatch: [5],
-    },
-    reviews: [0],
-  },
-];
-
-export function getUser(id: number) {
+export function getUser(id: string) {
   const user = users.find((x) => x.id === id);
 
   return user;

@@ -10,9 +10,13 @@ import {
 import { useState } from "react";
 
 import * as AuthService from "../services/AuthService";
+import { useAuth } from "../hooks/useAuth";
+import { redirect } from "next/navigation";
 
 export default function Auth() {
   const [login, setLogin] = useState(true);
+
+  const { onLogin } = useAuth();
 
   const changeLogin = () => {
     login ? setLogin(false) : setLogin(true);
@@ -25,7 +29,22 @@ export default function Auth() {
     const confirm = formData.get("confirm");
 
     if (!login) {
-      if (password !== confirm) alert("Passwords don't match");
+      if (password !== confirm) alert("Passwords don't match!");
+      AuthService.register({ username, email, password, confirm })
+        .then((res) => {
+          if (!res.token) return null;
+          onLogin(res);
+          // redirect("/home");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      AuthService.login({ username, password })
+        .then((res) => {
+          if (!res.token) return null;
+          onLogin(res);
+          // redirect("/");
+        })
+        .catch((err) => console.log(err));
     }
   };
 

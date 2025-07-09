@@ -13,7 +13,7 @@ import { Movie } from "@/app/services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function Landing() {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
 
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
