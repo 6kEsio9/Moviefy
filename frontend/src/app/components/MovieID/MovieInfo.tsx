@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Divider, Grid, Typography } from "@mui/material";
 import { renderCastOrCrew } from "./RenderFunctions";
 import { Movie } from "@/app/services/MovieService";

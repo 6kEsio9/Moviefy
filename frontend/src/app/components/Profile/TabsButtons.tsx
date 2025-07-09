@@ -15,7 +15,7 @@ export default function TabsButtons() {
   const { user, setUser } = useAuth();
 
   const userId = Number(useParams().id);
-  const profileUser = AuthService.getUser(userId!);
+  const profileUser = userId === user?.id ? user : AuthService.getUser(userId!);
 
   const [watched, setWatched] = useState<Movie[]>([]);
   const [isWatching, setIsWatching] = useState<Movie[]>([]);
@@ -54,17 +54,17 @@ export default function TabsButtons() {
             <Section
               title="🎬 Watched"
               movies={watched}
-              profileUser={profileUser}
+              profileUser={profileUser?.id === user?.id ? user : profileUser}
             />
             <Section
               title="⏳ Is Watching"
               movies={isWatching}
-              profileUser={profileUser}
+              profileUser={profileUser?.id === user?.id ? user : profileUser}
             />
             <Section
               title="📌 Will Watch"
               movies={willWatch}
-              profileUser={profileUser}
+              profileUser={profileUser?.id === user?.id ? user : profileUser}
             />
           </Box>
         )}
