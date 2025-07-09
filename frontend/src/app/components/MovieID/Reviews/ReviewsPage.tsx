@@ -33,20 +33,24 @@ export default function ReviewsPage() {
 
     const userReview = movieResult?.reviews!.find((x) => x.userId === user?.id);
 
-    const filteredReviews = movieResult?.reviews!.filter(
-      (x) => x.userId !== user?.id
-    );
-    const updatedReviews = [userReview!, ...filteredReviews!];
+    if (userReview) {
+      const filteredReviews = movieResult?.reviews!.filter(
+        (x) => x.userId !== user?.id
+      );
+      const updatedReviews = [userReview!, ...filteredReviews!];
 
-    setReviews(updatedReviews);
+      setReviews(updatedReviews);
+    } else {
+      setReviews(movieResult?.reviews!);
+    }
   }, [movies]);
 
   const sortAscending = () => {
-    setReviews([...reviews].sort((a, b) => a.rating - b.rating));
+    setReviews([...reviews].sort((a, b) => a.likes - b.likes));
   };
 
   const sortDescending = () => {
-    setReviews([...reviews].sort((a, b) => b.rating - a.rating));
+    setReviews([...reviews].sort((a, b) => b.likes - a.likes));
   };
 
   const clearSort = () => {
@@ -113,7 +117,7 @@ export default function ReviewsPage() {
               cursor: "pointer",
             }}
           >
-            Sort ↑ by rating
+            Sort ↑ by likes
           </button>
           <button
             onClick={sortDescending}
@@ -126,7 +130,7 @@ export default function ReviewsPage() {
               cursor: "pointer",
             }}
           >
-            Sort ↓ by rating
+            Sort ↓ by likes
           </button>
           <button
             onClick={clearSort}
