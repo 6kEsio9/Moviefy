@@ -14,7 +14,6 @@ import { useAuth } from "@/app/hooks/useAuth";
 export default function ReviewItem({ review }: ReviewProps) {
   const user = getUser(review.userId);
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(review.likes);
   const { movies, setMovies } = useMovies();
 
   const movieId = Number(useParams().id);
@@ -24,7 +23,8 @@ export default function ReviewItem({ review }: ReviewProps) {
   const currentUser = useAuth();
 
   useEffect(() => {
-    if(review.likes.includes(currentUser.user!.id))setLiked(true)
+    if(currentUser.user !== undefined)
+      if(review.likes.includes(currentUser.user.id))setLiked(true)
   }, [])
 
   const handleLike = () => {
@@ -72,7 +72,7 @@ export default function ReviewItem({ review }: ReviewProps) {
         </Grid>
         <Typography>{review.comment}</Typography>
         <Grid container direction={"row"}>
-          <IconButton color="inherit" sx={{ padding: 0 }} onClick={handleLike}>
+          <IconButton disabled={currentUser.user === undefined} color="inherit" sx={{ padding: 0 }} onClick={handleLike}>
             {liked ? <Favorite color="error" /> : <FavoriteBorder />}
           </IconButton>
           <Typography>{review.likes.length}</Typography>

@@ -21,7 +21,7 @@ export default function ReviewsPage() {
     const userReview = reviews.find((x) => x.userId === user?.id);
 
     const filteredReviews = reviews.filter((x) => x.userId !== user?.id);
-    const updatedReviews = [userReview!, ...filteredReviews];
+    const updatedReviews = userReview !== undefined ? [userReview, ...filteredReviews] : filteredReviews ;
 
     setReviews(updatedReviews);
   };
