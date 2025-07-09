@@ -1,4 +1,38 @@
-const url = "";
+const url = "https://localhost:(port)";
+
+export type UserTemp = {
+  id: string;
+  username: string;
+  pfp: string;
+};
+
+export async function login(formData: FormData) {
+  const req = await fetch(`${url}/login`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const res = await req.json();
+
+  return res;
+}
+
+export async function register(formData: FormData) {
+  const req = await fetch(`${url}/register`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  const res = await req.json();
+
+  return res;
+}
 
 export type User = {
   id: number;
@@ -42,6 +76,7 @@ const users: User[] = [
     reviews: [0],
   },
 ];
+
 export function getUser(id: number) {
   const user = users.find((x) => x.id === id);
 
