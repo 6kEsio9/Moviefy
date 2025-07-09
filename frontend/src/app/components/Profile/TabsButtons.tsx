@@ -7,12 +7,15 @@ import Reviews from "./Reviews/ReviewsTab";
 import { useParams } from "next/navigation";
 
 import * as AuthService from "../../services/AuthService";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function TabsButtons() {
   const [tab, setTab] = useState(0);
 
-  const userId = useParams().id;
-  const profileUser = AuthService.getUser(+userId!);
+  const { user, setUser } = useAuth();
+
+  const userId = Number(useParams().id);
+  const profileUser = AuthService.getUser(userId!);
 
   const [watched, setWatched] = useState<Movie[]>([]);
   const [isWatching, setIsWatching] = useState<Movie[]>([]);
@@ -66,7 +69,11 @@ export default function TabsButtons() {
           </Box>
         )}
 
-        {tab === 1 && <Reviews profileUser={profileUser} />}
+        {tab === 1 && (
+          <Reviews
+            profileUser={profileUser?.id === user?.id ? user : profileUser}
+          />
+        )}
       </Box>
     </>
   );

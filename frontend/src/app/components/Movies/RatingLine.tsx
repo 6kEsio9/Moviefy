@@ -22,34 +22,46 @@ export default function RatingLine({ movieId }: RatingLineProps) {
     const movieIndex = movies.findIndex((x) => x.id === movieId);
     const movie = movies[movieIndex];
 
-    const updatedRatings = [...movie.reviews];
+    const updatedReviews = [...movie.reviews];
 
-    const userIndex = updatedRatings.findIndex((x) => x.userId === user!.id);
+    const userIndex = updatedReviews.findIndex((x) => x.userId === user!.id);
 
     if (userIndex === -1) {
-      updatedRatings.push({
+      updatedReviews.push({
         userId: user!.id,
         rating: newValue!,
         comment: "",
         likes: 0,
       });
     } else {
-      updatedRatings[userIndex] = {
-        ...updatedRatings[userIndex],
+      updatedReviews[userIndex] = {
+        ...updatedReviews[userIndex],
         rating: newValue!,
       };
     }
 
     const ratedMovie = {
       ...movie,
-      reviews: updatedRatings,
+      reviews: updatedReviews,
       avgRating:
-        updatedRatings.reduce((acc, r) => acc + r.rating, 0) /
-        updatedRatings.length,
+        updatedReviews.reduce((acc, r) => acc + r.rating, 0) /
+        updatedReviews.length,
     };
 
     const updatedMovies = [...movies];
     updatedMovies[movieIndex] = ratedMovie;
+
+    if (!user?.reviews.includes(movieId)) {
+      const updatedReviewsUser = [...user?.reviews!];
+      updatedReviewsUser.push(movieId);
+
+      const updatedUser = {
+        ...user!,
+        reviews: updatedReviewsUser,
+      };
+
+      setUser(updatedUser);
+    }
 
     setMovies(updatedMovies);
 

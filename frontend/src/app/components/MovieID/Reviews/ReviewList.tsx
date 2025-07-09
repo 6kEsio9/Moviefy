@@ -15,14 +15,16 @@ export default function ReviewList({ reviews }: ReviewListProps) {
         </Typography>
 
         <Grid container direction={"column"} spacing={3}>
-          {reviews.map((review) => {
-            return (
-              <div key={review.userId}>
-                <Divider orientation="horizontal"/>
-                <ReviewItem review={review}/>
-              </div>
-            );
-          })}
+          {reviews
+            .sort((a, b) => b.likes - a.likes)
+            .map((review) => {
+              return (
+                <div key={review.userId}>
+                  <Divider orientation="horizontal" />
+                  <ReviewItem review={review} />
+                </div>
+              );
+            })}
         </Grid>
       </Container>
     </Grid>

@@ -9,9 +9,12 @@ import AuthButton from "./AuthButton";
 import SearchMenuLanding from "./SearchMenuLanding";
 
 import * as MovieService from "../../../services/MovieService";
-import { Movie } from "@/app/services/MovieService"
+import { Movie } from "@/app/services/MovieService";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function Landing() {
+  const { user, setUser } = useAuth();
+
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
   const [movies, setMovies] = React.useState<Movie[]>([]);
@@ -74,7 +77,7 @@ export default function Landing() {
           {movies.length > 0 && debouncedInput && (
             <SearchMenuLanding movies={movies} />
           )}
-          <AuthButton />
+          {!user && <AuthButton />}
         </Box>
       </Box>
     </>

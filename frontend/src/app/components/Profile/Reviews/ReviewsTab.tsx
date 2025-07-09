@@ -1,5 +1,4 @@
 import { User } from "@/app/services/AuthService";
-import * as MovieService from "../../../services/MovieService";
 
 import { Box } from "@mui/material";
 

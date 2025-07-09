@@ -6,32 +6,16 @@ import * as AuthService from "../services/AuthService";
 
 export type AuthContextType = {
   user: User | undefined;
-  setUser: (value: User) => void;
+  setUser: (value: User | undefined) => void;
 };
 
 export const AuthContext = createContext<AuthContextType>({
-  user: {
-    id: -1,
-    username: "",
-    email: "",
-    bio: "",
-    pfp: "",
-    watchList: { watched: [], isWatching: [], willWatch: [] },
-    reviews: [],
-  },
+  user: undefined,
   setUser: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | undefined>({
-    id: -1,
-    username: "",
-    email: "",
-    bio: "",
-    pfp: "",
-    watchList: { watched: [], isWatching: [], willWatch: [] },
-    reviews: [],
-  });
+  const [user, setUser] = useState<User | undefined>();
 
   useEffect(() => {
     setUser(AuthService.getUser(0));

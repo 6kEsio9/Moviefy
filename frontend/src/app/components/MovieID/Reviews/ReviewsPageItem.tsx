@@ -15,7 +15,6 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { useState } from "react";
 import EditReviews from "./EditReviews";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 interface ReviewPageItemProps {
   review: Review;
@@ -33,13 +32,19 @@ export default function ReviewPageItem({ review, movie }: ReviewPageItemProps) {
         <Box sx={{ display: "flex" }}>
           <Link href={`/profile/${review.userId}`}>
             <Avatar
-              src={AuthService.getUser(review.userId)?.pfp}
+              src={
+                review.userId === user?.id
+                  ? user?.pfp
+                  : AuthService.getUser(review.userId)?.pfp
+              }
               sx={{ width: 60, height: 60, mr: 2 }}
             />
           </Link>
           <Box>
             <Typography variant="h6">
-              {AuthService.getUser(review.userId)?.username}
+              {review.userId === user?.id
+                ? user?.username
+                : AuthService.getUser(review.userId)?.username}
             </Typography>
             <Rating value={review.rating} readOnly />
             {edit ? (
