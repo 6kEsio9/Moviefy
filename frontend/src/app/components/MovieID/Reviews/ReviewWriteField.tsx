@@ -19,14 +19,14 @@ export default function ReviewWriteField(){
     <Container>
       {shouldRender ?
       <Box>
-        <Typography variant="h5" color="gray">{user?.id === -1 ? "Sign in to write a review" : "Write a review"}</Typography>
-        <Rating disabled={user?.id === -1}/>
+        <Typography variant="h5" color="gray">{user === undefined ? "Sign in to write a review" : "Write a review"}</Typography>
+        <Rating disabled={user === undefined}/>
         <TextField
         fullWidth
         multiline
-        disabled={user?.id === -1}
+        disabled={user === undefined}
         rows={5}/>
-        <Button variant="contained" disabled={user?.id === -1} sx={{mt: 2}}>Post</Button>
+        <Button variant="contained" disabled={user === undefined} sx={{mt: 2}}>Post</Button>
       </Box>
       
       : <></>}
