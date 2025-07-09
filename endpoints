@@ -1,0 +1,89 @@
+/login - POST
+-> Formdata: username, passowrd
+<- id: string;
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+, accessToken, refreshToken
+-----------------------------
+/register - POST
+-> Formdata: username, email, password, confirm-password
+<- id: string;
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+, accessToken, refreshToken
+-----------------------------
+/user - GET
+-> params: id: string
+<- id: string;
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+  watchList: {
+    watched: number[];
+    isWatching: number[];
+    willWatch: number[];
+  };
+  reviews: number[];
+-----------------------------
+/movie - GET
+-> params: id: string
+<- id: string;
+  title: string;
+  imageUrl: string;
+  year: number;
+  avgRating: number;
+  genre: string;
+  ageRating: number;
+  summary: string;
+  director: string;
+  cast: string[];
+  crew: string[];
+  reviews: {userId: string, rating: number, comment: string, likes: number}[];
+};
+-----------------------------
+/movies - GET
+-> 
+<- []: id: number;
+  title: string;
+  imageUrl: string;
+  reviews: {userId: string, rating: number, comment: string, likes: number}[];
+-----------------------------
+/movies - GET
+-> params: genres[]
+<- []: id: number;
+  title: string;
+  imageUrl: string;
+-----------------------------
+/add-movie - POST
+ -> id: number;
+  title: string;
+  imageUrl: string;
+  year: number;
+  avgRating: number;
+  genre: string;
+  ageRating: number;
+  summary: string;
+  director: string;
+  cast: string[];
+  crew: string[];
+<-
+------------------------------
+/search - GET
+-> params: movies: bool, users: bool, input: string
+<- {
+users: true => users[], movies[]
+users: false => movies[]
+}
+------------------------------
+/review
+-> params: userId: string, movieId: string, rating: number, comment: string
+<- 
+-------------------------------
+/like
+-> params: userId, movieId
+<-
