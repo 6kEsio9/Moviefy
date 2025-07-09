@@ -7,7 +7,7 @@ export type UserTemp = {
   pfp: string;
 };
 
-const users: UserTemp[] = [
+export const users: UserTemp[] = [
   {
     token: "accessToken",
     id: "0",

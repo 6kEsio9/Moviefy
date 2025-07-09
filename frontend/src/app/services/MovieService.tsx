@@ -1,3 +1,5 @@
+import { users } from "./AuthService";
+
 const url = "";
 
 export type Review = {
@@ -168,10 +170,34 @@ export function getMovie(id: number) {
   return movie;
 }
 
-export function search(searchInput: string) {
-  const result = movies
+export async function search(searchInput: string, usersB: boolean) {
+  // const req = await fetch(
+  //   `${url}/search?` +
+  //     new URLSearchParams({
+  //       input: searchInput,
+  //       movies: "true",
+  //       users: usersB ? "true" : "false",
+  //     })
+  // );
+
+  // const res = await req.json();
+  // return res;
+
+  const result: any = [];
+
+  const resultTemp = movies
     .filter((x) => x.title.toLowerCase().includes(searchInput.toLowerCase()))
     .sort((a, b) => a.title.localeCompare(b.title));
+  result[0] = resultTemp;
+
+  if (usersB) {
+    const resultUsers = users
+      .filter((x) =>
+        x.username.toLowerCase().includes(searchInput.toLowerCase())
+      )
+      .sort((a, b) => a.username.localeCompare(b.username));
+    result[1] = resultUsers;
+  }
 
   return result;
 

@@ -17,6 +17,7 @@ export default function Landing() {
 
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
+
   const [movies, setMovies] = React.useState<Movie[]>([]);
 
   React.useEffect(() => {
@@ -30,10 +31,13 @@ export default function Landing() {
   }, [input]);
 
   React.useEffect(() => {
-    if (debouncedInput) {
-      const result = MovieService.search(debouncedInput);
-      setMovies(result);
-    }
+    const fetched = async () => {
+      if (debouncedInput) {
+        const result = await MovieService.search(debouncedInput, false);
+        setMovies(result[0]);
+      }
+    };
+    fetched();
   }, [debouncedInput]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

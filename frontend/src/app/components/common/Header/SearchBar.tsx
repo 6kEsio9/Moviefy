@@ -171,13 +171,14 @@ export default function PrimarySearchAppBar() {
   }, [input]);
 
   React.useEffect(() => {
-    if (debouncedInput) {
-      const resultMovies = MovieService.search(debouncedInput);
-      setMovies(resultMovies);
-
-      const resultUsers = AuthService.search(debouncedInput);
-      setUsers(resultUsers);
-    }
+    const fetched = async () => {
+      if (debouncedInput) {
+        const result = await MovieService.search(debouncedInput, true);
+        setMovies(result[0]);
+        setUsers(result[1]);
+      }
+    };
+    fetched();
   }, [debouncedInput]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
