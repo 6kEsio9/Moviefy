@@ -1,24 +1,13 @@
 'use client'
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InputText from "../components/AddMovie/InputText";
 import { Image } from "@mui/icons-material";
 import GenreSelect from "../components/AddMovie/GenreSelect";
-import { useMovies } from "../hooks/useMovies";
+import { getGenreList } from "../services/MovieService";
 
 export default function AddMoviePage(){
-  const [possibleGenres, setPossibleGenres] = useState<string[]>([])
-  const { movies } = useMovies();
-
-  useEffect(() => {
-    const genres: string[] = []
-
-    movies.forEach((x) => {
-      if(!genres.includes(x.genre))genres.push(x.genre);
-    })
-
-    setPossibleGenres(genres);
-  }, [movies])
+  const possibleGenres = getGenreList();
 
   const submitMovie = () => {
     const movie = {

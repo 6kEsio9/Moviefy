@@ -142,7 +142,7 @@ const movies = [
     id: 8,
     title: "Pokemon: Firered Version",
     imageUrl:
-      "https://imdb.com/title/tt0433620/mediaviewer/rm3435339521/?ref_=tt_ov_i",
+      "https://m.media-amazon.com/images/M/MV5BYjViMDU3MmItMzM0ZC00OWNmLWEyZWYtMWEyNjAyNjg1YWU4XkEyXkFqcGc@._V1_.jpg",
     year: 2012,
     avgRating: 5,
     genre: "Comedy",
@@ -187,4 +187,12 @@ export function rate(
 ) {
   // const movie = movies.find((x) => x.id === movieId);
   // const user = AuthService.getUser(authId);
+}
+
+export function getGenreList(){
+  const genreList: string[] = []
+  movies.forEach((movie) => {
+    if(!genreList.includes(movie.genre))genreList.push(movie.genre);
+  })
+  return genreList;
 }

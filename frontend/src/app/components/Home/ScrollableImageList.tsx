@@ -2,8 +2,7 @@
 import { useRef } from "react";
 import { Box, IconButton, ImageListItem } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
-import { Movie } from "@/app/contexts/MovieContext";
-
+import { Movie } from "@/app/services/MovieService";
 import Image from "./Image";
 
 interface ScrollableImageListProps {

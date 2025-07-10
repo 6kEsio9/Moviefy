@@ -2,9 +2,11 @@
 import { Container, Divider, Stack } from "@mui/material";
 import GenreSelection from "../components/Home/GenreSection";
 import { useMovies } from "@/app/hooks/useMovies";
+import { getGenreList } from "../services/MovieService";
 
 export default function HomePage() {
   const { movies } = useMovies();
+  const genreList = getGenreList();
 
   return (
     <Container sx={{ marginTop: "15px", marginBottom: "15px" }}>
@@ -18,10 +20,11 @@ export default function HomePage() {
           genre="Top 10 Movies"
           textColor="black"
           moreRedirect="/movies?order=popular"
+          dontFilter
         />
-        <GenreSelection movies={movies} genre="Action" />
-        <GenreSelection movies={movies} genre="Horror" />
-        <GenreSelection movies={movies} genre="Comedy" />
+        {genreList.map((x) => (
+          <GenreSelection movies={movies} genre={x}/>
+        ))}
       </Stack>
     </Container>
   );
