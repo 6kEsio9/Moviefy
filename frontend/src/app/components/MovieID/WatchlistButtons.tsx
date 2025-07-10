@@ -77,7 +77,7 @@ export default function WatchlistButtons() {
   }, []);
 
   return (
-    <div style={{ position: "absolute", right: "20%" }}>
+    <div>
       <IconButton
         onClick={() => handleWatchlistChange("watched")}
         color={watchStatus === "watched" ? "success" : "default"}

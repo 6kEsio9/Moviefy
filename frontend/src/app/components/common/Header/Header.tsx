@@ -1,23 +1,12 @@
 "use client";
 
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-
 import SearchBar from "./SearchBar";
 import Link from "next/link";
 import { useAuth } from "@/app/hooks/useAuth";
+import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Menu as MenuIcon, Adb as AdbIcon } from "@mui/icons-material";
+import { redirect } from "next/navigation";
 
 const pages = ["Home", "Movies"];
 const settings = ["Profile", "Logout"];
@@ -99,7 +88,13 @@ function Header() {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem 
+                  key={page}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    redirect(`/${page.toLowerCase()}`)}
+                  }
+                >
                   <Typography sx={{ textAlign: "center" }}>{page}</Typography>
                 </MenuItem>
               ))}
