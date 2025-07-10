@@ -17,9 +17,9 @@ export default function TabsButtons() {
   const userId = Number(useParams().id);
   const profileUser = userId === user?.id ? user : AuthService.getUser(userId!);
 
-  const [watched, setWatched] = useState<Movie[]>([]);
-  const [isWatching, setIsWatching] = useState<Movie[]>([]);
-  const [willWatch, setWillWatch] = useState<Movie[]>([]);
+  const [watched, setWatched] = useState<Movie[]>();
+  const [isWatching, setIsWatching] = useState<Movie[]>();
+  const [willWatch, setWillWatch] = useState<Movie[]>();
 
   useEffect(() => {
     const watchedResult: Movie[] = [];

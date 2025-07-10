@@ -7,8 +7,6 @@ import Link from "next/link";
 import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
 import { useParams } from "next/navigation";
 import { useMovies } from "@/app/hooks/useMovies";
-import { useEffect, useState } from "react";
-import { Movie } from "@/app/services/MovieService";
 import Loading from "@/app/components/Movies/Loading";
 
 export default function MovieDetails() {
