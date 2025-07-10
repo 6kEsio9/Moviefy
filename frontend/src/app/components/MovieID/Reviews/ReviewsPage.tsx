@@ -24,7 +24,7 @@ export default function ReviewsPage() {
   }, []);
 
   useEffect(() => {
-    if (!movie || !user) return;
+    if (!movie) return;
 
     const userReview = movie?.reviews!.find((x) => x.userId === user?.id);
 

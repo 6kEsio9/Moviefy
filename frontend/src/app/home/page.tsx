@@ -1,10 +1,20 @@
-'use client'
+"use client";
 import { Container, Divider, Stack } from "@mui/material";
 import GenreSelection from "../components/Home/GenreSection";
-import { useMovies } from "@/app/hooks/useMovies";
+import { useEffect, useState } from "react";
+import { Movie } from "../services/MovieService";
+import * as MovieService from "../services/MovieService";
 
 export default function HomePage() {
-  const { movies } = useMovies();
+  const [movies, setMovies] = useState<Movie[]>();
+
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await MovieService.getAll();
+      setMovies(res);
+    };
+    fetched();
+  }, []);
 
   return (
     <Container sx={{ marginTop: "15px", marginBottom: "15px" }}>
@@ -13,15 +23,19 @@ export default function HomePage() {
         divider={<Divider orientation="horizontal" />}
         spacing={2}
       >
-        <GenreSelection
-          movies={movies}
-          genre="Top 10 Movies"
-          textColor="black"
-          moreRedirect="/movies?order=popular"
-        />
-        <GenreSelection movies={movies} genre="Action" />
-        <GenreSelection movies={movies} genre="Horror" />
-        <GenreSelection movies={movies} genre="Comedy" />
+        {movies && (
+          <>
+            <GenreSelection
+              movies={movies}
+              genre="Top 10 Movies"
+              textColor="black"
+              moreRedirect="/movies?order=popular"
+            />
+            <GenreSelection movies={movies} genre="Action" />
+            <GenreSelection movies={movies} genre="Horror" />
+            <GenreSelection movies={movies} genre="Comedy" />
+          </>
+        )}
       </Stack>
     </Container>
   );
