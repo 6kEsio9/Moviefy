@@ -2,8 +2,6 @@
 -> Formdata: username, passowrd
 <- id: string;
   username: string;
-  email: string;
-  bio: string;
   pfp: string;
 , accessToken, refreshToken
 -----------------------------
@@ -11,8 +9,6 @@
 -> Formdata: username, email, password, confirm-password
 <- id: string;
   username: string;
-  email: string;
-  bio: string;
   pfp: string;
 , accessToken, refreshToken
 -----------------------------
