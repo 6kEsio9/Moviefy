@@ -5,45 +5,52 @@ import { useEffect, useState } from "react";
 import ReviewsPageItem from "./ReviewsPageItem";
 import { useParams } from "next/navigation";
 import { Movie, Review } from "@/app/services/MovieService";
-import { useMovies } from "@/app/hooks/useMovies";
+import * as MovieService from "../../../services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [movie, setMovie] = useState<Movie>();
+  const { user } = useAuth();
 
-  const { movies, setMovies } = useMovies();
-  const { user, setUser } = useAuth();
-
-  const movieId = Number(useParams().id);
-
-  const displayOnTop = () => {
-    const userReview = reviews.find((x) => x.userId === user?.id);
-
-    const filteredReviews = reviews.filter((x) => x.userId !== user?.id);
-    const updatedReviews = userReview !== undefined ? [userReview, ...filteredReviews] : filteredReviews ;
-
-    setReviews(updatedReviews);
-  };
+  const movieId = useParams().id?.toString();
 
   useEffect(() => {
-    if (movies.length === 0) return;
-    const movieResult = movies.find((x) => x.id === movieId);
-    setMovie(movieResult);
+    const fetched = async () => {
+      const movieResult = await MovieService.getMovie(movieId!);
+      setMovie(movieResult);
+    };
+    fetched();
+  }, []);
 
-    const userReview = movieResult?.reviews!.find((x) => x.userId === user?.id);
+  useEffect(() => {
+    if (!movie || !user) return;
+
+    const userReview = movie?.reviews!.find((x) => x.userId === user?.id);
 
     if (userReview) {
-      const filteredReviews = movieResult?.reviews!.filter(
+      const filteredReviews = movie?.reviews!.filter(
         (x) => x.userId !== user?.id
       );
       const updatedReviews = [userReview!, ...filteredReviews!];
 
       setReviews(updatedReviews);
     } else {
-      setReviews(movieResult?.reviews!);
+      setReviews(movie?.reviews!);
     }
-  }, [movies]);
+  }, [movie]);
+
+  const displayOnTop = () => {
+    const userReview = reviews.find((x) => x.userId === user?.id);
+
+    const filteredReviews = reviews.filter((x) => x.userId !== user?.id);
+    const updatedReviews =
+      userReview !== undefined
+        ? [userReview, ...filteredReviews]
+        : filteredReviews;
+
+    setReviews(updatedReviews);
+  };
 
   const sortAscending = () => {
     setReviews([...reviews].sort((a, b) => a.likes.length - b.likes.length));
@@ -155,9 +162,18 @@ export default function ReviewsPage() {
           minWidth: "300px",
         }}
       >
-        {reviews?.map((review) => (
-          <ReviewsPageItem key={review.userId} review={review} movie={movie!} />
-        ))}
+        {reviews.length > 0 ? (
+          movie &&
+          reviews.map((review) => (
+            <ReviewsPageItem
+              key={review.userId}
+              review={review}
+              movie={movie}
+            />
+          ))
+        ) : (
+          <p>Movie has no reviews.</p>
+        )}
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export default function EditReviews({
   setEdit,
   movie,
 }: EditReviewsProps) {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const { movies, setMovies } = useMovies();
 
   const onSubmitHandler = (event: any) => {

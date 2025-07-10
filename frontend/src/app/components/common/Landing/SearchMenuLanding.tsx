@@ -29,6 +29,7 @@ export default function SearchMenuLanding({ movies }: SearchMenuProps) {
     >
       {movies.map((x) => (
         <Link
+          key={x.id}
           style={{ textDecoration: "none", color: "black" }}
           href={`/movies/${x.id}`}
         >

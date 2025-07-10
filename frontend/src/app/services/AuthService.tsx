@@ -74,10 +74,30 @@ export type User = {
   reviews: number[];
 };
 
-export function getUser(id: string) {
+export async function getUser(id: string) {
+  // const req = await fetch(
+  //   `${url}/users?` + new URLSearchParams({ id: string })
+  // );
+  // const res = await req.json();
+  // return res;
+
   const user = users.find((x) => x.id === id);
 
   return user;
+}
+
+export type WatchList = {
+  watched: number[];
+  isWatching: number[];
+  willWatch: number[];
+};
+
+export async function getWatchList(id: string) {
+  return {
+    watched: [3],
+    isWatching: [4],
+    willWatch: [5],
+  };
 }
 
 export function search(searchInput: string) {

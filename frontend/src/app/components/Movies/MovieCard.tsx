@@ -9,7 +9,7 @@ import RatingLine from "./RatingLine";
 import Link from "next/link";
 
 interface MovieCardProps {
-  id: number;
+  id: string;
   title: string;
   imageUrl: string;
 }

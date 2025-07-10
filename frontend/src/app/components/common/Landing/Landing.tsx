@@ -34,7 +34,7 @@ export default function Landing() {
     const fetched = async () => {
       if (debouncedInput) {
         const result = await MovieService.search(debouncedInput, false);
-        setMovies(result[0]);
+        setMovies(result.movies);
       }
     };
     fetched();

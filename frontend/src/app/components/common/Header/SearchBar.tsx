@@ -174,8 +174,8 @@ export default function PrimarySearchAppBar() {
     const fetched = async () => {
       if (debouncedInput) {
         const result = await MovieService.search(debouncedInput, true);
-        setMovies(result[0]);
-        setUsers(result[1]);
+        setMovies(result.movies);
+        setUsers(result.users);
       }
     };
     fetched();

@@ -17,7 +17,7 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useLocalStorage("user");
+  const [user, setUser] = useLocalStorage<UserTemp | null>("user", null);
 
   const onLogin = useCallback(
     (user: UserTemp) => {
