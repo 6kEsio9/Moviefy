@@ -67,9 +67,9 @@ export type User = {
   bio: string;
   pfp: string;
   watchList: {
-    watched: number[];
-    isWatching: number[];
-    willWatch: number[];
+    watched: string[];
+    isWatching: string[];
+    willWatch: string[];
   };
   reviews: number[];
 };
@@ -87,26 +87,35 @@ export async function getUser(id: string) {
 }
 
 export type WatchList = {
-  watched: number[];
-  isWatching: number[];
-  willWatch: number[];
+  watched: string[];
+  isWatching: string[];
+  willWatch: string[];
 };
 
 export async function getWatchList(id: string) {
   return {
-    watched: [3],
-    isWatching: [4],
-    willWatch: [5],
+    watched: ["3"],
+    isWatching: ["4"],
+    willWatch: ["5"],
   };
 }
 
-export function search(searchInput: string) {
-  const result = users
-    .filter((x) => x.username.toLowerCase().includes(searchInput.toLowerCase()))
-    .sort((a, b) => a.username.localeCompare(b.username));
+export async function changeMovieStatus(
+  userId: string,
+  movieId: string,
+  status: number,
+  authToken: string
+) {
+  const req = await fetch(`${url}/change`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+      "x-authorization": authToken,
+    },
+    body: JSON.stringify({ userId, movieId, status }),
+  });
 
-  return result;
+  const res = await req.json();
 
-  // return fetch(url + '/search' + '/searchInput')
-  //   .then(res => res.json());
+  return res;
 }
