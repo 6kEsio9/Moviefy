@@ -22,24 +22,24 @@ export default function TabsButtons() {
   const [willWatch, setWillWatch] = useState<Movie[]>([]);
 
   useEffect(() => {
-    let watchedResult: Movie[] = [];
+    const watchedResult: Movie[] = [];
     profileUser?.watchList.watched.map((x) => {
       watchedResult.push(MovieService.getMovie(x)!);
     });
     setWatched(watchedResult);
 
-    let isWatchingResult: Movie[] = [];
+    const isWatchingResult: Movie[] = [];
     profileUser?.watchList.isWatching.map((x) => {
       isWatchingResult.push(MovieService.getMovie(x)!);
     });
     setIsWatching(isWatchingResult);
 
-    let willWatchResult: Movie[] = [];
+    const willWatchResult: Movie[] = [];
     profileUser?.watchList.willWatch.map((x) => {
       willWatchResult.push(MovieService.getMovie(x)!);
     });
     setWillWatch(willWatchResult);
-  }, []);
+  }, [user?.watchList.watched, user?.watchList.isWatching, user?.watchList.willWatch]);
 
   return (
     <>
