@@ -2,7 +2,7 @@ import { users } from "./AuthService";
 
 const url = "";
 
-export type Review = {
+export type ReviewMovie = {
   userId: string;
   rating: number;
   comment: string;
@@ -21,7 +21,7 @@ export type Movie = {
   director: string;
   cast: string[];
   crew: string[];
-  reviews: Review[];
+  reviews: ReviewMovie[];
 };
 
 const movies = [
@@ -185,6 +185,10 @@ export async function getAll() {
 }
 
 export async function getMovie(id: string) {
+  // const req = await fetch(`${url}` + new URLSearchParams({movieId: id}));
+  // const res = await req.json();
+  // return res;
+
   const movie = movies.find((x) => x.id === id);
 
   return movie;
@@ -232,7 +236,7 @@ export async function rate(
   authToken: string,
   comment?: string
 ) {
-  // const req = await fetch(`${url}/review`, {
+  // const req = await fetch(`${url}/movies/rate`, {
   //   method: "POST",
   //   headers: {
   //     "content-type": "application/json",
@@ -241,4 +245,22 @@ export async function rate(
   //   body: JSON.stringify({ userId, movieId, rating, comment }),
   // });
   console.log("movie rated");
+}
+
+export async function editReview(
+  userId: string,
+  movieId: string,
+  comment: string,
+  authToken: string
+) {
+  // const req = await fetch(`${url}/movies/reviews/edit`, {
+  //   method: 'PUT',
+  //   headers: {
+  //     'content-type': 'application/json',
+  //     'x-authorization': authToken
+  //   },
+  //   body: JSON.stringify({userId, movieId, comment});
+  // });
+  // const res = await req.json();
+  // return res;
 }

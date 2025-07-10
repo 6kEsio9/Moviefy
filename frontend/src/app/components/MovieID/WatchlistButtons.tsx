@@ -7,8 +7,13 @@ import { AccessTime, List, RemoveRedEyeRounded } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Movie } from "@/app/services/MovieService";
 
-export default function WatchlistButtons() {
+interface WatchListButtonsProps {
+  movie: Movie;
+}
+
+export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
   const { user } = useAuth();
   const movieId = useParams().id?.toString();
 
@@ -24,14 +29,16 @@ export default function WatchlistButtons() {
   }, [user]);
 
   useEffect(() => {
-    if (watchList) {
-      if (watchList.watched.includes(movieId!)) setWatchStatus("watched");
-      else if (watchList.isWatching.includes(movieId!))
-        setWatchStatus("watching");
-      else if (watchList.willWatch.includes(movieId!)) setWatchStatus("plan");
-      else setWatchStatus("none");
-    }
-  }, []);
+    if (!watchList || !movie) return;
+
+    if (watchList.watched.some((x) => x.id === movie.id)) {
+      setWatchStatus("watched");
+    } else if (watchList.isWatching.some((x) => x.id === movie.id))
+      setWatchStatus("watching");
+    else if (watchList.willWatch.some((x) => x.id === movie.id))
+      setWatchStatus("plan");
+    else setWatchStatus("none");
+  }, [watchList, movie]);
 
   const handleWatchlistChange = (state: string) => {
     let updatedWatched = [...(watchList?.watched || [])];
@@ -42,12 +49,12 @@ export default function WatchlistButtons() {
       case "watched": {
         if (watchStatus === "watched") {
           setWatchStatus("none");
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("watched");
-          updatedWatched?.push(movieId!);
-          updatedWatching = updatedWatching?.filter((x) => x !== movieId);
-          updatedPlan = updatedPlan?.filter((x) => x !== movieId);
+          updatedWatched?.push(movie);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
+          updatedPlan = updatedPlan?.filter((x) => x.id !== movieId);
         }
         break;
       }
@@ -55,12 +62,12 @@ export default function WatchlistButtons() {
       case "plan": {
         if (watchStatus === "plan") {
           setWatchStatus("none");
-          updatedPlan = updatedPlan!.filter((x) => x !== movieId);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("plan");
-          updatedPlan?.push(movieId!);
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
-          updatedWatching = updatedWatching?.filter((x) => x !== movieId);
+          updatedPlan?.push(movie);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
         }
         break;
       }
@@ -68,12 +75,12 @@ export default function WatchlistButtons() {
       case "watching": {
         if (watchStatus === "watching") {
           setWatchStatus("none");
-          updatedWatching = updatedWatching!.filter((x) => x !== movieId);
+          updatedWatching = updatedWatching!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("watching");
-          updatedWatching?.push(movieId!);
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
-          updatedPlan = updatedPlan!.filter((x) => x !== movieId);
+          updatedWatching?.push(movie);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
         }
         break;
       }

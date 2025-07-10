@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/app/hooks/useAuth";
+import { UserProfile } from "@/app/services/AuthService";
 import {
   Container,
   Paper,
@@ -10,9 +11,22 @@ import {
   Button,
 } from "@mui/material";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import * as AuthService from "../../../services/AuthService";
 
 export default function EditProfile() {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
+
+  const [editUser, setEditUser] = useState<UserProfile>();
+
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await AuthService.getUser(user?.id!);
+      setEditUser(res);
+    };
+    fetched();
+  }, []);
 
   const onSubmitHandler = (formData: FormData) => {
     const username = formData.get("username")?.toString() || "";
@@ -22,13 +36,25 @@ export default function EditProfile() {
     const password = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
-    if (user) {
-      setUser({ ...user, username, email, bio, pfp, id: user?.id });
+    if (password !== confirm) {
+      alert("Passwords don't match!");
+      return;
     }
 
-    console.log(user);
+    // if (user) {
+    //   setUser({ ...user, username, email, bio, pfp, id: user?.id });
+    // }
 
-    redirect(`/profile/${user?.id}`);
+    const fetched = async () => {
+      await AuthService.editUser(
+        editUser?.id!,
+        { username, email, bio, pfp, password, confirm },
+        user?.token!
+      );
+    };
+    fetched();
+
+    redirect(`/profile/${editUser?.id}`);
   };
 
   return (
@@ -49,7 +75,7 @@ export default function EditProfile() {
               fullWidth
               autoComplete="username"
               autoFocus
-              defaultValue={user?.username}
+              defaultValue={editUser && editUser.username}
               placeholder="Username"
             />
             <TextField
@@ -58,7 +84,7 @@ export default function EditProfile() {
               fullWidth
               autoComplete="email"
               autoFocus
-              defaultValue={user?.email}
+              defaultValue={editUser && editUser.email}
               placeholder="Email"
             />
 
@@ -68,7 +94,7 @@ export default function EditProfile() {
               fullWidth
               autoFocus
               autoComplete="off"
-              defaultValue={user?.bio}
+              defaultValue={editUser && editUser.bio}
               placeholder="Bio"
             />
 
@@ -78,7 +104,7 @@ export default function EditProfile() {
               fullWidth
               autoComplete="off"
               autoFocus
-              defaultValue={user?.pfp}
+              defaultValue={editUser && editUser.pfp}
               placeholder="Profile Picture Url"
             />
 

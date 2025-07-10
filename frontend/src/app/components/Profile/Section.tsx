@@ -3,13 +3,12 @@ import { Box, Card, Grid, Typography } from "@mui/material";
 import { Movie } from "../../services/MovieService";
 import Link from "next/link";
 import CardButtons from "./SectionButtons";
-import { User } from "@/app/services/AuthService";
-import { useAuth } from "@/app/hooks/useAuth";
+import { UserProfile } from "@/app/services/AuthService";
 
 interface SectionProps {
   title: string;
   movies: Movie[] | undefined;
-  profileUser: User | undefined;
+  profileUser: UserProfile | undefined;
 }
 
 export default function Section({ title, movies, profileUser }: SectionProps) {
@@ -19,7 +18,7 @@ export default function Section({ title, movies, profileUser }: SectionProps) {
         {title}
       </Typography>
       <Grid container spacing={2}>
-        {movies!.length > 0 ? (
+        {movies && movies!.length > 0 ? (
           movies!.map((movie) =>
             movie ? (
               <Grid

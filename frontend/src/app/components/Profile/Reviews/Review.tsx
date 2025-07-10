@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,46 +9,49 @@ import {
   Button,
 } from "@mui/material";
 import EditReviews from "./EditReviews";
-import { Movie } from "@/app/services/MovieService";
-import { User } from "@/app/services/AuthService";
+import { ReviewUser, UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
 
 interface ReviewProps {
-  movie: Movie;
-  profileUser: User | undefined;
+  review: ReviewUser;
+  profileUser: UserProfile | undefined;
+  setReviews: React.Dispatch<React.SetStateAction<ReviewUser[] | undefined>>;
 }
 
-export default function Review({ movie, profileUser }: ReviewProps) {
-  const { user, setUser } = useAuth();
+export default function Review({
+  review,
+  profileUser,
+  setReviews,
+}: ReviewProps) {
+  const { user } = useAuth();
   const [edit, setEdit] = useState(false);
 
-  const movieRating = movie?.reviews.find((x) => x.userId === profileUser?.id);
-
   return (
-    <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
+    <Card sx={{ mb: 2, position: "relative" }}>
       <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box sx={{ display: "flex" }}>
           <Avatar
-            src={user?.id === profileUser?.id ? user?.pfp : profileUser?.pfp}
+            src={profileUser?.pfp}
             sx={{ width: 60, height: 60, mr: 2 }}
           />
           <Box>
             <Link
-              href={`/movies/${movie.id}`}
+              href={`/movies/${review.movieId}`}
               style={{ textDecoration: "none", color: "black" }}
             >
-              <Typography variant="h6">{movie?.title}</Typography>
+              <Typography variant="h6">{review.movieTitle}</Typography>
             </Link>
-            <Rating value={movieRating?.rating} readOnly />
+            <Rating value={review.rating} readOnly />
             {edit ? (
               <EditReviews
-                comment={movieRating?.comment}
+                comment={review.comment}
                 setEdit={setEdit}
-                movie={movie}
+                review={review}
+                setReviews={setReviews}
               />
             ) : (
-              <Typography variant="body2">{movieRating?.comment}</Typography>
+              <Typography variant="body2">{review.comment}</Typography>
             )}
           </Box>
         </Box>

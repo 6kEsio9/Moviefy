@@ -38,11 +38,11 @@ export default function MovieDetails() {
         marginLeft: "10%",
       }}
     >
-      <MovieInfo movie={movie!} />
+      <MovieInfo movie={movie} />
 
-      {user && <WatchlistButtons />}
+      {user && <WatchlistButtons movie={movie} />}
 
-      <ReviewList movie={movie!} setMovie={setMovie} />
+      <ReviewList movie={movie} setMovie={setMovie} />
 
       <ReviewWriteField />
 

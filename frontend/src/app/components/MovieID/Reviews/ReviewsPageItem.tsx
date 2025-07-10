@@ -10,18 +10,23 @@ import {
 
 import * as AuthService from "../../../services/AuthService";
 import * as MovieService from "../../../services/MovieService";
-import { Review } from "@/app/services/MovieService";
+import { ReviewMovie } from "@/app/services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import EditReviews from "./EditReviews";
 import Link from "next/link";
 
 interface ReviewPageItemProps {
-  review: Review;
+  review: ReviewMovie;
   movie: MovieService.Movie;
+  setReviews: React.Dispatch<React.SetStateAction<ReviewMovie[]>>;
 }
 
-export default function ReviewPageItem({ review, movie }: ReviewPageItemProps) {
+export default function ReviewPageItem({
+  review,
+  movie,
+  setReviews,
+}: ReviewPageItemProps) {
   const [displayUser, setDisplayUser] = useState<AuthService.UserTemp | null>(
     null
   );
@@ -57,6 +62,8 @@ export default function ReviewPageItem({ review, movie }: ReviewPageItemProps) {
                   comment={review?.comment}
                   setEdit={setEdit}
                   movie={movie!}
+                  setReviews={setReviews}
+                  review={review}
                 />
               ) : (
                 <Typography variant="body2">{review?.comment}</Typography>

@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 
 import ReviewsPageItem from "./ReviewsPageItem";
 import { useParams } from "next/navigation";
-import { Movie, Review } from "@/app/services/MovieService";
+import { Movie, ReviewMovie } from "@/app/services/MovieService";
 import * as MovieService from "../../../services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function ReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<ReviewMovie[]>([]);
   const [movie, setMovie] = useState<Movie>();
   const { user } = useAuth();
 
@@ -169,6 +169,7 @@ export default function ReviewsPage() {
               key={review.userId}
               review={review}
               movie={movie}
+              setReviews={setReviews}
             />
           ))
         ) : (

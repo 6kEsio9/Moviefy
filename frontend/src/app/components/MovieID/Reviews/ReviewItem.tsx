@@ -1,7 +1,7 @@
 import Link from "next/link";
 interface ReviewProps {
   movie: ms.Movie;
-  review: ms.Review;
+  review: ms.ReviewMovie;
   setMovie: React.Dispatch<React.SetStateAction<ms.Movie | undefined>>;
 }
 import { Grid, IconButton, Rating, Typography } from "@mui/material";

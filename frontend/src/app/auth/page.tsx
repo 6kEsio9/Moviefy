@@ -34,17 +34,17 @@ export default function Auth() {
         .then((res) => {
           if (!res.token) return null;
           onLogin(res);
-          // redirect("/home");
         })
         .catch((err) => console.log(err));
+      redirect("/home");
     } else {
       AuthService.login({ username, password })
         .then((res) => {
           if (!res.token) return null;
           onLogin(res);
-          // redirect("/");
         })
         .catch((err) => console.log(err));
+      redirect("/home");
     }
   };
 
