@@ -1,13 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import MovieCard from "./MovieCard";
 import Sidebar from "./Sidebar/Sidebar";
-
-import { useMovies } from "@/app/hooks/useMovies";
+import { Movie } from "@/app/services/MovieService";
+import * as MovieService from "../../services/MovieService";
 
 export default function MoviesPage() {
-  const { movies } = useMovies();
+  const [movies, setMovies] = useState<Movie[]>();
+
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await MovieService.getAll();
+      setMovies(res);
+    };
+    fetched();
+  }, []);
 
   return (
     <>
@@ -32,16 +41,9 @@ export default function MoviesPage() {
             width: "140ch", //1300px, 140ch
           }}
         >
-          {movies.length > 0 ? (
+          {movies && movies.length > 0 ? (
             movies.map((movie) => {
-              return (
-                <MovieCard
-                  key={movie.id}
-                  id={movie.id}
-                  title={movie.title}
-                  imageUrl={movie.imageUrl}
-                />
-              );
+              return <MovieCard key={movie.id} movie={movie} movies={movies} />;
             })
           ) : (
             <Loading />

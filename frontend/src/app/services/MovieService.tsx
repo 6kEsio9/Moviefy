@@ -176,9 +176,11 @@ const movies = [
   },
 ];
 
-export function getAll() {
-  //   return fetch(url)
-  //     .then((res) => res.json());
+export async function getAll() {
+  // const req = await fetch(`${url}/movies`);
+  // const res = await req.json();
+  // return res;
+
   return movies;
 }
 
@@ -223,12 +225,20 @@ export async function search(searchInput: string, usersB: boolean) {
   //   .then(res => res.json());
 }
 
-export function rate(
-  authId: number,
-  movieId: number,
+export async function rate(
+  userId: string,
+  movieId: string,
   rating: number,
-  comment: string
+  authToken: string,
+  comment?: string
 ) {
-  // const movie = movies.find((x) => x.id === movieId);
-  // const user = AuthService.getUser(authId);
+  // const req = await fetch(`${url}/review`, {
+  //   method: "POST",
+  //   headers: {
+  //     "content-type": "application/json",
+  //     "x-authorization": authToken,
+  //   },
+  //   body: JSON.stringify({ userId, movieId, rating, comment }),
+  // });
+  console.log("movie rated");
 }

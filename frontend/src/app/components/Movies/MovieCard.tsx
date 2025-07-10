@@ -7,14 +7,14 @@ import CardActions from "@mui/material/CardActions";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import RatingLine from "./RatingLine";
 import Link from "next/link";
+import { Movie } from "@/app/services/MovieService";
 
 interface MovieCardProps {
-  id: string;
-  title: string;
-  imageUrl: string;
+  movie: Movie;
+  movies: Movie[];
 }
 
-export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
+export default function MovieCard({ movie, movies }: MovieCardProps) {
   const [hover, setHover] = React.useState(false);
 
   return (
@@ -29,7 +29,7 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
         m: "15px 15px 15px 15px",
       }}
     >
-      <Link href={`/movies/${id}`} style={{ textDecoration: "none" }}>
+      <Link href={`/movies/${movie.id}`} style={{ textDecoration: "none" }}>
         <div
           style={{ position: "relative" }}
           onMouseEnter={() => setHover(true)}
@@ -37,8 +37,8 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
         >
           <CardMedia
             component="img"
-            image={imageUrl}
-            alt={title}
+            image={movie.imageUrl}
+            alt={movie.title}
             style={{
               width: "100%",
               height: "400px",
@@ -58,14 +58,14 @@ export default function MovieCard({ id, title, imageUrl }: MovieCardProps) {
                 fontSize: "250%",
               }}
             >
-              {title}
+              {movie.title}
             </div>
           )}
         </div>
       </Link>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <RatingLine movieId={id} />
+          <RatingLine movie={movie} movies={movies} />
         </IconButton>
       </CardActions>
     </Card>
