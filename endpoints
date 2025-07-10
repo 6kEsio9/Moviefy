@@ -1,95 +1,73 @@
-/login - POST
--> Formdata: username, passowrd
-<- id: string;
-  username: string;
-  pfp: string;
-, accessToken, refreshToken
------------------------------
-/register - POST
--> Formdata: username, email, password, confirm-password
-<- id: string;
-  username: string;
-  pfp: string;
-, accessToken, refreshToken
------------------------------
-/user - GET
--> params: id: string
-<- id: string;
-  username: string;
-  email: string;
-  bio: string;
-  pfp: string;
------------------------------
-/movie - GET
--> params: id: string
-<- id: string;
-  title: string;
-  imageUrl: string;
-  year: number;
-  avgRating: number;
-  genre: string;
-  ageRating: number;
-  summary: string;
-  director: string;
-  cast: string[];
-  crew: string[];
-  reviews: {userId: string, rating: number, comment: string, likes: number}[];
+AUTHENTICATION TYPES:
+type ReviewUser = {
+  movieId: string;
+  movieTitle: string;
+  rating: number;
+  comment: string;
+  likes: string[];
 };
------------------------------
-/movies - GET
--> 
-<- []: id: number;
-  title: string;
-  imageUrl: string;
-  reviews: {userId: string, rating: number, comment: string, likes: number}[];
------------------------------
-/movies - GET
--> params: genres[]
-<- []: id: number;
-  title: string;
-  imageUrl: string;
------------------------------
-/add-movie - POST
- -> id: number;
-  title: string;
-  imageUrl: string;
-  year: number;
-  avgRating: number;
-  genre: string;
-  ageRating: number;
-  summary: string;
-  director: string;
-  cast: string[];
-  crew: string[];
-<-
-------------------------------
-/search - GET
--> params: movies: bool, users: bool, input: string
-<- {
-users: true => [movies[], users[]]
-users: false => [movies[]]
-}
-------------------------------
-/review
--> params: userId: string, movieId: string, rating: number, comment: string
-<- 
--------------------------------
-/like
--> params: userId, movieId
-<-
---------------------------------
+
 type User = {
-  id: number;
+  token: string;
+  id: string;
+  username: string;
+  pfp: string;
+};
+
+type UserProfile = {
+  id: string;
   username: string;
   email: string;
   bio: string;
   pfp: string;
-  watchList: {
-    watched: number[];
-    isWatching: number[];
-    willWatch: number[];
-  };
-  reviews: number[];
+};
+
+export type WatchList = {
+  watched: Movie[];
+  isWatching: Movie[];
+  willWatch: Movie[];
+};
+AUTHENTICATION API:
+----------------------------------------------------
+Login: url/login POST
+-> body: {formData: {username: string, password: string}}
+<- User
+----------------------------------------------------
+Register: url/register POST
+-> body: {formData: {username: string, email: string, password: string, confirm: string}}
+<- User
+----------------------------------------------------
+Get user: url/users? GET
+-> params: {userId: string}
+<- UserProfile
+----------------------------------------------------
+Get user watchlist: url/users/watchlist GET
+-> params: {userId: string}
+<- WatchList
+----------------------------------------------------
+Change movie status: url/change PUT NEEDS AUTHORIZATION
+-> body: {userId: string, movieId: string, status: number}
+<- OK
+----------------------------------------------------
+Get user reviews: url/users/reviews? GET
+-> params: {userId: string}
+<- ReviewUser[]
+----------------------------------------------------
+Edit review: url/users/reviews/edit PUT NEEDS AUTHORIZATION
+-> body: {userId: string, movieId: string, comment: string}
+<- OK
+----------------------------------------------------
+Edit user: url/users/edit PUT
+-> body: {userId: string, email: string, bio?: string, pfp?: string, newPassword?: string, newConfirm?: string}
+<- OK
+----------------------------------------------------
+====================================================
+MOVIE TYPES:
+type ReviewMovie = {
+  userId: string;
+  rating: number;
+  comment: string;
+  likes: string[];
 };
 
 type Movie = {
@@ -104,5 +82,33 @@ type Movie = {
   director: string;
   cast: string[];
   crew: string[];
-  reviews: Review[];
+  reviews: ReviewMovie[];
 };
+MOVIES API:
+----------------------------------------------------
+Get all movies: url/movies GET
+-> 
+<- Movie[]
+----------------------------------------------------
+Get movie by id: url/movies? GET
+-> params: {movieId: string}
+<- Movie
+----------------------------------------------------
+Search: url/search? GET
+-> params: {input: string, users: string<"true"|"false">}
+<- users: true => [Movie[], Users[]]
+false => [Movie[]]
+----------------------------------------------------
+Rate movie: url/movies/rate POST NEEDS AUTHORIZATION
+-> body: {userId: string, movieId: string, rating: number, comment?: string}
+<- OK
+----------------------------------------------------
+Edit review: url/movies/reviews/edit PUT NEEDS AUTHORIZATION
+-> body: {userId: string, movieId: string, comment: string}
+<- OK
+----------------------------------------------------
+Like review: url/movies/like POST NEEDS AUTHORIZATION
+//if like is true -> like. if like is false -> dislike.
+-> body: {userId: string, movieId: string, like: boolean}
+<- OK
+----------------------------------------------------
