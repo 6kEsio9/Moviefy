@@ -19,12 +19,6 @@
   email: string;
   bio: string;
   pfp: string;
-  watchList: {
-    watched: number[];
-    isWatching: number[];
-    willWatch: number[];
-  };
-  reviews: number[];
 -----------------------------
 /movie - GET
 -> params: id: string
