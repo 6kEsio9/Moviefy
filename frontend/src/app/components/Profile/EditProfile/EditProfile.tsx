@@ -77,6 +77,7 @@ export default function EditProfile() {
               autoFocus
               defaultValue={editUser && editUser.username}
               placeholder="Username"
+              required
             />
             <TextField
               name="email"
@@ -86,6 +87,7 @@ export default function EditProfile() {
               autoFocus
               defaultValue={editUser && editUser.email}
               placeholder="Email"
+              required
             />
 
             <TextField

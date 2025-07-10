@@ -1,12 +1,12 @@
 "use client";
 
 import { createContext, ReactNode, useCallback, useEffect } from "react";
-import { UserTemp } from "../services/AuthService";
+import { User } from "../services/AuthService";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export type AuthContextType = {
-  user: UserTemp | null;
-  onLogin: (value: UserTemp) => void;
+  user: User | null;
+  onLogin: (value: User) => void;
   onLogout: () => void;
 };
 
@@ -17,10 +17,10 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useLocalStorage<UserTemp | null>("user", null);
+  const [user, setUser] = useLocalStorage<User | null>("user", null);
 
   const onLogin = useCallback(
-    (user: UserTemp) => {
+    (user: User) => {
       setUser(user);
     },
     [setUser]

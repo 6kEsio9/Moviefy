@@ -27,7 +27,7 @@ export default function ReviewPageItem({
   movie,
   setReviews,
 }: ReviewPageItemProps) {
-  const [displayUser, setDisplayUser] = useState<AuthService.UserTemp | null>(
+  const [displayUser, setDisplayUser] = useState<AuthService.User | null>(
     null
   );
 

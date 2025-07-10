@@ -184,12 +184,12 @@ export async function getAll() {
   return movies;
 }
 
-export async function getMovie(id: string) {
-  // const req = await fetch(`${url}` + new URLSearchParams({movieId: id}));
+export async function getMovie(movieId: string) {
+  // const req = await fetch(`${url}/movies?` + new URLSearchParams({movieId: movieId}));
   // const res = await req.json();
   // return res;
 
-  const movie = movies.find((x) => x.id === id);
+  const movie = movies.find((x) => x.id === movieId);
 
   return movie;
 }
@@ -199,7 +199,6 @@ export async function search(searchInput: string, usersB: boolean) {
   //   `${url}/search?` +
   //     new URLSearchParams({
   //       input: searchInput,
-  //       movies: "true",
   //       users: usersB ? "true" : "false",
   //     })
   // );
@@ -263,4 +262,22 @@ export async function editReview(
   // });
   // const res = await req.json();
   // return res;
+}
+
+export async function like(
+  userId: string,
+  movieId: string,
+  like: boolean,
+  authToken: string
+) {
+  const req = await fetch(`${url}/movies/like`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-authorization": authToken,
+    },
+    body: JSON.stringify({ userId, movieId, like }),
+  });
+  const res = await req.json();
+  return res;
 }

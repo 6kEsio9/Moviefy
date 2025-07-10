@@ -6,13 +6,13 @@ interface ReviewProps {
 }
 import { Grid, IconButton, Rating, Typography } from "@mui/material";
 import * as ms from "@/app/services/MovieService";
-import { getUser, UserTemp } from "@/app/services/AuthService";
+import { getUser, User } from "@/app/services/AuthService";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
-  const [displayUser, setDisplayUser] = useState<UserTemp>();
+  const [displayUser, setDisplayUser] = useState<User>();
 
   const [liked, setLiked] = useState(false);
 
@@ -46,6 +46,11 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
     });
 
     const updatedMovie = { ...movie!, reviews: updatedReviews };
+
+    const fetched = async () => {
+      await ms.like(user?.id!, movie.id, newLiked ? true : false, user?.token!);
+    };
+    fetched();
 
     setMovie(updatedMovie);
   };

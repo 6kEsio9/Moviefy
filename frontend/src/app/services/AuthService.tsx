@@ -162,33 +162,34 @@ export type ReviewUser = {
   likes: string[];
 };
 
-export type UserTemp = {
+export type User = {
   token: string;
   id: string;
   username: string;
   pfp: string;
 };
 
-export const users: UserTemp[] = [
+export type UserProfile = {
+  id: string;
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+};
+
+export type WatchList = {
+  watched: Movie[];
+  isWatching: Movie[];
+  willWatch: Movie[];
+};
+
+export const users: User[] = [
   {
     token: "accessToken",
     id: "0",
     username: "Georgi",
     pfp: "/images/pfp.jpeg",
   },
-  // {
-  //   id: 1,
-  //   username: "Ivan",
-  //   email: "primerenemail1@gmail.com",
-  //   bio: "I don't like watching movies",
-  //   pfp: "/images/pfp.jpeg",
-  //   watchList: {
-  //     watched: [3],
-  //     isWatching: [4],
-  //     willWatch: [5],
-  //   },
-  //   reviews: [0],
-  // },
 ];
 
 export async function login(formData: Object) {
@@ -222,36 +223,14 @@ export async function register(formData: Object) {
   return users[0];
 }
 
-export type UserProfile = {
-  id: string;
-  username: string;
-  email: string;
-  bio: string;
-  pfp: string;
-};
-
-export type User = {
-  id: number;
-  username: string;
-  email: string;
-  bio: string;
-  pfp: string;
-  watchList: {
-    watched: string[];
-    isWatching: string[];
-    willWatch: string[];
-  };
-  reviews: number[];
-};
-
-export async function getUser(id: string) {
+export async function getUser(userId: string) {
   // const req = await fetch(
-  //   `${url}/users?` + new URLSearchParams({ id: string })
+  //   `${url}/users?` + new URLSearchParams({ userId: string })
   // );
   // const res = await req.json();
   // return res;
 
-  const user = users.find((x) => x.id === id);
+  const user = users.find((x) => x.id === userId);
 
   return {
     ...user!,
@@ -260,14 +239,8 @@ export async function getUser(id: string) {
   };
 }
 
-export type WatchList = {
-  watched: Movie[];
-  isWatching: Movie[];
-  willWatch: Movie[];
-};
-
 export async function getWatchList(userId: string) {
-  // const req = await fetch(`${url}/watchList` + new URLSearchParams({
+  // const req = await fetch(`${url}/users/watchList` + new URLSearchParams({
   //   userId: userId
   // }))
   // const res = await req.json();
@@ -301,7 +274,7 @@ export async function changeMovieStatus(
 }
 
 export async function getReviews(userId: string) {
-  // const req = await fetch(`${url}/profile/reviews?` + new URLSearchParams({ userId: userId}));
+  // const req = await fetch(`${url}/users/reviews?` + new URLSearchParams({ userId: userId}));
   // const res = await req.json();
   // return res;
 
@@ -322,7 +295,7 @@ export async function editReview(
   comment: string,
   accessToken: string
 ) {
-  // const req = await fetch(`${url}/profile/reviews/edit`, {
+  // const req = await fetch(`${url}/users/reviews/edit`, {
   //   method: "PUT",
   //   headers: {
   //     "content-type": "application/json",
