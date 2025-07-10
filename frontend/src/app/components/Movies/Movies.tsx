@@ -25,7 +25,7 @@ export default function MoviesPage() {
     //GET next movieCountPerPage # of movies
 
     setDisplayMovies(movies.filter((x) => x.id < page * movieCountPerPage && x.id >= (page - 1) * movieCountPerPage ));
-  }, [movies, page])
+  }, [movies, page, movieCountPerPage])
 
   return (
     <div
@@ -38,45 +38,45 @@ export default function MoviesPage() {
         marginBottom: "30px"
       }}
     >
-      <Sidebar></Sidebar>
+      <Sidebar/>
+
       <Stack>
-      <div
-        id="movies-list"
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          marginTop: "15px",
-          marginBottom: "15px",
-          width: "140ch",
-          // justifyContent:"center"
-        }}
-      >
-        {movies.length > 0 ? (
-          displayMovies.map((movie) => {
-            return (
-              <MovieCard
-                key={movie.id}
-                id={movie.id}
-                title={movie.title}
-                imageUrl={movie.imageUrl}
-              />
-            );
-          })
-        ) : ( 
-          <Loading />
-        )}
-      </div>
-      <div style={{display: "flex", justifyContent: "center"}}>
-        <Pagination
-          variant="outlined"
-          shape="rounded"
-          count={Math.ceil(movies.length/movieCountPerPage)}
-          size="large"
-          sx={{mt: 5}}
-          page={page}
-          onChange={handlePageChange}
-        />
-      </div>
+        <div
+          id="movies-list"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            marginTop: "15px",
+            marginBottom: "15px",
+            width: "140ch",
+          }}
+        >
+          {movies.length > 0 ? (
+            displayMovies.map((movie) => {
+              return (
+                <MovieCard
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  imageUrl={movie.imageUrl}
+                />
+              );
+            })
+          ) : ( 
+            <Loading />
+          )}
+        </div>
+        <div style={{display: "flex", justifyContent: "center"}}>
+          <Pagination
+            variant="outlined"
+            shape="rounded"
+            count={Math.ceil(movies.length/movieCountPerPage)}
+            size="large"
+            sx={{mt: 5}}
+            page={page}
+            onChange={handlePageChange}
+          />
+        </div>
       </Stack>
     </div>
   );
