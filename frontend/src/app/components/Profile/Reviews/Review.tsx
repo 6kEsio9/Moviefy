@@ -24,6 +24,15 @@ export default function Review({ movie, profileUser }: ReviewProps) {
   const [edit, setEdit] = useState(false);
 
   const movieRating = movie?.reviews.find((x) => x.userId === profileUser?.id);
+  
+  const handleRemove = () => {
+    let updatedReviews = user!.reviews;
+    updatedReviews = updatedReviews!.filter((x) => x !== movie.id);
+    const updatedUser = {...user!, reviews: updatedReviews};
+    setUser(updatedUser);
+
+    //POST remove review from movie
+  }
 
   return (
     <Card key={movie?.id} sx={{ mb: 2, position: "relative" }}>
@@ -65,6 +74,7 @@ export default function Review({ movie, profileUser }: ReviewProps) {
             <Button
               variant="outlined"
               sx={{ fontSize: "10px", width: "120px" }}
+              onClick={handleRemove}
             >
               Remove
             </Button>
