@@ -11,11 +11,11 @@ import { UserProfile } from "../../services/AuthService";
 export default function ProfilePage() {
   const [profileUser, setProfileUser] = useState<UserProfile>();
 
-  const userId = useParams().id?.toString();
+  const userId = useParams().id;
 
   useEffect(() => {
     const fetched = async () => {
-      const res = await AuthService.getUser(userId!);
+      const res = await AuthService.getUser(String(userId!));
       setProfileUser(res);
     };
     fetched();

@@ -16,11 +16,11 @@ export default function MovieDetails() {
   const { user } = useAuth();
   const [movie, setMovie] = useState<Movie>();
 
-  const movieId = useParams().id?.toString();
+  const movieId = useParams().id;
 
   useEffect(() => {
     const fetched = async () => {
-      const result = await MovieSerivce.getMovie(movieId!);
+      const result = await MovieSerivce.getMovie(String(movieId!));
       setMovie(result);
     };
     fetched();
