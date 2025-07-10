@@ -87,3 +87,32 @@ users: false => [movies[]]
 /like
 -> params: userId, movieId
 <-
+--------------------------------
+type User = {
+  id: number;
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+  watchList: {
+    watched: number[];
+    isWatching: number[];
+    willWatch: number[];
+  };
+  reviews: number[];
+};
+
+type Movie = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  year: number;
+  avgRating: number;
+  genre: string;
+  ageRating: number;
+  summary: string;
+  director: string;
+  cast: string[];
+  crew: string[];
+  reviews: Review[];
+};
