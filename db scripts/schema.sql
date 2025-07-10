@@ -1,7 +1,72 @@
 CREATE EXTENSION IF NOT EXISTS pg_trgm; 
 CREATE EXTENSION IF NOT EXISTS intarray;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Core tables
+--to be removed
+/*
+  CREATE TABLE image_ids (
+   image_id TEXT PRIMARY KEY,
+   object_id TEXT,
+  object_type TEXT,
+  image_version TEXT
+);
+
+CREATE TABLE image_licenses(
+    image_id TEXT PRIMARY KEY REFERENCES image_ids(image_id) ,
+  source TEXT,
+  license_id TEXT,
+  author TEXT
+);
+
+CREATE TABLE movie_abstracts (
+  movie_id TEXT PRIMARY KEY REFERENCES title_basics(omdbid) ON DELETE CASCADE,
+  abstract TEXT
+);
+
+*/
+
+-- CORE tables
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  keycloak_user_id UUID NOT NULL UNIQUE,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  pfpUrl TEXT DEFAULT 'default',
+  bio TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE user_rating (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  filmId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
+  rating REAL CHECK (rating BETWEEN 1 AND 5),
+  UNIQUE (userId, filmId)
+);
+
+CREATE TABLE comments (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  ratingId INTEGER REFERENCES user_rating(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  likeCount INTEGER DEFAULT 0
+);
+
+CREATE TABLE comment_likes(
+  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  commentId INTEGER REFERENCES comments(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  PRIMARY KEY (userId, commentId)
+);
+
+CREATE TABLE watchlist (
+  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  filmId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
+  type SMALLINT CHECK (type BETWEEN 0 AND 3),
+  PRIMARY KEY (userId, filmId)
+);
+
+-- IMDB tables
 CREATE TABLE title_basics (
     tconst TEXT PRIMARY KEY,
     titleType TEXT NOT NULL,
@@ -48,19 +113,6 @@ CREATE TABLE title_episode (
     episodeNumber INTEGER
 );
 
-CREATE TABLE image_ids (
-   image_id TEXT PRIMARY KEY,
-   object_id TEXT,
-  object_type TEXT,
-  image_version TEXT
-);
-
-CREATE TABLE image_licenses(
-    image_id TEXT PRIMARY KEY REFERENCES image_ids(image_id) ,
-  source TEXT,
-  license_id TEXT,
-  author TEXT
-);
 
 CREATE TABLE trailers(
   trailer_id TEXT ,
@@ -70,10 +122,6 @@ CREATE TABLE trailers(
   source TEXT
 );
 
-CREATE TABLE movie_abstracts (
-  movie_id TEXT PRIMARY KEY REFERENCES title_basics(omdbid) ON DELETE CASCADE,
-  abstract TEXT
-);
 
 CREATE TABLE movie_links (
   tconst TEXT,
@@ -82,7 +130,8 @@ CREATE TABLE movie_links (
 
 CREATE TABLE posters (
     titleId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
-    posterId TEXT
+    posterId TEXT,
+    description TEXT
 );
 
 CREATE TABLE title_principals (
