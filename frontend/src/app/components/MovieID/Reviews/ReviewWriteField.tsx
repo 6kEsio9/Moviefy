@@ -40,6 +40,9 @@ export default function ReviewWriteField(){
   }
 
   useEffect(() => {
+    
+    //fetch
+
     if(!user?.reviews.includes(+movieId!)){
       setShouldRender(true);
     }

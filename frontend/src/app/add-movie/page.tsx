@@ -1,17 +1,24 @@
 'use client'
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputText from "../components/AddMovie/InputText";
 import { Image } from "@mui/icons-material";
 import GenreSelect from "../components/AddMovie/GenreSelect";
-
-const possibleGenres = [
-  "Action",
-  "Comedy",
-  "Horror"
-]
+import { useMovies } from "../hooks/useMovies";
 
 export default function AddMoviePage(){
+  const [possibleGenres, setPossibleGenres] = useState<string[]>([])
+  const { movies } = useMovies();
+
+  useEffect(() => {
+    const genres: string[] = []
+
+    movies.forEach((x) => {
+      if(!genres.includes(x.genre))genres.push(x.genre);
+    })
+
+    setPossibleGenres(genres);
+  }, [movies])
 
   const submitMovie = () => {
     const movie = {
@@ -59,7 +66,6 @@ export default function AddMoviePage(){
               label="Poster Image URL"
               value={poster}
               onChange={(e) => setPoster(e.target.value)}
-              width={300}
             />
           </div>
         </Grid>
