@@ -15,6 +15,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import React, { useEffect, useState } from "react";
 import EditReviews from "./EditReviews";
 import Link from "next/link";
+// import * as ms from "@/app/services/MovieService"
 
 interface ReviewPageItemProps {
   review: ReviewMovie;
@@ -42,6 +43,17 @@ export default function ReviewPageItem({
     };
     fetched();
   }, []);
+
+  const handleRemove = () => {
+    setReviews((prevReviews) => {
+      return prevReviews.filter((x) => x.userId !== user?.id)
+    })
+
+    // const fetched = async () => {
+    //   await ms.deleteReview(user!.id, movie.id, user!.token);
+    // };
+    // fetched();
+  }
 
   if (displayUser) {
     return (
@@ -83,6 +95,7 @@ export default function ReviewPageItem({
               <Button
                 variant="outlined"
                 sx={{ fontSize: "10px", width: "120px" }}
+                onClick={handleRemove}
               >
                 Remove
               </Button>
