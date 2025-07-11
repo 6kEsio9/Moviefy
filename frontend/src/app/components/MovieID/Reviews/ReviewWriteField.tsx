@@ -9,23 +9,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import * as MovieService from "../../../services/MovieService";
 
-export default function ReviewWriteField() {
+interface ReviewWriteFieldProps {
+  movie: Movie;
+}
+
+export default function ReviewWriteField({ movie }: ReviewWriteFieldProps) {
   const { user } = useAuth();
-  const movieId = useParams().id?.toString();
   const [shouldRender, setShouldRender] = useState(false);
-  const [movie, setMovie] = useState<Movie>();
-
-  useEffect(() => {
-    const fetched = async () => {
-      const res = await MovieService.getMovie(movieId!);
-      setMovie(res);
-    };
-    fetched();
-  }, []);
 
   useEffect(() => {
     const userIndex = movie?.reviews.findIndex((x) => x.userId === user?.id);

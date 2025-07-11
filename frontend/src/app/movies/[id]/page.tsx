@@ -44,7 +44,7 @@ export default function MovieDetails() {
 
       <ReviewList movie={movie} setMovie={setMovie} />
 
-      <ReviewWriteField />
+      <ReviewWriteField movie={movie} />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}
