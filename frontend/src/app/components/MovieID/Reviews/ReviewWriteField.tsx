@@ -20,6 +20,8 @@ interface ReviewWriteFieldProps {
 
 export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldProps) {
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
+
   const [shouldRender, setShouldRender] = useState(false);
   const [rating, setRating] = useState<number | null>(0)
   const [showRatingError, setShowRatingError] = useState(false)
@@ -43,7 +45,7 @@ export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldPr
     });
 
     // const fetched = async () => {
-      // await ms.rate(user!.id, movie.id, rating, user!.token, reviewText)
+    //   await ms.rate(user!.id, movie.id, rating, authToken!, reviewText)
     // };
     // fetched();
     

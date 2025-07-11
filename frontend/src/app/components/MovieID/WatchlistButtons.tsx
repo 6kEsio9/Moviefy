@@ -18,6 +18,8 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
   const [watchStatus, setWatchStatus] = useState("none");
   const [watchList, setWatchList] = useState<WatchList>();
 
+  const authToken = localStorage.getItem("user");
+
   useEffect(() => {
     const fetched = async () => {
       const res = await AuthService.getWatchList(user!.id);
@@ -96,7 +98,7 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
     //     user?.id!,
     //     movie.id!,
     //     AuthService.statusToNum(watchStatus)!,
-    //     user?.token!
+    //     authToken!
     //   );
     //   console.log(req);
     // };

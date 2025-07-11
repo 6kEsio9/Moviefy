@@ -17,6 +17,7 @@ import * as AuthService from "../../../services/AuthService";
 
 export default function EditProfile() {
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
 
   const [editUser, setEditUser] = useState<UserProfile>();
 
@@ -45,7 +46,7 @@ export default function EditProfile() {
       await AuthService.editUser(
         editUser?.id!,
         { username, email, bio, pfp, password, confirm },
-        user?.token!
+        authToken!
       );
     };
     fetched();

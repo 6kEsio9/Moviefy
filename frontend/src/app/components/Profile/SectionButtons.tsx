@@ -22,6 +22,7 @@ export default function SectionButtons({
   const [hover, setHover] = useState(false);
 
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
 
   const [status, setStatus] = useState(false);
 
@@ -78,7 +79,7 @@ export default function SectionButtons({
     //     user?.id!,
     //     movie.id!,
     //     AuthService.statusToNum(watchStatus)!,
-    //     user?.token!
+    //     authToken!
     //   );
     //   console.log(req);
     // };

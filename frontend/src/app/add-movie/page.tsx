@@ -10,6 +10,8 @@ export default function AddMoviePage() {
 
   const { user } = useAuth();
 
+  const authToken = localStorage.getItem("user");
+
   const submitHandler = (formData: FormData) => {
     const imageUrl = formData.get("imageUrl")?.toString() || "";
     const title = formData.get("title")?.toString() || "";
@@ -24,7 +26,7 @@ export default function AddMoviePage() {
       await addMovie(
         user?.id!,
         { imageUrl, title, summary, year, ageRating, director, cast, crew },
-        user?.token!
+        authToken!
       );
     };
     fetched();
