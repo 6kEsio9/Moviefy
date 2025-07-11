@@ -5,8 +5,14 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { Movie } from "@/app/services/MovieService";
+import * as MovieService from "../../../../services/MovieService";
 
-export default function Year() {
+interface YearProps {
+  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+}
+
+export default function Year({ setMovies }: YearProps) {
   const [openYear, setOpenYear] = React.useState(false);
 
   const handleClickOpenYear = () => {
@@ -14,6 +20,15 @@ export default function Year() {
   };
 
   const years = ["Oldest", "Newest"];
+
+  const yearHandler = (e: any) => {
+    const year = e.currentTarget.textContent.toLowerCase();
+    const fetched = async () => {
+      const res = await MovieService.filterMovies("year", year);
+      setMovies(res);
+    };
+    fetched();
+  };
 
   return (
     <>
@@ -25,7 +40,11 @@ export default function Year() {
         <List component="div" disablePadding>
           {years.map((x) => (
             <ListItemButton key={x}>
-              <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
+              <ListItemText
+                onClick={yearHandler}
+                sx={{ pl: 4 }}
+                primary={`${x}`}
+              />
             </ListItemButton>
           ))}
         </List>

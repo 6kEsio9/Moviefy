@@ -5,8 +5,14 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { Movie } from "@/app/services/MovieService";
+import * as MovieService from "../../../../services/MovieService";
 
-export default function AgeRating() {
+interface AgeRatingProps {
+  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+}
+
+export default function AgeRating({ setMovies }: AgeRatingProps) {
   const [openAge, setOpenAge] = React.useState(false);
 
   const handleClickOpenAge = () => {
@@ -14,6 +20,15 @@ export default function AgeRating() {
   };
 
   const ages = ["<18", ">18"];
+
+  const agesHandler = (e: any) => {
+    const ages = e.currentTarget.textContent;
+    const fetched = async () => {
+      const res = await MovieService.filterMovies("ages", ages);
+      setMovies(res);
+    };
+    fetched();
+  };
 
   return (
     <>
@@ -25,7 +40,11 @@ export default function AgeRating() {
         <List component="div" disablePadding>
           {ages.map((x) => (
             <ListItemButton key={x}>
-              <ListItemText sx={{ pl: 4 }} primary={`${x}`} />
+              <ListItemText
+                onClick={agesHandler}
+                sx={{ pl: 4 }}
+                primary={`${x}`}
+              />
             </ListItemButton>
           ))}
         </List>

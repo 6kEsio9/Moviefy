@@ -1,12 +1,18 @@
 "use client";
 
-import { createContext, ReactNode, useCallback, useEffect } from "react";
-import { User } from "../services/AuthService";
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { User } from "../services/AuthService";
 
 export type AuthContextType = {
   user: User | null;
-  onLogin: (value: User) => void;
+  onLogin: (value: string, user: User) => void;
   onLogout: () => void;
 };
 
@@ -17,18 +23,22 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useLocalStorage<User | null>("user", null);
+  const [token, setToken] = useLocalStorage<string | null>("user", null);
+  const [user, setUser] = useState<User | null>(null);
 
   const onLogin = useCallback(
-    (user: User) => {
+    (token: string, user: User) => {
+      setToken(token);
       setUser(user);
     },
-    [setUser]
+    [setToken]
   );
 
   const onLogout = useCallback(() => {
-    setUser(null);
-  }, [setUser]);
+    setToken(null);
+  }, [setToken]);
+
+  useEffect(() => {}, [token]);
 
   return (
     <AuthContext.Provider value={{ user, onLogin, onLogout }}>

@@ -12,7 +12,6 @@ const movieCountPerPage = 6;
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<Movie[]>();
-  const [displayMovies, setDisplayMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function MoviesPage() {
         marginBottom: "30px",
       }}
     >
-      <Sidebar />
+      {movies && <Sidebar setMovies={setMovies} />}
 
       <Stack>
         <div

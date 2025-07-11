@@ -9,8 +9,13 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Genre from "./Genre";
 import Year from "./Year";
 import AgeRating from "./AgeRating";
+import { Movie } from "@/app/services/MovieService";
 
-export default function Filters() {
+interface FiltersProps {
+  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+}
+
+export default function Filters({ setMovies }: FiltersProps) {
   const [openFilters, setOpenFilters] = React.useState(false);
 
   const handleClickFilters = () => {
@@ -25,9 +30,9 @@ export default function Filters() {
       </ListItemButton>
       <Collapse in={openFilters} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Genre />
-          <Year />
-          <AgeRating />
+          <Genre setMovies={setMovies} />
+          <Year setMovies={setMovies} />
+          <AgeRating setMovies={setMovies} />
         </List>
       </Collapse>
     </>

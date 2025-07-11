@@ -310,6 +310,8 @@ export async function addMovie(
   formData: object,
   authToken: string
 ) {
+  console.log(userId, formData, authToken);
+
   const req = await fetch(`${url}/movies/add`, {
     method: "POST",
     headers: {
@@ -319,5 +321,18 @@ export async function addMovie(
     body: JSON.stringify({ userId, formData }),
   });
   const res = req.json();
+  return res;
+}
+
+export async function filterMovies(filterType: string, filter: string) {
+  const req = await fetch(
+    `${url}/movies/filter?` +
+      new URLSearchParams({
+        filterType: filterType,
+        filter: filter,
+      })
+  );
+
+  const res = await req.json();
   return res;
 }
