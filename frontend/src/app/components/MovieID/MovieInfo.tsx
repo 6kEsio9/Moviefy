@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Grid,
+  Typography,
+  Stack,
+  useTheme
+} from "@mui/material";
 import { renderCastOrCrew } from "./RenderFunctions";
 import { Movie } from "@/app/services/MovieService";
 import { Star } from "@mui/icons-material";
@@ -11,72 +18,82 @@ interface MovieInfoProps {
 }
 
 export default function MovieInfo({ movie }: MovieInfoProps) {
+  const theme = useTheme();
+
   return (
-    <Grid container>
-      <Grid
-        size={{ lg: 3, md: 12 }}
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-      >
-        <img src={movie.imageUrl} style={{ height: "400px" }} />
+    <Grid container spacing={4} padding={4}>
+      <Grid size={{xs: 12, md: 4, lg: 3}}>
+        <Box
+          component="img"
+          src={movie.imageUrl}
+          alt={movie.title}
+          sx={{
+            height: { xs: 300, md: 400 },
+            objectFit: "cover",
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        />
       </Grid>
-      <Grid size={{ lg: 6, md: 6 }}>
-        <Grid>
-          <Grid
-            container
-            direction="row"
-            alignItems="center"
-            spacing={3}
-            justifyContent={"space-between"}
-            mb={2}
-          >
-            <Box>
-              <Typography variant="h2">{movie.title}</Typography>
-              <Typography variant="h6" color="info">
-                {movie.year}
-              </Typography>
-            </Box>
-            <Typography>{`Directed by ${movie.director}`}</Typography>
-            <WatchlistButtons movie={movie} />
-          </Grid>
 
-          <Divider orientation="horizontal" />
-
-          <Box display="flex">
-            <Typography sx={{ fontSize: 18, margin: 2 }}>
-              {movie.summary}
+      <Grid size={{xs: 12, md: 8, lg: 6}}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="h3">{movie.title}</Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              {movie.year} &bull; Directed by {movie.director}
             </Typography>
           </Box>
 
-          <Divider orientation="horizontal" />
+          <WatchlistButtons movie={movie} />
 
-          <Grid container spacing={5} mt={2}>
-            <Grid size={6}>
-              <Typography variant="h5" style={{ marginBottom: "10px" }}>
+          <Divider />
+
+          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+            {movie.summary}
+          </Typography>
+
+          <Divider />
+
+          <Grid container spacing={4}>
+            <Grid size={{xs: 12, sm: 6}}>
+              <Typography variant="h5" gutterBottom>
                 Cast
               </Typography>
               {renderCastOrCrew(movie.cast)}
             </Grid>
-            <Grid size={6}>
-              <Typography variant="h5" style={{ marginBottom: "10px" }}>
+            <Grid size={{xs: 12, sm: 6}}>
+              <Typography variant="h5" gutterBottom>
                 Crew
               </Typography>
               {renderCastOrCrew(movie.crew)}
             </Grid>
           </Grid>
-        </Grid>
+        </Stack>
       </Grid>
-      <Grid
-        size={{ lg: 3 }}
-        justifyItems={"center"}
-        sx={{ alignContent: "center", top: "20%", right: "20%" }}
-      >
-        <Typography variant="h3">Average Rating</Typography>
-        <Typography variant="h3">
-          {movie.avgRating}
-          <Star />
-        </Typography>
+
+      <Grid size={{xs: 12, lg: 3}}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems={{ xs: "flex-start", lg: "center" }}
+          justifyContent="center"
+          height="100%"
+          textAlign={{ xs: "left", lg: "center" }}
+          sx={{
+            backgroundColor: theme.palette.grey[100],
+            borderRadius: 2,
+            padding: 3,
+            boxShadow: 1,
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Average Rating
+          </Typography>
+          <Typography variant="h3" color="primary">
+            {movie.avgRating} <Star fontSize="inherit" />
+          </Typography>
+        </Box>
       </Grid>
     </Grid>
   );

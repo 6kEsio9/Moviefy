@@ -15,7 +15,6 @@ import { useAuth } from "@/app/hooks/useAuth";
 import React, { useEffect, useState } from "react";
 import EditReviews from "./EditReviews";
 import Link from "next/link";
-// import * as ms from "@/app/services/MovieService"
 
 interface ReviewPageItemProps {
   review: ReviewMovie;
@@ -50,7 +49,7 @@ export default function ReviewPageItem({
     })
 
     // const fetched = async () => {
-    //   await ms.deleteReview(user!.id, movie.id, user!.token);
+    //   await MovieService.deleteReview(user!.id, movie.id, user!.token);
     // };
     // fetched();
   }
