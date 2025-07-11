@@ -13,12 +13,24 @@ interface MovieInfoProps {
 export default function MovieInfo({ movie }: MovieInfoProps) {
   return (
     <Grid container>
-      <Grid size={{lg: 3, md: 12}} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+      <Grid
+        size={{ lg: 3, md: 12 }}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+      >
         <img src={movie.imageUrl} style={{ height: "400px" }} />
       </Grid>
-      <Grid size={{lg: 6, md: 6}}>
+      <Grid size={{ lg: 6, md: 6 }}>
         <Grid>
-          <Grid container direction="row" alignItems="center" spacing={3} justifyContent={"space-between"} mb={2}>
+          <Grid
+            container
+            direction="row"
+            alignItems="center"
+            spacing={3}
+            justifyContent={"space-between"}
+            mb={2}
+          >
             <Box>
               <Typography variant="h2">{movie.title}</Typography>
               <Typography variant="h6" color="info">
@@ -26,7 +38,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
               </Typography>
             </Box>
             <Typography>{`Directed by ${movie.director}`}</Typography>
-            <WatchlistButtons/>
+            <WatchlistButtons movie={movie} />
           </Grid>
 
           <Divider orientation="horizontal" />
@@ -56,7 +68,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
         </Grid>
       </Grid>
       <Grid
-        size={{lg: 3}}
+        size={{ lg: 3 }}
         justifyItems={"center"}
         sx={{ alignContent: "center", top: "20%", right: "20%" }}
       >

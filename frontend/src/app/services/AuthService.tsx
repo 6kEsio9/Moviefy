@@ -263,7 +263,7 @@ export async function changeMovieStatus(
     method: "PUT",
     headers: {
       "content-type": "application/json",
-      "x-authorization": authToken,
+      Authorization: "Bearer " + authToken,
     },
     body: JSON.stringify({ userId, movieId, status }),
   });
@@ -299,7 +299,7 @@ export async function editReview(
   //   method: "PUT",
   //   headers: {
   //     "content-type": "application/json",
-  //     "x-authorization": accessToken,
+  //     "Authorization": 'Bearer ' + authToken,
   //   },
   //   body: JSON.stringify({ userId, movieId, comment }),
   // });
@@ -316,7 +316,7 @@ export async function editUser(
   //   method: 'PUT',
   //   headers: {
   //     'content-type': 'application/json',
-  //     'x-authorization': accessToken
+  //     "Authorization": 'Bearer ' + authToken,
   //   },
   //   body: JSON.stringify({userId, formData})
   // })

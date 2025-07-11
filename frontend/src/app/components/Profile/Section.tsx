@@ -2,17 +2,26 @@ import { Box, Card, Grid, Typography } from "@mui/material";
 
 import { Movie } from "../../services/MovieService";
 import Link from "next/link";
-import CardButtons from "./SectionButtons";
-import { UserProfile } from "@/app/services/AuthService";
+import { UserProfile, WatchList } from "@/app/services/AuthService";
 import Loading from "../Movies/Loading";
+import SectionButtons from "./SectionButtons";
+import React from "react";
 
 interface SectionProps {
   title: string;
   movies: Movie[] | undefined;
   profileUser: UserProfile | undefined;
+  setWatchList: React.Dispatch<React.SetStateAction<WatchList | undefined>>;
+  watchStatus: string;
 }
 
-export default function Section({ title, movies, profileUser }: SectionProps) {
+export default function Section({
+  title,
+  movies,
+  profileUser,
+  setWatchList,
+  watchStatus,
+}: SectionProps) {
   return (
     <Box mb={4}>
       <Typography variant="h6" mb={2}>
@@ -20,8 +29,8 @@ export default function Section({ title, movies, profileUser }: SectionProps) {
       </Typography>
       {movies ? (
         <Grid container spacing={2}>
-          {movies!.length > 0 ? (
-            movies!.map((movie) =>
+          {movies.length > 0 ? (
+            movies.map((movie) =>
               movie ? (
                 <Grid
                   item
@@ -47,7 +56,12 @@ export default function Section({ title, movies, profileUser }: SectionProps) {
                         }}
                       />
                     </Link>
-                    <CardButtons movie={movie} profileUser={profileUser} />
+                    <SectionButtons
+                      watchStatus={watchStatus}
+                      movie={movie}
+                      profileUser={profileUser}
+                      setWatchList={setWatchList}
+                    />
                   </Card>
                 </Grid>
               ) : null

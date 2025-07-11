@@ -239,7 +239,7 @@ export async function rate(
   //   method: "POST",
   //   headers: {
   //     "content-type": "application/json",
-  //     "x-authorization": authToken,
+  //     "Authorization": 'Bearer ' + authToken,
   //   },
   //   body: JSON.stringify({ userId, movieId, rating, comment }),
   // });
@@ -256,7 +256,7 @@ export async function editReview(
   //   method: 'PUT',
   //   headers: {
   //     'content-type': 'application/json',
-  //     'x-authorization': authToken
+  //     "Authorization": 'Bearer ' + authToken,
   //   },
   //   body: JSON.stringify({userId, movieId, comment});
   // });
@@ -274,7 +274,7 @@ export async function like(
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-authorization": authToken,
+      Authorization: "Bearer " + authToken,
     },
     body: JSON.stringify({ userId, movieId, like }),
   });
@@ -282,10 +282,10 @@ export async function like(
   return res;
 }
 
-export function getGenreList(){
-  const genreList: string[] = []
+export function getGenreList() {
+  const genreList: string[] = [];
   movies.forEach((movie) => {
-    if(!genreList.includes(movie.genre))genreList.push(movie.genre);
-  })
+    if (!genreList.includes(movie.genre)) genreList.push(movie.genre);
+  });
   return genreList;
 }

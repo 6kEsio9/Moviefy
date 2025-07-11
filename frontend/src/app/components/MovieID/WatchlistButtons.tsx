@@ -5,7 +5,6 @@ import { WatchList } from "@/app/services/AuthService";
 import * as AuthService from "../../services/AuthService";
 import { AccessTime, List, RemoveRedEyeRounded } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Movie } from "@/app/services/MovieService";
 
@@ -15,7 +14,6 @@ interface WatchListButtonsProps {
 
 export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
   const { user } = useAuth();
-  const movieId = useParams().id?.toString();
 
   const [watchStatus, setWatchStatus] = useState("none");
   const [watchList, setWatchList] = useState<WatchList>();
@@ -49,12 +47,12 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       case "watched": {
         if (watchStatus === "watched") {
           setWatchStatus("none");
-          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movie.id);
         } else {
           setWatchStatus("watched");
           updatedWatched?.push(movie);
-          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
-          updatedPlan = updatedPlan?.filter((x) => x.id !== movieId);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movie.id);
+          updatedPlan = updatedPlan?.filter((x) => x.id !== movie.id);
         }
         break;
       }
@@ -62,12 +60,13 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       case "plan": {
         if (watchStatus === "plan") {
           setWatchStatus("none");
-          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
+          console.log(updatedPlan);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movie.id);
         } else {
           setWatchStatus("plan");
           updatedPlan?.push(movie);
-          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
-          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
+          updatedWatched = updatedWatched?.filter((x) => x.id !== movie.id);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movie.id);
         }
         break;
       }
@@ -75,12 +74,12 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       case "watching": {
         if (watchStatus === "watching") {
           setWatchStatus("none");
-          updatedWatching = updatedWatching!.filter((x) => x.id !== movieId);
+          updatedWatching = updatedWatching!.filter((x) => x.id !== movie.id);
         } else {
           setWatchStatus("watching");
           updatedWatching?.push(movie);
-          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
-          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movie.id);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movie.id);
         }
         break;
       }

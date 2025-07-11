@@ -35,18 +35,24 @@ export default function TabsButtons({ profileUser }: TabsButtonsProps) {
           <Box>
             <Section
               title="🎬 Watched"
+              watchStatus="watched"
               movies={watchList.watched}
               profileUser={profileUser}
+              setWatchList={setWatchList}
             />
             <Section
               title="⏳ Is Watching"
+              watchStatus="watching"
               movies={watchList.isWatching}
               profileUser={profileUser}
+              setWatchList={setWatchList}
             />
             <Section
               title="📌 Will Watch"
+              watchStatus="plan"
               movies={watchList.willWatch}
               profileUser={profileUser}
+              setWatchList={setWatchList}
             />
           </Box>
         )}

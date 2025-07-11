@@ -40,8 +40,6 @@ export default function MovieDetails() {
     >
       <MovieInfo movie={movie} />
 
-      {user && <WatchlistButtons movie={movie} />}
-
       <ReviewList movie={movie} setMovie={setMovie} />
 
       <ReviewWriteField movie={movie} />

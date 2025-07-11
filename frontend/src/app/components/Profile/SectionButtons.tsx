@@ -3,18 +3,22 @@ import Button from "@mui/material/Button";
 
 import { Movie } from "@/app/services/MovieService";
 import { useState } from "react";
-import { UserProfile } from "@/app/services/AuthService";
+import { UserProfile, WatchList } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 
-interface CardButtonsProps {
+interface SectionButtonsProps {
+  watchStatus: string;
   movie: Movie;
   profileUser: UserProfile | undefined;
+  setWatchList: React.Dispatch<React.SetStateAction<WatchList | undefined>>;
 }
 
 export default function SectionButtons({
+  watchStatus,
   profileUser,
   movie,
-}: CardButtonsProps) {
+  setWatchList,
+}: SectionButtonsProps) {
   const [hover, setHover] = useState(false);
 
   const { user } = useAuth();
@@ -22,50 +26,8 @@ export default function SectionButtons({
   const [status, setStatus] = useState(false);
 
   const handleWatchlistChange = (state: string) => {
-    let updatedWatched = user!.watchList.watched;
-    let updatedPlan = user!.watchList.willWatch;
-    let updatedWatching = user!.watchList.isWatching;
-
-    switch (state) {
-      case "watched": {
-        updatedWatched!.push(movie.id);
-        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
-        updatedPlan = updatedPlan!.filter((x) => x !== movie.id);
-        break;
-      }
-
-      case "watching": {
-        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
-        updatedWatching!.push(movie.id);
-        updatedPlan = updatedPlan!.filter((x) => x !== movie.id);
-        break;
-      }
-
-      case "plan": {
-        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
-        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
-        updatedPlan!.push(movie.id);
-        break;
-      }
-
-      case "remove": {
-        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
-        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
-        updatedPlan = updatedPlan.filter((x) => x !== movie.id);
-        break;
-      }
-    }
-
-    const updatedWatchlist = {
-      watched: updatedWatched!,
-      isWatching: updatedWatching!,
-      willWatch: updatedPlan!,
-    };
-    const updatedUser = { ...user, watchList: updatedWatchlist };
-    setUser(updatedUser as User);
-
+    if (watchStatus === state) return;
   };
-
 
   return (
     <CardContent
