@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { User } from "../services/AuthService";
+import { jwtDecode } from "jwt-decode";
 
 export type AuthContextType = {
   user: User | null;
@@ -23,8 +24,19 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useLocalStorage<string | null>("user", null);
+  const [token, setToken] = useLocalStorage<string | null>("token", null);
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    // const decoded = jwtDecode(token!);
+    // console.log(decoded);
+    setUser({
+      id: "0",
+      username: "Georgi",
+      pfp: "/images/pfp.jpeg",
+    });
+  }, []);
 
   const onLogin = useCallback(
     (token: string, user: User) => {
@@ -37,8 +49,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const onLogout = useCallback(() => {
     setToken(null);
   }, [setToken]);
-
-  useEffect(() => {}, [token]);
 
   return (
     <AuthContext.Provider value={{ user, onLogin, onLogout }}>

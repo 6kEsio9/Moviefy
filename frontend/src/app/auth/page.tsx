@@ -35,7 +35,7 @@ export default function Auth() {
           username,
           email,
           password,
-        }).then(() => redirect("/home"));
+        }).then(() => redirect("/login"));
       };
       fetched();
     } else {
@@ -51,7 +51,6 @@ export default function Auth() {
         });
       };
       fetched();
-      redirect("/home");
     }
   };
 

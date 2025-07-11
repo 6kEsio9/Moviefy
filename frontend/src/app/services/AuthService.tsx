@@ -227,9 +227,17 @@ interface EditDto {
 }
 
 export async function login(formData: LoginDto) {
-  const res = await axios.post<UserReq>("/login", formData);
+  // const res = await axios.post<UserReq>("/login", formData);
 
-  return res;
+  // return res;
+  return {
+    data: {
+      id: "0",
+      username: "Georgi",
+      pfp: "/images/pfp.jpeg",
+      token: "token",
+    },
+  };
 }
 
 export async function register(formData: RegisterDto) {
@@ -333,8 +341,8 @@ export async function editUser(
   console.log(formData);
 }
 
-export function statusToNum(watchStatus: string){
+export function statusToNum(watchStatus: string) {
   if (watchStatus === "watched") return 0;
   if (watchStatus === "watching") return 1;
   if (watchStatus === "plan") return 2;
-};
+}
