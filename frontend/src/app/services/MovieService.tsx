@@ -24,7 +24,7 @@ export type Movie = {
   reviews: ReviewMovie[];
 };
 
-const movies = [
+const movies: Movie[] = [
   {
     id: "0",
     title: "Tenet",
@@ -286,4 +286,21 @@ export function getGenreList() {
     if (!genreList.includes(movie.genre)) genreList.push(movie.genre);
   });
   return genreList;
+}
+
+export async function addMovie(
+  userId: string,
+  formData: object,
+  authToken: string
+) {
+  const req = await fetch(`${url}/movies/add`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: "Bearer " + authToken,
+    },
+    body: JSON.stringify({ userId, formData }),
+  });
+  const res = req.json();
+  return res;
 }

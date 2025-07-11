@@ -23,10 +23,10 @@ export default function Auth() {
   };
 
   const handleAuth = (formData: FormData) => {
-    const username = formData.get("username");
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const confirm = formData.get("confirm");
+    const username = formData.get("username")?.toString() || "";
+    const email = formData.get("email")?.toString() || "";
+    const password = formData.get("password")?.toString() || "";
+    const confirm = formData.get("confirm")?.toString() || "";
 
     if (!login) {
       if (password !== confirm) alert("Passwords don't match!");
