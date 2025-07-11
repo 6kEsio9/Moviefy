@@ -4,14 +4,10 @@ import { useState } from "react";
 import InputText from "../components/AddMovie/InputText";
 import { Image } from "@mui/icons-material";
 import GenreSelect from "../components/AddMovie/GenreSelect";
-
-const possibleGenres = [
-  "Action",
-  "Comedy",
-  "Horror"
-]
+import { getGenreList } from "../services/MovieService";
 
 export default function AddMoviePage(){
+  const possibleGenres = getGenreList();
 
   const submitMovie = () => {
     const movie = {
@@ -59,7 +55,6 @@ export default function AddMoviePage(){
               label="Poster Image URL"
               value={poster}
               onChange={(e) => setPoster(e.target.value)}
-              width={300}
             />
           </div>
         </Grid>

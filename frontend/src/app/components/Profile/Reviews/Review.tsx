@@ -68,6 +68,7 @@ export default function Review({
             <Button
               variant="outlined"
               sx={{ fontSize: "10px", width: "120px" }}
+              // onClick={handleRemove}
             >
               Remove
             </Button>

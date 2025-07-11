@@ -13,6 +13,7 @@ export default function GenreSelection({
   movies,
   genre,
   textColor = "GrayText",
+
   moreRedirect = "",
 }: GenreSelectionProps) {
   return (

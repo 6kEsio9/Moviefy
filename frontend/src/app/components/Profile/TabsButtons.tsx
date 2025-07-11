@@ -31,21 +31,21 @@ export default function TabsButtons({ profileUser }: TabsButtonsProps) {
       </Tabs>
 
       <Box mt={4}>
-        {tab === 0 && (
+        {watchList && tab === 0 && (
           <Box>
             <Section
               title="🎬 Watched"
-              movies={watchList?.watched}
+              movies={watchList.watched}
               profileUser={profileUser}
             />
             <Section
               title="⏳ Is Watching"
-              movies={watchList?.isWatching}
+              movies={watchList.isWatching}
               profileUser={profileUser}
             />
             <Section
               title="📌 Will Watch"
-              movies={watchList?.willWatch}
+              movies={watchList.willWatch}
               profileUser={profileUser}
             />
           </Box>

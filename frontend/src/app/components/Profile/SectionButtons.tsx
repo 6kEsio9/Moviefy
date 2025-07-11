@@ -21,6 +21,52 @@ export default function SectionButtons({
 
   const [status, setStatus] = useState(false);
 
+  const handleWatchlistChange = (state: string) => {
+    let updatedWatched = user!.watchList.watched;
+    let updatedPlan = user!.watchList.willWatch;
+    let updatedWatching = user!.watchList.isWatching;
+
+    switch (state) {
+      case "watched": {
+        updatedWatched!.push(movie.id);
+        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
+        updatedPlan = updatedPlan!.filter((x) => x !== movie.id);
+        break;
+      }
+
+      case "watching": {
+        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
+        updatedWatching!.push(movie.id);
+        updatedPlan = updatedPlan!.filter((x) => x !== movie.id);
+        break;
+      }
+
+      case "plan": {
+        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
+        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
+        updatedPlan!.push(movie.id);
+        break;
+      }
+
+      case "remove": {
+        updatedWatched = updatedWatched!.filter((x) => x !== movie.id);
+        updatedWatching = updatedWatching!.filter((x) => x !== movie.id);
+        updatedPlan = updatedPlan.filter((x) => x !== movie.id);
+        break;
+      }
+    }
+
+    const updatedWatchlist = {
+      watched: updatedWatched!,
+      isWatching: updatedWatching!,
+      willWatch: updatedPlan!,
+    };
+    const updatedUser = { ...user, watchList: updatedWatchlist };
+    setUser(updatedUser as User);
+
+  };
+
+
   return (
     <CardContent
       onMouseEnter={() => setHover(true)}
@@ -33,18 +79,21 @@ export default function SectionButtons({
         status ? (
           <div>
             <Button
+              onClick={() => handleWatchlistChange("watched")}
               variant="contained"
               sx={{ fontSize: "10px", width: "120px" }}
             >
               Watched
             </Button>
             <Button
+              onClick={() => handleWatchlistChange("watching")}
               variant="contained"
               sx={{ fontSize: "10px", width: "120px" }}
             >
               Is Watching
             </Button>
             <Button
+              onClick={() => handleWatchlistChange("plan")}
               variant="contained"
               sx={{ fontSize: "10px", width: "120px" }}
             >
@@ -63,6 +112,7 @@ export default function SectionButtons({
             <Button
               variant="outlined"
               sx={{ fontSize: "10px", width: "120px" }}
+              onClick={() => handleWatchlistChange("remove")}
             >
               Remove
             </Button>

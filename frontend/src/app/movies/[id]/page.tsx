@@ -1,7 +1,6 @@
 "use client";
 import { Button, Grid } from "@mui/material";
 import MovieInfo from "@/app/components/MovieID/MovieInfo";
-import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
 import ReviewList from "@/app/components/MovieID/Reviews/ReviewList";
 import Link from "next/link";
 import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
@@ -11,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieSerivce from "../../services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
+import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
 
 export default function MovieDetails() {
   const { user } = useAuth();
