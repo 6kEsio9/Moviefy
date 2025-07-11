@@ -1,41 +1,45 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { useMovies } from "@/app/hooks/useMovies";
+import { ReviewUser } from "@/app/services/AuthService";
+import * as AuthService from "../../../services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
-import { Movie } from "@/app/services/MovieService";
 
 interface EditReviewsProps {
   comment: string | undefined;
   setEdit: React.Dispatch<React.SetStateAction<boolean>>;
-  movie: Movie;
+  review: ReviewUser;
+  setReviews: React.Dispatch<React.SetStateAction<ReviewUser[] | undefined>>;
 }
 
 export default function EditReviews({
   comment,
   setEdit,
-  movie,
+  review,
+  setReviews,
 }: EditReviewsProps) {
-  const { movies, setMovies } = useMovies();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
 
   const onSubmitHandler = (event: any) => {
     event?.preventDefault();
     const newComment = event.currentTarget[0].value;
-    const updatedReviews = movie.reviews.map((review) => {
-      if (review.userId === user?.id) {
-        return { ...review, comment: newComment };
-      }
-      return review;
-    });
 
-    const updatedMovie = { ...movie, reviews: updatedReviews };
+    setReviews((prevReviews) =>
+      prevReviews?.map((r) =>
+        r.movieId === review.movieId ? { ...r, comment: newComment } : r
+      )
+    );
 
-    const newMovies = movies.map((x) => (x.id === movie.id ? updatedMovie : x));
-
-    setMovies(newMovies);
     setEdit(false);
-    //fetch...
+    const fetched = async () => {
+      await AuthService.editReview(
+        user?.id!,
+        review.movieId,
+        newComment,
+        user?.token!
+      );
+    };
+    fetched();
   };
 
   return (

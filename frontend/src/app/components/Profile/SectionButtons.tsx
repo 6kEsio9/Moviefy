@@ -3,12 +3,12 @@ import Button from "@mui/material/Button";
 
 import { Movie } from "@/app/services/MovieService";
 import { useState } from "react";
-import { User } from "@/app/services/AuthService";
+import { UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 interface CardButtonsProps {
   movie: Movie;
-  profileUser: User | undefined;
+  profileUser: UserProfile | undefined;
 }
 
 export default function SectionButtons({
@@ -17,7 +17,7 @@ export default function SectionButtons({
 }: CardButtonsProps) {
   const [hover, setHover] = useState(false);
 
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
 
   const [status, setStatus] = useState(false);
 

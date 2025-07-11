@@ -5,15 +5,26 @@ import ReviewList from "@/app/components/MovieID/Reviews/ReviewList";
 import Link from "next/link";
 import ReviewWriteField from "@/app/components/MovieID/Reviews/ReviewWriteField";
 import { useParams } from "next/navigation";
-import { useMovies } from "@/app/hooks/useMovies";
 import Loading from "@/app/components/Movies/Loading";
+import { useEffect, useState } from "react";
+import { Movie } from "@/app/services/MovieService";
+import * as MovieSerivce from "../../services/MovieService";
+import { useAuth } from "@/app/hooks/useAuth";
+import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
 
 export default function MovieDetails() {
-  const { movies } = useMovies();
+  const { user } = useAuth();
+  const [movie, setMovie] = useState<Movie>();
 
-  const movieId = Number(useParams().id);
+  const movieId = useParams().id;
 
-  const movie = movies.find((x) => x.id === movieId);
+  useEffect(() => {
+    const fetched = async () => {
+      const result = await MovieSerivce.getMovie(String(movieId!));
+      setMovie(result);
+    };
+    fetched();
+  }, []);
 
   return movie ? (
     <Grid
@@ -27,11 +38,13 @@ export default function MovieDetails() {
         marginLeft: "10%",
       }}
     >
-      <MovieInfo movie={movie!} />
+      <MovieInfo movie={movie} />
 
-      <ReviewList reviews={movie!.reviews} />
+      {user && <WatchlistButtons movie={movie} />}
 
-      <ReviewWriteField />
+      <ReviewList movie={movie} setMovie={setMovie} />
+
+      <ReviewWriteField movie={movie} />
 
       <Link
         style={{ alignSelf: "center", textDecoration: "none" }}

@@ -1,28 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Box, Typography } from "@mui/material";
 import Edit from "./Edit";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useParams } from "next/navigation";
 
-import * as AuthService from "../../services/AuthService";
+import { UserProfile } from "../../services/AuthService";
 
-export default function ProfileHeader() {
-  const { user, setUser } = useAuth();
+interface ProfileHeaderProps {
+  profileUser: UserProfile | undefined;
+}
 
-  const userId = useParams().id;
-  const profileUser = AuthService.getUser(+userId!);
+export default function ProfileHeader({ profileUser }: ProfileHeaderProps) {
+  const { user } = useAuth();
 
   return (
     <Box className="flex flex-col items-center mb-6">
-      <Avatar
-        src={user?.id === profileUser?.id ? user?.pfp : profileUser?.pfp}
-        sx={{ width: 120, height: 120, mb: 2 }}
-      />
-      <Typography variant="h5">
-        {user?.id === profileUser?.id ? user?.username : profileUser?.username}
-      </Typography>
+      <Avatar src={profileUser?.pfp} sx={{ width: 120, height: 120, mb: 2 }} />
+      <Typography variant="h5">{profileUser?.username}</Typography>
       <Typography variant="body1" color="text.secondary">
-        {user?.id === profileUser?.id ? user?.bio : profileUser?.bio}
+        {profileUser?.bio}
       </Typography>
       {user?.id === profileUser?.id && <Edit />}
     </Box>

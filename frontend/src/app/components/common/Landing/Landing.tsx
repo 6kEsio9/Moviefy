@@ -13,10 +13,11 @@ import { Movie } from "@/app/services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function Landing() {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
 
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
+
   const [movies, setMovies] = React.useState<Movie[]>([]);
 
   React.useEffect(() => {
@@ -30,10 +31,13 @@ export default function Landing() {
   }, [input]);
 
   React.useEffect(() => {
-    if (debouncedInput) {
-      const result = MovieService.search(debouncedInput);
-      setMovies(result);
-    }
+    const fetched = async () => {
+      if (debouncedInput) {
+        const result = await MovieService.search(debouncedInput, false);
+        setMovies(result.movies);
+      }
+    };
+    fetched();
   }, [debouncedInput]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

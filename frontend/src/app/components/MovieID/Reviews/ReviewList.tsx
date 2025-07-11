@@ -1,12 +1,14 @@
-import { Review } from "@/app/services/MovieService";
+import * as React from "react";
+import { Movie } from "@/app/services/MovieService";
 import { Container, Divider, Grid, Typography } from "@mui/material";
 import ReviewItem from "./ReviewItem";
 
 interface ReviewListProps {
-  reviews: Review[];
+  movie: Movie;
+  setMovie: React.Dispatch<React.SetStateAction<Movie | undefined>>;
 }
 
-export default function ReviewList({ reviews }: ReviewListProps) {
+export default function ReviewList({ movie, setMovie }: ReviewListProps) {
   return (
     <Grid>
       <Container>
@@ -15,13 +17,17 @@ export default function ReviewList({ reviews }: ReviewListProps) {
         </Typography>
 
         <Grid container direction={"column"} spacing={3}>
-          {reviews
+          {movie.reviews
             .sort((a, b) => b.likes.length - a.likes.length)
             .map((review) => {
               return (
                 <div key={review.userId}>
                   <Divider orientation="horizontal" />
-                  <ReviewItem review={review} />
+                  <ReviewItem
+                    review={review}
+                    movie={movie}
+                    setMovie={setMovie}
+                  />
                 </div>
               );
             })}

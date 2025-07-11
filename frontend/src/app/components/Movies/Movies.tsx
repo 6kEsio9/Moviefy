@@ -1,31 +1,39 @@
 "use client";
 
-import { Pagination, Stack } from "@mui/material";
+import { useEffect, useState } from "react";
 import Loading from "./Loading";
 import MovieCard from "./MovieCard";
 import Sidebar from "./Sidebar/Sidebar";
-
-import { useMovies } from "@/app/hooks/useMovies";
-import { useEffect, useState } from "react";
 import { Movie } from "@/app/services/MovieService";
+import * as MovieService from "../../services/MovieService";
+import { Pagination, Stack } from "@mui/material";
 
-const movieCountPerPage = 6
+const movieCountPerPage = 6;
 
 export default function MoviesPage() {
-  const { movies } = useMovies();
-  const [displayMovies, setDisplayMovies] = useState<Movie[]>([])
+  const [movies, setMovies] = useState<Movie[]>();
+  const [displayMovies, setDisplayMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value)
-  }
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await MovieService.getAll();
+      setMovies(res);
+    };
+    fetched();
+  }, []);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
 
   useEffect(() => {
-
     //GET next movieCountPerPage # of movies
-
-    setDisplayMovies(movies.filter((x) => x.id < page * movieCountPerPage && x.id >= (page - 1) * movieCountPerPage ));
-  }, [movies, page, movieCountPerPage])
+    // setDisplayMovies(movies.filter((x) => x.id < page * movieCountPerPage && x.id >= (page - 1) * movieCountPerPage ));
+  }, [movies, page, movieCountPerPage]);
 
   return (
     <div
@@ -35,10 +43,10 @@ export default function MoviesPage() {
         flexDirection: "row",
         alignItems: "flex-start",
         gap: "20px",
-        marginBottom: "30px"
+        marginBottom: "30px",
       }}
     >
-      <Sidebar/>
+      <Sidebar />
 
       <Stack>
         <div
@@ -51,32 +59,27 @@ export default function MoviesPage() {
             width: "140ch",
           }}
         >
-          {movies.length > 0 ? (
-            displayMovies.map((movie) => {
-              return (
-                <MovieCard
-                  key={movie.id}
-                  id={movie.id}
-                  title={movie.title}
-                  imageUrl={movie.imageUrl}
-                />
-              );
+          {movies && movies.length > 0 ? (
+            movies.map((movie) => {
+              return <MovieCard key={movie.id} movie={movie} movies={movies} />;
             })
-          ) : ( 
+          ) : (
             <Loading />
           )}
         </div>
-        <div style={{display: "flex", justifyContent: "center"}}>
-          <Pagination
-            variant="outlined"
-            shape="rounded"
-            count={Math.ceil(movies.length/movieCountPerPage)}
-            size="large"
-            sx={{mt: 5}}
-            page={page}
-            onChange={handlePageChange}
-          />
-        </div>
+        {movies && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Pagination
+              variant="outlined"
+              shape="rounded"
+              count={Math.ceil(movies.length / movieCountPerPage)}
+              size="large"
+              sx={{ mt: 5 }}
+              page={page}
+              onChange={handlePageChange}
+            />
+          </div>
+        )}
       </Stack>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 interface ImageProps {
-  item: { title: string; id: number; imageUrl: string };
+  item: { title: string; id: string; imageUrl: string };
   index: number;
 }
 

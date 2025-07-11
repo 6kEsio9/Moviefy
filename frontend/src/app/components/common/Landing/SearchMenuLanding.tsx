@@ -4,7 +4,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import { Movie } from "@/app/contexts/MovieContext";
+import { Movie } from "@/app/services/MovieService";
 import Link from "next/link";
 
 interface SearchMenuProps {
@@ -29,6 +29,7 @@ export default function SearchMenuLanding({ movies }: SearchMenuProps) {
     >
       {movies.map((x) => (
         <Link
+          key={x.id}
           style={{ textDecoration: "none", color: "black" }}
           href={`/movies/${x.id}`}
         >

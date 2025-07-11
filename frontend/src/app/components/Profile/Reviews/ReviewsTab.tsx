@@ -1,32 +1,41 @@
-import { User } from "@/app/services/AuthService";
+import { UserProfile } from "@/app/services/AuthService";
 
 import { Box } from "@mui/material";
 
 import Review from "./Review";
-import { useMovies } from "@/app/hooks/useMovies";
+import React, { useEffect, useState } from "react";
+import * as AuthService from "@/app/services/AuthService";
 
 interface ReviewProps {
-  profileUser: User | undefined;
+  profileUser: UserProfile | undefined;
 }
 
 export default function Reviews({ profileUser }: ReviewProps) {
-  const { movies, setMovies } = useMovies();
+  const [reviews, setReviews] = useState<
+    AuthService.ReviewUser[] | undefined
+  >();
+
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await AuthService.getReviews(profileUser?.id!);
+      setReviews(res);
+    };
+    fetched();
+  }, []);
 
   return (
-    profileUser!.reviews.length > 0 ? (
-      <Box>
-        {profileUser?.reviews.map((movieId) => {
-          const movie = movies.find((x) => x.id === movieId);
-
+    <Box>
+      {reviews &&
+        reviews.map((review) => {
           return (
-            <Review key={movieId} movie={movie!} profileUser={profileUser} />
+            <Review
+              key={review.movieTitle}
+              review={review}
+              profileUser={profileUser}
+              setReviews={setReviews}
+            />
           );
         })}
-      </Box>
-    ) : (
-      <div style={{display: "flex", justifyContent:"center"}}>
-        <p>User doesn't have reviews in this section.</p>
-      </div>
-    )
+    </Box>
   );
 }

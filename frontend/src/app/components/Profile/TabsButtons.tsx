@@ -1,45 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import Section from "./Section";
-import { Movie } from "@/app/services/MovieService";
-import * as MovieService from "@/app/services/MovieService";
 import Reviews from "./Reviews/ReviewsTab";
-import { useParams } from "next/navigation";
 
+import { UserProfile, WatchList } from "@/app/services/AuthService";
 import * as AuthService from "../../services/AuthService";
-import { useAuth } from "@/app/hooks/useAuth";
 
-export default function TabsButtons() {
+interface TabsButtonsProps {
+  profileUser: UserProfile | undefined;
+}
+
+export default function TabsButtons({ profileUser }: TabsButtonsProps) {
   const [tab, setTab] = useState(0);
 
-  const { user, setUser } = useAuth();
-
-  const userId = Number(useParams().id);
-  const profileUser = userId === user?.id ? user : AuthService.getUser(userId!);
-
-  const [watched, setWatched] = useState<Movie[]>();
-  const [isWatching, setIsWatching] = useState<Movie[]>();
-  const [willWatch, setWillWatch] = useState<Movie[]>();
+  const [watchList, setWatchList] = useState<WatchList>();
 
   useEffect(() => {
-    const watchedResult: Movie[] = [];
-    profileUser?.watchList.watched.map((x) => {
-      watchedResult.push(MovieService.getMovie(x)!);
-    });
-    setWatched(watchedResult);
-
-    const isWatchingResult: Movie[] = [];
-    profileUser?.watchList.isWatching.map((x) => {
-      isWatchingResult.push(MovieService.getMovie(x)!);
-    });
-    setIsWatching(isWatchingResult);
-
-    const willWatchResult: Movie[] = [];
-    profileUser?.watchList.willWatch.map((x) => {
-      willWatchResult.push(MovieService.getMovie(x)!);
-    });
-    setWillWatch(willWatchResult);
-  }, [user?.watchList.watched, user?.watchList.isWatching, user?.watchList.willWatch]);
+    const fetched = async () => {
+      const res = await AuthService.getWatchList(profileUser?.id!);
+      setWatchList(res);
+    };
+    fetched();
+  }, []);
 
   return (
     <>
@@ -49,31 +31,27 @@ export default function TabsButtons() {
       </Tabs>
 
       <Box mt={4}>
-        {tab === 0 && (
+        {watchList && tab === 0 && (
           <Box>
             <Section
               title="🎬 Watched"
-              movies={watched}
-              profileUser={profileUser?.id === user?.id ? user : profileUser}
+              movies={watchList.watched}
+              profileUser={profileUser}
             />
             <Section
               title="⏳ Is Watching"
-              movies={isWatching}
-              profileUser={profileUser?.id === user?.id ? user : profileUser}
+              movies={watchList.isWatching}
+              profileUser={profileUser}
             />
             <Section
               title="📌 Will Watch"
-              movies={willWatch}
-              profileUser={profileUser?.id === user?.id ? user : profileUser}
+              movies={watchList.willWatch}
+              profileUser={profileUser}
             />
           </Box>
         )}
 
-        {tab === 1 && (
-          <Reviews
-            profileUser={profileUser?.id === user?.id ? user : profileUser}
-          />
-        )}
+        {tab === 1 && <Reviews profileUser={profileUser} />}
       </Box>
     </>
   );

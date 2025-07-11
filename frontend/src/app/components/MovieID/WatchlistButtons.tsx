@@ -1,32 +1,60 @@
 "use client";
 
 import { useAuth } from "@/app/hooks/useAuth";
-import { User } from "@/app/services/AuthService";
+import { WatchList } from "@/app/services/AuthService";
+import * as AuthService from "../../services/AuthService";
 import { AccessTime, List, RemoveRedEyeRounded } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Movie } from "@/app/services/MovieService";
 
-export default function WatchlistButtons() {
-  const { user, setUser } = useAuth();
-  const movieId = +useParams().id!;
+interface WatchListButtonsProps {
+  movie: Movie;
+}
+
+export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
+  const { user } = useAuth();
+  const movieId = useParams().id?.toString();
+
   const [watchStatus, setWatchStatus] = useState("none");
+  const [watchList, setWatchList] = useState<WatchList>();
+
+  useEffect(() => {
+    const fetched = async () => {
+      const res = await AuthService.getWatchList(user!.id);
+      setWatchList(res);
+    };
+    fetched();
+  }, [user]);
+
+  useEffect(() => {
+    if (!watchList || !movie) return;
+
+    if (watchList.watched.some((x) => x.id === movie.id)) {
+      setWatchStatus("watched");
+    } else if (watchList.isWatching.some((x) => x.id === movie.id))
+      setWatchStatus("watching");
+    else if (watchList.willWatch.some((x) => x.id === movie.id))
+      setWatchStatus("plan");
+    else setWatchStatus("none");
+  }, [watchList, movie]);
 
   const handleWatchlistChange = (state: string) => {
-    let updatedWatched = user?.watchList.watched;
-    let updatedPlan = user?.watchList.willWatch;
-    let updatedWatching = user?.watchList.isWatching;
+    let updatedWatched = [...(watchList?.watched || [])];
+    let updatedPlan = [...(watchList?.willWatch || [])];
+    let updatedWatching = [...(watchList?.isWatching || [])];
 
     switch (state) {
       case "watched": {
         if (watchStatus === "watched") {
           setWatchStatus("none");
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("watched");
-          updatedWatched?.push(movieId);
-          updatedWatching = updatedWatching?.filter((x) => x !== movieId);
-          updatedPlan = updatedPlan?.filter((x) => x !== movieId);
+          updatedWatched?.push(movie);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
+          updatedPlan = updatedPlan?.filter((x) => x.id !== movieId);
         }
         break;
       }
@@ -34,12 +62,12 @@ export default function WatchlistButtons() {
       case "plan": {
         if (watchStatus === "plan") {
           setWatchStatus("none");
-          updatedPlan = updatedPlan!.filter((x) => x !== movieId);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("plan");
-          updatedPlan?.push(movieId);
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
-          updatedWatching = updatedWatching?.filter((x) => x !== movieId);
+          updatedPlan?.push(movie);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
+          updatedWatching = updatedWatching?.filter((x) => x.id !== movieId);
         }
         break;
       }
@@ -47,34 +75,40 @@ export default function WatchlistButtons() {
       case "watching": {
         if (watchStatus === "watching") {
           setWatchStatus("none");
-          updatedWatching = updatedWatching!.filter((x) => x !== movieId);
+          updatedWatching = updatedWatching!.filter((x) => x.id !== movieId);
         } else {
           setWatchStatus("watching");
-          updatedWatching?.push(movieId);
-          updatedWatched = updatedWatched!.filter((x) => x !== movieId);
-          updatedPlan = updatedPlan!.filter((x) => x !== movieId);
+          updatedWatching?.push(movie);
+          updatedWatched = updatedWatched!.filter((x) => x.id !== movieId);
+          updatedPlan = updatedPlan!.filter((x) => x.id !== movieId);
         }
         break;
       }
     }
 
-    const updatedWatchlist = {
-      watched: updatedWatched!,
-      isWatching: updatedWatching!,
-      willWatch: updatedPlan!,
+    const statusToNum = (watchStatus: string) => {
+      if (watchStatus === "watched") return 0;
+      if (watchStatus === "watching") return 1;
+      if (watchStatus === "plan") return 2;
     };
-    const updatedUser = { ...user, watchList: updatedWatchlist };
-    setUser(updatedUser as User);
-  };
 
-  useEffect(() => {
-    if (user?.watchList.watched.includes(+movieId!)) setWatchStatus("watched");
-    else if (user?.watchList.isWatching.includes(+movieId!))
-      setWatchStatus("watching");
-    else if (user?.watchList.willWatch.includes(+movieId!))
-      setWatchStatus("plan");
-    else setWatchStatus("none");
-  }, []);
+    setWatchList({
+      watched: updatedWatched,
+      willWatch: updatedPlan,
+      isWatching: updatedWatching,
+    });
+
+    // const fetched = async () => {
+    //   const req = await AuthService.changeMovieStatus(
+    //     user?.id!,
+    //     movieId!,
+    //     statusToNum(watchStatus)!,
+    //     user?.token!
+    //   );
+    //   console.log(req);
+    // };
+    // fetched();
+  };
 
   return (
     <div>

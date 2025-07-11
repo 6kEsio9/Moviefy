@@ -1,14 +1,16 @@
+import { users } from "./AuthService";
+
 const url = "";
 
-export type Review = {
-  userId: number;
+export type ReviewMovie = {
+  userId: string;
   rating: number;
   comment: string;
-  likes: number[];
+  likes: string[];
 };
 
 export type Movie = {
-  id: number;
+  id: string;
   title: string;
   imageUrl: string;
   year: number;
@@ -19,12 +21,12 @@ export type Movie = {
   director: string;
   cast: string[];
   crew: string[];
-  reviews: Review[];
+  reviews: ReviewMovie[];
 };
 
 const movies = [
   {
-    id: 0,
+    id: "0",
     title: "Tenet",
     imageUrl: "/images/tennet.jpeg",
     year: 2005,
@@ -35,10 +37,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 1, rating: 3, comment: "Great movie!", likes: [0, 1] }],
+    reviews: [
+      { userId: "0", rating: 3, comment: "Great movie!", likes: ["0", "1"] },
+    ],
   },
   {
-    id: 1,
+    id: "1",
     title: "Cars",
     imageUrl: "/images/cars.jpeg",
     year: 2010,
@@ -50,10 +54,12 @@ const movies = [
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
 
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 2,
+    id: "2",
     title: "Game Of Thrones",
     imageUrl: "/images/gameOfThrones.jpeg",
     year: 2015,
@@ -65,10 +71,12 @@ const movies = [
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
 
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 3,
+    id: "3",
     title: "Inglourious Basterds",
     imageUrl: "/images/inglouriousBasterds.jpeg",
     year: 2009,
@@ -79,10 +87,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 4,
+    id: "4",
     title: "Interstellar",
     imageUrl: "/images/interstellar.jpeg",
     year: 2004,
@@ -93,10 +103,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 5,
+    id: "5",
     title: "Star Wars",
     imageUrl: "/images/starWars.jpeg",
     year: 1999,
@@ -107,10 +119,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 6,
+    id: "6",
     title: "Taxi",
     imageUrl: "/images/taxi.jpeg",
     year: 2012,
@@ -121,10 +135,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 7,
+    id: "7",
     title: "No Game No Life Zero",
     imageUrl:
       "//upload.wikimedia.org/wikipedia/en/3/3d/No_Game%2C_No_Life_Zero_poster.jpg",
@@ -136,10 +152,12 @@ const movies = [
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
   {
-    id: 8,
+    id: "8",
     title: "Pokemon: Firered Version",
     imageUrl:
       "https://m.media-amazon.com/images/M/MV5BYjViMDU3MmItMzM0ZC00OWNmLWEyZWYtMWEyNjAyNjg1YWU4XkEyXkFqcGc@._V1_.jpg",
@@ -152,26 +170,57 @@ const movies = [
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
 
-    reviews: [{ userId: 0, rating: 4, comment: "Great movie!", likes: [1] }],
+    reviews: [
+      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
+    ],
   },
 ];
 
-export function getAll() {
-  //   return fetch(url)
-  //     .then((res) => res.json());
+export async function getAll() {
+  // const req = await fetch(`${url}/movies`);
+  // const res = await req.json();
+  // return res;
+
   return movies;
 }
 
-export function getMovie(id: number) {
-  const movie = movies.find((x) => x.id === id);
+export async function getMovie(movieId: string) {
+  // const req = await fetch(`${url}/movies?` + new URLSearchParams({movieId: movieId}));
+  // const res = await req.json();
+  // return res;
+
+  const movie = movies.find((x) => x.id === movieId);
 
   return movie;
 }
 
-export function search(searchInput: string) {
-  const result = movies
+export async function search(searchInput: string, usersB: boolean) {
+  // const req = await fetch(
+  //   `${url}/search?` +
+  //     new URLSearchParams({
+  //       input: searchInput,
+  //       users: usersB ? "true" : "false",
+  //     })
+  // );
+
+  // const res = await req.json();
+  // return res;
+
+  const result: any = {};
+
+  const resultTemp = movies
     .filter((x) => x.title.toLowerCase().includes(searchInput.toLowerCase()))
     .sort((a, b) => a.title.localeCompare(b.title));
+  result.movies = resultTemp;
+
+  if (usersB) {
+    const resultUsers = users
+      .filter((x) =>
+        x.username.toLowerCase().includes(searchInput.toLowerCase())
+      )
+      .sort((a, b) => a.username.localeCompare(b.username));
+    result.users = resultUsers;
+  }
 
   return result;
 
@@ -179,14 +228,58 @@ export function search(searchInput: string) {
   //   .then(res => res.json());
 }
 
-export function rate(
-  authId: number,
-  movieId: number,
+export async function rate(
+  userId: string,
+  movieId: string,
   rating: number,
-  comment: string
+  authToken: string,
+  comment?: string
 ) {
-  // const movie = movies.find((x) => x.id === movieId);
-  // const user = AuthService.getUser(authId);
+  // const req = await fetch(`${url}/movies/rate`, {
+  //   method: "POST",
+  //   headers: {
+  //     "content-type": "application/json",
+  //     "x-authorization": authToken,
+  //   },
+  //   body: JSON.stringify({ userId, movieId, rating, comment }),
+  // });
+  console.log("movie rated");
+}
+
+export async function editReview(
+  userId: string,
+  movieId: string,
+  comment: string,
+  authToken: string
+) {
+  // const req = await fetch(`${url}/movies/reviews/edit`, {
+  //   method: 'PUT',
+  //   headers: {
+  //     'content-type': 'application/json',
+  //     'x-authorization': authToken
+  //   },
+  //   body: JSON.stringify({userId, movieId, comment});
+  // });
+  // const res = await req.json();
+  // return res;
+}
+
+export async function like(
+  userId: string,
+  movieId: string,
+  like: boolean,
+  authToken: string
+) {
+  const req = await fetch(`${url}/movies/like`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-authorization": authToken,
+    },
+    body: JSON.stringify({ userId, movieId, like }),
+  });
+  const res = await req.json();
+  return res;
 }
 
 export function getGenreList(){

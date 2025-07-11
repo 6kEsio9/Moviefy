@@ -1,37 +1,42 @@
 import Link from "next/link";
 interface ReviewProps {
-  review: ms.Review;
+  movie: ms.Movie;
+  review: ms.ReviewMovie;
+  setMovie: React.Dispatch<React.SetStateAction<ms.Movie | undefined>>;
 }
 import { Grid, IconButton, Rating, Typography } from "@mui/material";
 import * as ms from "@/app/services/MovieService";
-import { getUser } from "@/app/services/AuthService";
+import { getUser, User } from "@/app/services/AuthService";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { useMovies } from "@/app/hooks/useMovies";
-import { useParams } from "next/navigation";
 import { useAuth } from "@/app/hooks/useAuth";
 
-export default function ReviewItem({ review }: ReviewProps) {
-  const user = getUser(review.userId);
+export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
+  const [displayUser, setDisplayUser] = useState<User>();
+
   const [liked, setLiked] = useState(false);
-  const { movies, setMovies } = useMovies();
 
-  const movieId = Number(useParams().id);
-
-  const movie = movies.find((x) => x.id === movieId);
-
-  const currentUser = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if(currentUser.user !== undefined)
-      if(review.likes.includes(currentUser.user.id))setLiked(true)
-  }, [])
+    const fetched = async () => {
+      const resUser = await getUser(review.userId);
+      setDisplayUser(resUser);
+    };
+    fetched();
+
+    if (user) if (review.likes.includes(user.id)) setLiked(true);
+  }, []);
 
   const handleLike = () => {
     const newLiked = !liked;
     setLiked(newLiked);
     const updatedReview = review;
-    newLiked ? updatedReview.likes.push(currentUser.user!.id) : updatedReview.likes = updatedReview.likes.filter((x) => x !== currentUser.user!.id)
+    newLiked
+      ? updatedReview.likes.push(user!.id)
+      : (updatedReview.likes = updatedReview.likes.filter(
+          (x) => x !== user!.id
+        ));
 
     const updatedReviews = movie!.reviews.map((review) => {
       if (review.userId === user?.id) {
@@ -41,14 +46,13 @@ export default function ReviewItem({ review }: ReviewProps) {
     });
 
     const updatedMovie = { ...movie!, reviews: updatedReviews };
-    const updatedMovieList = movies.map((x) => {
-      if (x.id === movie!.id) {
-        return updatedMovie;
-      }
-      return x;
-    });
 
-    setMovies(updatedMovieList as ms.Movie[]);
+    const fetched = async () => {
+      await ms.like(user?.id!, movie.id, newLiked ? true : false, user?.token!);
+    };
+    fetched();
+
+    setMovie(updatedMovie);
   };
 
   return (
@@ -56,11 +60,7 @@ export default function ReviewItem({ review }: ReviewProps) {
       <Grid>
         <Link href={`/profile/${user?.id}`}>
           <img
-            src={
-              currentUser.user?.id === user?.id
-                ? currentUser.user?.pfp
-                : user?.pfp
-            }
+            src={displayUser?.pfp}
             style={{ borderRadius: "100%", width: "50px" }}
           />
         </Link>
@@ -72,7 +72,12 @@ export default function ReviewItem({ review }: ReviewProps) {
         </Grid>
         <Typography>{review.comment}</Typography>
         <Grid container direction={"row"}>
-          <IconButton disabled={currentUser.user === undefined} color="inherit" sx={{ padding: 0 }} onClick={handleLike}>
+          <IconButton
+            disabled={!user}
+            color="inherit"
+            sx={{ padding: 0 }}
+            onClick={handleLike}
+          >
             {liked ? <Favorite color="error" /> : <FavoriteBorder />}
           </IconButton>
           <Typography>{review.likes.length}</Typography>

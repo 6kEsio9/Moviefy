@@ -1,77 +1,48 @@
-'use client'
+"use client";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useMovies } from "@/app/hooks/useMovies";
-import { Movie, Review } from "@/app/services/MovieService";
-import { Box, Button, Container, Rating, TextField, Typography } from "@mui/material";
-import { useParams } from "next/navigation";
+import { Movie } from "@/app/services/MovieService";
+import {
+  Box,
+  Button,
+  Container,
+  Rating,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 
-export default function ReviewWriteField(){
-  const { user, setUser } = useAuth();
-  const movieId = Number(useParams().id);
-  const [shouldRender, setShouldRender] = useState(false)
-  const [rating, setRating] = useState<number | null>(0)
-  const { movies, setMovies } = useMovies();
+interface ReviewWriteFieldProps {
+  movie: Movie;
+}
 
-  const handlePost = (formData: FormData) => {
-    const reviewText = formData.get("reviewText")?.toString() || ""
-
-    user!.reviews.push(Number(movieId));
-    
-    const newReview: Review = {
-      userId: user!.id,
-      rating: (rating) ? rating : 0,
-      comment: reviewText,
-      likes: []
-    }
-    const movie = movies.find((x) => x.id === movieId);
-
-    const updatedReviews = movie!.reviews;
-    updatedReviews.push(newReview)
-
-    const updatedMovie = {...movie!, reviews: updatedReviews}
-    const updatedMovieList: Movie[] = movies.map((x) => {
-      if(x.id === movieId)return updatedMovie;
-      return x;
-    })
-
-    setMovies(updatedMovieList);
-    setShouldRender(false);
-  }
+export default function ReviewWriteField({ movie }: ReviewWriteFieldProps) {
+  const { user } = useAuth();
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    
-    //fetch
+    const userIndex = movie?.reviews.findIndex((x) => x.userId === user?.id);
 
-    if(!user?.reviews.includes(+movieId!)){
+    if (userIndex! > -1) {
       setShouldRender(true);
     }
-  }, [])
+  }, []);
 
-  return(
+  return (
     <Container>
-      {shouldRender ?
-      <Box>
-        <Typography variant="h5" color="gray">{user === undefined ? "Sign in to write a review" : "Write a review"}</Typography>
-        <Rating value={rating} onChange={(e, newValue) => setRating(newValue)} disabled={user === undefined}/>
-        <Box component="form" action={handlePost}>
-          <TextField
-            name="reviewText"  
-            fullWidth
-            multiline
-            disabled={user === undefined}
-            rows={5}/>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={user === undefined}
-            sx={{mt: 2}}
-            >Post
+      {shouldRender ? (
+        <Box>
+          <Typography variant="h5" color="gray">
+            {user === null ? "Sign in to write a review" : "Write a review"}
+          </Typography>
+          <Rating disabled={user === null} />
+          <TextField fullWidth multiline disabled={user === null} rows={5} />
+          <Button variant="contained" disabled={user === null} sx={{ mt: 2 }}>
+            Post
           </Button>
         </Box>
-      </Box>
-      
-      : <></>}
+      ) : (
+        <></>
+      )}
     </Container>
-  )
+  );
 }

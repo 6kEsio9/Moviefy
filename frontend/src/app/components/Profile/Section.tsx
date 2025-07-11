@@ -3,13 +3,13 @@ import { Box, Card, Grid, Typography } from "@mui/material";
 import { Movie } from "../../services/MovieService";
 import Link from "next/link";
 import CardButtons from "./SectionButtons";
-import { User } from "@/app/services/AuthService";
+import { UserProfile } from "@/app/services/AuthService";
 import Loading from "../Movies/Loading";
 
 interface SectionProps {
   title: string;
   movies: Movie[] | undefined;
-  profileUser: User | undefined;
+  profileUser: UserProfile | undefined;
 }
 
 export default function Section({ title, movies, profileUser }: SectionProps) {
@@ -40,7 +40,11 @@ export default function Section({ title, movies, profileUser }: SectionProps) {
                       <img
                         src={movie.imageUrl}
                         alt={movie.title}
-                        style={{ width: "100%", height: 200, objectFit: "cover" }}
+                        style={{
+                          width: "100%",
+                          height: 200,
+                          objectFit: "cover",
+                        }}
                       />
                     </Link>
                     <CardButtons movie={movie} profileUser={profileUser} />
@@ -53,7 +57,7 @@ export default function Section({ title, movies, profileUser }: SectionProps) {
           )}
         </Grid>
       ) : (
-        <Loading/>
+        <Loading />
       )}
     </Box>
   );

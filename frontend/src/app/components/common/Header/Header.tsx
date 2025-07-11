@@ -35,7 +35,14 @@ function Header() {
     setAnchorElUser(null);
   };
 
-  const { user, setUser } = useAuth();
+  const { user, onLogout } = useAuth();
+
+  const handleLogout = (e: any) => {
+    if (e.currentTarget.textContent === "Logout") {
+      onLogout();
+      //redirect...
+    }
+  };
 
   return (
     <AppBar position="static">
@@ -144,11 +151,18 @@ function Header() {
                 ? settings.map((setting) => (
                     <Link
                       key={setting}
-                      href={`/${setting.toLowerCase()}/${user.id}`}
+                      href={
+                        setting === "Profile"
+                          ? `/${setting.toLowerCase()}/${user.id}`
+                          : ""
+                      }
                       style={{ textDecoration: "none", color: "black" }}
                     >
                       <MenuItem onClick={handleCloseUserMenu}>
-                        <Typography sx={{ textAlign: "center" }}>
+                        <Typography
+                          sx={{ textAlign: "center" }}
+                          onClick={handleLogout}
+                        >
                           {setting}
                         </Typography>
                       </MenuItem>

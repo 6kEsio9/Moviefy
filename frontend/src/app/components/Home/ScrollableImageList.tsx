@@ -51,14 +51,15 @@ export default function ScrollableImageList({
           scrollbarWidth: "none",
         }}
       >
-        {movies.map((movie, index) => (
-          <ImageListItem
-            key={index}
-            sx={{ maxWidth: 200, maxHeight: 300, flex: "0 0 auto" }}
-          >
-            <Image item={movie} index={index} />
-          </ImageListItem>
-        ))}
+        {movies &&
+          movies.map((movie, index) => (
+            <ImageListItem
+              key={movie.id}
+              sx={{ maxWidth: 200, maxHeight: 300, flex: "0 0 auto" }}
+            >
+              <Image item={movie} index={index} />
+            </ImageListItem>
+          ))}
       </Box>
 
       <IconButton
