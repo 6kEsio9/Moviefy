@@ -200,9 +200,8 @@ export default function PrimarySearchAppBar() {
               onChange={handleSearch}
             />
           </Search>
-          {(movies.length > 0 || users.length > 0) && debouncedInput && (
-            <SearchMenu movies={movies} users={users} />
-          )}
+          {((movies && movies.length > 0) || (users && users.length > 0)) &&
+            debouncedInput && <SearchMenu movies={movies} users={users} />}
         </Toolbar>
       </AppBar>
       {renderMobileMenu}

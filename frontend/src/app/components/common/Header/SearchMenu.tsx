@@ -27,7 +27,7 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
         overflowY: "auto",
       }}
     >
-      {movies.length > 0 && (
+      {movies && movies.length > 0 && (
         <div
           style={{
             width: "90%",
@@ -38,26 +38,31 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
           Movies
         </div>
       )}
-      {movies.map((x) => (
-        <Link
-          style={{ textDecoration: "none", color: "black" }}
-          href={`/movies/${x.id}`}
-        >
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <img
-                  style={{ width: "100%", height: "100%" }}
-                  src={x.imageUrl}
-                  alt={x.title}
-                ></img>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={x.title} secondary={`Premiere: ${x.year}`} />
-          </ListItem>
-        </Link>
-      ))}
-      {users.length > 0 && (
+      {movies &&
+        movies.map((x) => (
+          <Link
+            key={x.id}
+            style={{ textDecoration: "none", color: "black" }}
+            href={`/movies/${x.id}`}
+          >
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <img
+                    style={{ width: "100%", height: "100%" }}
+                    src={x.imageUrl}
+                    alt={x.title}
+                  ></img>
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={x.title}
+                secondary={`Premiere: ${x.year}`}
+              />
+            </ListItem>
+          </Link>
+        ))}
+      {users && users.length > 0 && (
         <div
           style={{
             width: "90%",
@@ -69,25 +74,26 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
         </div>
       )}
 
-      {users.map((x) => (
-        <Link
-          style={{ textDecoration: "none", color: "black" }}
-          href={`/profile/${x.id}`}
-        >
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <img
-                  style={{ width: "100%", height: "100%" }}
-                  src={x.pfp}
-                  alt={x.username}
-                ></img>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={x.username} />
-          </ListItem>
-        </Link>
-      ))}
+      {users &&
+        users.map((x) => (
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            href={`/profile/${x.id}`}
+          >
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <img
+                    style={{ width: "100%", height: "100%" }}
+                    src={x.pfp}
+                    alt={x.username}
+                  ></img>
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary={x.username} />
+            </ListItem>
+          </Link>
+        ))}
     </List>
   );
 }

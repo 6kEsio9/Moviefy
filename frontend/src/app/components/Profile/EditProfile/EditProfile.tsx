@@ -41,10 +41,6 @@ export default function EditProfile() {
       return;
     }
 
-    // if (user) {
-    //   setUser({ ...user, username, email, bio, pfp, id: user?.id });
-    // }
-
     const fetched = async () => {
       await AuthService.editUser(
         editUser?.id!,
