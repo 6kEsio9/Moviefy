@@ -22,6 +22,8 @@ export default function EditReviews({
 }: EditReviewsProps) {
   const { user } = useAuth();
 
+  const authToken = localStorage.getItem("user");
+
   const onSubmitHandler = (event: any) => {
     event?.preventDefault();
 
@@ -32,7 +34,7 @@ export default function EditReviews({
         user?.id!,
         movie.id,
         newComment,
-        user?.token!
+        authToken!
       );
     };
     fetched();

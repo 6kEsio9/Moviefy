@@ -32,6 +32,7 @@ export default function ReviewPageItem({
   );
 
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
 
   const [edit, setEdit] = useState(false);
 
@@ -49,7 +50,7 @@ export default function ReviewPageItem({
     })
 
     // const fetched = async () => {
-    //   await MovieService.deleteReview(user!.id, movie.id, user!.token);
+    //   await MovieService.deleteReview(user!.id, movie.id, authToken!);
     // };
     // fetched();
   }

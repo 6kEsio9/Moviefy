@@ -12,7 +12,7 @@ import EditReviews from "./EditReviews";
 import { ReviewUser, UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
-// import * as ms from "@/app/services/MovieService"
+import * as ms from "@/app/services/MovieService"
 
 interface ReviewProps {
   review: ReviewUser;
@@ -26,6 +26,7 @@ export default function Review({
   setReviews,
 }: ReviewProps) {
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
   const [edit, setEdit] = useState(false);
 
   const handleRemove = () => {
@@ -34,7 +35,7 @@ export default function Review({
     })
 
     // const fetched = async () => {
-    //   await ms.deleteReview(user!.id, review.movieId, user!.token);
+    //   await ms.deleteReview(user!.id, review.movieId, authToken!);
     // };
     // fetched();
   }

@@ -28,7 +28,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
           src={movie.imageUrl}
           alt={movie.title}
           sx={{
-            height: { xs: 300, md: 400 },
+            height: { xs: 400, md: 500 },
             objectFit: "cover",
             borderRadius: 2,
             boxShadow: 3,

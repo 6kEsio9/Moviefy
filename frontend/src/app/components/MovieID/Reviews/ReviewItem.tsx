@@ -17,6 +17,7 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
   const [liked, setLiked] = useState(false);
 
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
 
   useEffect(() => {
     const fetched = async () => {
@@ -48,7 +49,7 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
     const updatedMovie = { ...movie!, reviews: updatedReviews };
 
     const fetched = async () => {
-      await ms.like(user?.id!, movie.id, newLiked ? true : false, user?.token!);
+      await ms.like(user?.id!, movie.id, newLiked ? true : false, authToken!);
     };
     fetched();
 
