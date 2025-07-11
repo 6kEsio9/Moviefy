@@ -256,7 +256,24 @@ export async function editReview(
   //     'content-type': 'application/json',
   //     "Authorization": 'Bearer ' + authToken,
   //   },
-  //   body: JSON.stringify({userId, movieId, comment});
+  //   body: JSON.stringify({userId, movieId, comment}),
+  // });
+  // const res = await req.json();
+  // return res;
+}
+
+export async function deleteReview(
+  userId: string,
+  movieId: string,
+  authToken: string
+) {
+  // const req = await fetch(`${url}/movies/reviews/delete`, {
+  //   method: 'PUT',
+  //   headers: {
+  //     'content-type': 'application/json',
+  //     "Authorization": 'Bearer ' + authToken,
+  //   },
+  //   body: JSON.stringify({userId, movieId}),
   // });
   // const res = await req.json();
   // return res;

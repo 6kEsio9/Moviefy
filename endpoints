@@ -107,6 +107,10 @@ Edit review: url/movies/reviews/edit PUT NEEDS AUTHORIZATION
 -> body: {userId: string, movieId: string, comment: string}
 <- OK
 ----------------------------------------------------
+Delete review: url/movies/reviews/delete DELETE NEEDS AUTHORIZATION
+-> body: {userId: string, movieId: string}
+<- OK
+----------------------------------------------------
 Like review: url/movies/like POST NEEDS AUTHORIZATION
 //if like is true -> like. if like is false -> dislike.
 -> body: {userId: string, movieId: string, like: boolean}
