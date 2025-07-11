@@ -85,12 +85,6 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       }
     }
 
-    const statusToNum = (watchStatus: string) => {
-      if (watchStatus === "watched") return 0;
-      if (watchStatus === "watching") return 1;
-      if (watchStatus === "plan") return 2;
-    };
-
     setWatchList({
       watched: updatedWatched,
       willWatch: updatedPlan,
@@ -100,8 +94,8 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
     // const fetched = async () => {
     //   const req = await AuthService.changeMovieStatus(
     //     user?.id!,
-    //     movieId!,
-    //     statusToNum(watchStatus)!,
+    //     movie.id!,
+    //     AuthService.statusToNum(watchStatus)!,
     //     user?.token!
     //   );
     //   console.log(req);

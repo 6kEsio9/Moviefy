@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieSerivce from "../../services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
-import WatchlistButtons from "@/app/components/MovieID/WatchlistButtons";
 
 export default function MovieDetails() {
   const { user } = useAuth();
