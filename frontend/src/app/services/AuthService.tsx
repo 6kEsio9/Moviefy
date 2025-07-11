@@ -32,9 +32,7 @@ const movies = [
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
 
-    reviews: [
-      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-    ],
+    reviews: [],
   },
   {
     id: "2",
