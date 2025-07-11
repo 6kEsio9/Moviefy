@@ -33,9 +33,7 @@ const movies = [
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
     crew: [],
 
-    reviews: [
-      { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-    ],
+    reviews: [],
   },
   {
     id: "2",
@@ -334,3 +332,9 @@ export async function editUser(
 
   console.log(formData);
 }
+
+export function statusToNum(watchStatus: string){
+  if (watchStatus === "watched") return 0;
+  if (watchStatus === "watching") return 1;
+  if (watchStatus === "plan") return 2;
+};
