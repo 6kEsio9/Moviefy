@@ -1,3 +1,4 @@
+import { Axios } from "axios";
 import { Movie } from "./MovieService";
 
 const url = "https://localhost:(port)";
@@ -154,6 +155,20 @@ const movies = [
   },
 ];
 
+const axios = new Axios({ baseURL: url });
+
+axios.interceptors.request.use(
+  function (config) {
+    config.headers["content-type"] = "application/json";
+    config.headers["Authorization"] = localStorage.getItem("token");
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
 export type ReviewUser = {
   movieId: string;
   movieTitle: string;
@@ -162,12 +177,14 @@ export type ReviewUser = {
   likes: string[];
 };
 
-export type User = {
+export type UserReq = {
   token: string;
   id: string;
   username: string;
   pfp: string;
 };
+
+export type User = { id: string; username: string; pfp: string };
 
 export type UserProfile = {
   id: string;
@@ -185,49 +202,46 @@ export type WatchList = {
 
 export const users: User[] = [
   {
-    token: "accessToken",
     id: "0",
     username: "Georgi",
     pfp: "/images/pfp.jpeg",
   },
 ];
 
-export async function login(formData: Object) {
-  // const req = await fetch(`${url}/login`, {
-  //   method: "POST",
-  //   headers: {
-  //     "content-type": "application/json",
-  //   },
-  //   body: JSON.stringify(formData),
-  // });
-
-  // const res = await req.json();
-
-  // return res;
-  return users[0];
+interface LoginDto {
+  username: string;
+  password: string;
 }
 
-export async function register(formData: Object) {
-  // const req = await fetch(`${url}/register`, {
-  //   method: "POST",
-  //   headers: {
-  //     "content-type": "application/json",
-  //   },
-  //   body: JSON.stringify(formData),
-  // });
+interface RegisterDto {
+  username: string;
+  email: string;
+  password: string;
+}
 
-  // const res = await req.json();
+interface EditDto {
+  username: string;
+  email: string;
+  bio: string;
+  pfp: string;
+  password?: string;
+  confirm?: string;
+}
 
-  // return res;
+export async function login(formData: LoginDto) {
+  const res = await axios.post<UserReq>("/login", formData);
 
-  return users[0];
+  return res;
+}
+
+export async function register(formData: RegisterDto) {
+  const res = await axios.post<UserReq>("/register", formData);
+
+  return res;
 }
 
 export async function getUser(userId: string) {
-  // const req = await fetch(
-  //   `${url}/users?` + new URLSearchParams({ userId: string })
-  // );
-  // const res = await req.json();
+  // const res = await axios.get("/users", {params: {userId: userId}});
   // return res;
 
   const user = users.find((x) => x.id === userId);
@@ -240,10 +254,7 @@ export async function getUser(userId: string) {
 }
 
 export async function getWatchList(userId: string) {
-  // const req = await fetch(`${url}/users/watchList` + new URLSearchParams({
-  //   userId: userId
-  // }))
-  // const res = await req.json();
+  // const res = await axios.get('/users/watchList', {params: {userId: userId}});
   // return res;
 
   return {
@@ -259,23 +270,16 @@ export async function changeMovieStatus(
   status: number,
   authToken: string
 ) {
-  const req = await fetch(`${url}/change`, {
-    method: "PUT",
-    headers: {
-      "content-type": "application/json",
-      Authorization: "Bearer " + authToken,
-    },
-    body: JSON.stringify({ userId, movieId, status }),
-  });
-
-  const res = await req.json();
-
-  return res;
+  // const res = await axios.put('/change', {userId, movieId, status, authToken});
+  // return res;
 }
 
 export async function getReviews(userId: string) {
   // const req = await fetch(`${url}/users/reviews?` + new URLSearchParams({ userId: userId}));
   // const res = await req.json();
+  // return res;
+
+  // const res = await axios.get('/users/reviews', {params: {userId: userId}});
   // return res;
 
   return [
@@ -305,11 +309,13 @@ export async function editReview(
   // });
   // const res = await req.json();
   // return res;
+  // const res = await axios.put('/users/review/edit', {userId, movieId, comment, accessToken});
+  // return res;
 }
 
 export async function editUser(
   userId: string,
-  formData: Object,
+  formData: EditDto,
   accessToken: string
 ) {
   // const req = await fetch(`${url}/users/edit`, {
@@ -321,6 +327,9 @@ export async function editUser(
   //   body: JSON.stringify({userId, formData})
   // })
   // const res = await req.json();
+  // return res;
+
+  // const res = await axios.put("/users/edit", { userId, formData, accessToken });
   // return res;
 
   console.log(formData);

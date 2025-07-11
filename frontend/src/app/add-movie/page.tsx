@@ -9,23 +9,24 @@ export default function AddMoviePage() {
   const possibleGenres = getGenreList();
 
   const { user } = useAuth();
+  const authToken = localStorage.getItem("user");
 
   const submitHandler = (formData: FormData) => {
     const imageUrl = formData.get("imageUrl")?.toString() || "";
     const title = formData.get("title")?.toString() || "";
     const summary = formData.get("summary")?.toString() || "";
-    const year = formData.get("year")?.toString() || "";
+    const year = Number(formData.get("year")?.toString() || "");
     const ageRating = formData.get("ageRating")?.toString() || "";
     const director = formData.get("director")?.toString() || "";
-    const cast = formData.get("cast")?.toString() || "".split(", ");
-    const crew = formData.get("crew")?.toString() || "".split(", ");
+    const cast = (formData.get("cast")?.toString() || "").split(", ");
+    const crew = (formData.get("crew")?.toString() || "").split(", ");
 
     const fetched = async () => {
       await addMovie(
         user?.id!,
         { imageUrl, title, summary, year, ageRating, director, cast, crew },
-        user?.token!
-      );
+        authToken!
+      ).catch((err) => console.log(err));
     };
     fetched();
   };

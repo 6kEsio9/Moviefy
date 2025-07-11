@@ -30,20 +30,27 @@ export default function Auth() {
 
     if (!login) {
       if (password !== confirm) alert("Passwords don't match!");
-      AuthService.register({ username, email, password, confirm })
-        .then((res) => {
-          if (!res.token) return null;
-          onLogin(res);
-        })
-        .catch((err) => console.log(err));
-      redirect("/home");
+      const fetched = async () => {
+        await AuthService.register({
+          username,
+          email,
+          password,
+        }).then(() => redirect("/home"));
+      };
+      fetched();
     } else {
-      AuthService.login({ username, password })
-        .then((res) => {
-          if (!res.token) return null;
-          onLogin(res);
-        })
-        .catch((err) => console.log(err));
+      const fetched = async () => {
+        const res = await AuthService.login({
+          username,
+          password,
+        });
+        onLogin(res.data.token, {
+          id: res.data.id,
+          username: res.data.username,
+          pfp: res.data.pfp,
+        });
+      };
+      fetched();
       redirect("/home");
     }
   };
