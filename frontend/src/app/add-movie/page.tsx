@@ -16,7 +16,7 @@ export default function AddMoviePage() {
     const title = formData.get("title")?.toString() || "";
     const summary = formData.get("summary")?.toString() || "";
     const year = Number(formData.get("year")?.toString() || "");
-    const ageRating = formData.get("ageRating")?.toString() || "";
+    const ageRating = Number(formData.get("ageRating")?.toString() || "");
     const director = formData.get("director")?.toString() || "";
     const cast = (formData.get("cast")?.toString() || "").split(", ");
     const crew = (formData.get("crew")?.toString() || "").split(", ");

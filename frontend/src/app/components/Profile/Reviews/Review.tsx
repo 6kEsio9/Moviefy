@@ -12,7 +12,7 @@ import EditReviews from "./EditReviews";
 import { ReviewUser, UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
-import * as ms from "@/app/services/MovieService"
+import * as ms from "@/app/services/MovieService";
 
 interface ReviewProps {
   review: ReviewUser;
@@ -32,13 +32,13 @@ export default function Review({
   const handleRemove = () => {
     setReviews((prevReviews) => {
       return prevReviews!.filter((x) => x.movieId !== user?.id);
-    })
+    });
 
     // const fetched = async () => {
     //   await ms.deleteReview(user!.id, review.movieId, authToken!);
     // };
     // fetched();
-  }
+  };
 
   return (
     <Card sx={{ mb: 2, position: "relative" }}>
@@ -69,7 +69,7 @@ export default function Review({
           </Box>
         </Box>
 
-        {user?.id === profileUser?.id && (
+        {user && user?.id === profileUser?.id && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Button
               variant="contained"

@@ -19,7 +19,7 @@ export default function ProfileHeader({ profileUser }: ProfileHeaderProps) {
       <Typography variant="body1" color="text.secondary">
         {profileUser?.bio}
       </Typography>
-      {user?.id === profileUser?.id && <Edit />}
+      {user && user?.id === profileUser?.id && <Edit />}
     </Box>
   );
 }
