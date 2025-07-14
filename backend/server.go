@@ -25,23 +25,54 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	/*
+		type LoginRequest struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}
+		* */
 	mux.HandleFunc("/login", authService.LoginHandler)
 	mux.HandleFunc("/logout", authService.LogoutHandler)
 	mux.HandleFunc("/refresh", authService.RefreshHandler)
 	mux.HandleFunc("/register", authService.RegisterHandler)
 
+	/*
+					movieId := r.URL.Query().Get("movieId")
+					offset := r.URL.Query().Get("offset")
+				ako nqma movieId
+								&movie.Id,
+								&movie.Title,
+								&movie.PosterUrl,
+								&movie.AverageRating,
+				ako ima movieId
+
+		type Movie struct {
+			Id        string             `json:"id"`
+			Title     string             `json:"title"`
+			Genres    []string           `json:"genres"`
+			IsAdult   bool               `json:"isAdult"`
+			Year      int                `json:"year"`
+			Summary   *string            `json:"summary"`
+			PosterUrl *string            `json:"posterUrl"`
+			AvgRating float32            `json:"avgRating"`
+			Directors []string           `json:"directors"`
+			Writers   []string           `json:"writers"`
+			Reviews   []ratingSingleFilm `json:"reviews"`
+			Cast      []string           `json:"cast"`
+		}
+				* */
 	mux.HandleFunc("/movies", api.GetMovies)
 	mux.HandleFunc("/search", api.SearchMovies)
 
 	mux.HandleFunc("/user/reviews", api.GetReviews)
 	mux.HandleFunc("/watchlist", api.GetWatchList)
-	mux.HandleFunc("/user/", api.GetUser)
+	mux.HandleFunc("/users", api.GetUser)
 
 	mux.Handle("/change", authService.AuthMiddleware(http.HandlerFunc(api.ChangeMovieStatus)))
 	//zashto samo comentara se smenq,a
-	mux.Handle("/user/reviews/edit", authService.AuthMiddleware(http.HandlerFunc(api.EditReview)))
-	mux.Handle("/user/reviews/delete", authService.AuthMiddleware(http.HandlerFunc(api.DeleteReview)))
-	mux.Handle("/user/reviews/like", authService.AuthMiddleware(http.HandlerFunc(api.LikeReview)))
+	mux.Handle("/users/reviews/edit", authService.AuthMiddleware(http.HandlerFunc(api.EditReview)))
+	mux.Handle("/users/reviews/delete", authService.AuthMiddleware(http.HandlerFunc(api.DeleteReview)))
+	mux.Handle("/users/reviews/like", authService.AuthMiddleware(http.HandlerFunc(api.LikeReview)))
 	mux.Handle("/movies/rate", authService.AuthMiddleware(http.HandlerFunc(api.RateMovie)))
 	//mux.Handle("/user/edit", authService.AuthMiddleware(http.HandlerFunc(editUser)))
 

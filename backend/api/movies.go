@@ -390,19 +390,19 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Status method not allowed")
 		return
 	}
-	username := r.URL.Query().Get("username")
+	userId := r.URL.Query().Get("userId")
 
 	ctx := context.Background()
 
-	if username == "" {
+	if userId == "" {
 		keycloak.SendErrorResponse(w, http.StatusNoContent, "You should give userId")
 		return
 	}
 
 	ratingsRow := neshto.MovieDB.QueryRow(ctx, `
 		SELECT id, username, email, bio, pfpUrl FROM users
-		WHERE username = $1
-		LIMIT 1;`, username)
+		WHERE keycloak_user_id = $1
+		LIMIT 1;`, userId)
 
 	var user User
 	err := ratingsRow.Scan(
