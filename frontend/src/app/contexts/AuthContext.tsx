@@ -30,19 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (!token) return;
-    const decoded = jwtDecode(token!);
-    const userId = decoded.sub;
-    const fetched = async () => {
-      const res = await AuthService.getUser(userId!);
-      setUser({
-        id: res.data.id,
-        username: res.data.username,
-        pfp: res.data.pfp,
-      });
-    };
-    fetched();
-  }, []);
+    if (!token) setUser(null);
+    else {
+      const decoded = jwtDecode(token!);
+      const userId = decoded.sub;
+      const fetched = async () => {
+        const res = await AuthService.getUser(userId!);
+        setUser({
+          id: res.data.id,
+          username: res.data.username,
+          pfp: res.data.pfp,
+        });
+      };
+      fetched();
+    }
+  }, [token]);
 
   const onLogin = useCallback(
     (token: string, user: User) => {

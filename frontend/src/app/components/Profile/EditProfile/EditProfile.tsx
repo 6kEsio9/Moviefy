@@ -23,15 +23,15 @@ export default function EditProfile() {
 
   const [editUser, setEditUser] = useState<UserProfile>();
 
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
     height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
+    overflow: "hidden",
+    position: "absolute",
     bottom: 0,
     left: 0,
-    whiteSpace: 'nowrap',
+    whiteSpace: "nowrap",
     width: 1,
   });
 
@@ -49,7 +49,7 @@ export default function EditProfile() {
     const username = formData.get("username")?.toString() || "";
     const email = formData.get("email")?.toString() || "";
     const bio = formData.get("bio")?.toString() || "";
-    const pfp = (formData.get("pfp") as File);
+    const pfp = formData.get("pfp") as File;
     const password = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
@@ -59,11 +59,14 @@ export default function EditProfile() {
     }
 
     const fetched = async () => {
-      await AuthService.editUser(
-        editUser?.id!,
-        { username, email, bio, pfp, password, confirm },
-        authToken!
-      );
+      await AuthService.editUser({
+        username,
+        email,
+        bio,
+        pfp,
+        password,
+        confirm,
+      });
     };
     fetched();
 
@@ -119,14 +122,10 @@ export default function EditProfile() {
               variant="contained"
               tabIndex={-1}
               startIcon={<CloudUpload />}
-              sx={{mt: 1, mb: 1, padding:   2}}
+              sx={{ mt: 1, mb: 1, padding: 2 }}
             >
               Upload Profile Picture
-              <VisuallyHiddenInput
-                accept="image/*"
-                name="pfp"
-                type="file"
-              />
+              <VisuallyHiddenInput accept="image/*" name="pfp" type="file" />
             </Button>
 
             <TextField
