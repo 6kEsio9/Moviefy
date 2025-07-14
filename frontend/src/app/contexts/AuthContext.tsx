@@ -11,6 +11,8 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { User } from "../services/AuthService";
 import { jwtDecode } from "jwt-decode";
 
+import * as AuthService from "../services/AuthService";
+
 export type AuthContextType = {
   user: User | null;
   onLogin: (value: string, user: User) => void;
@@ -29,13 +31,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!token) return;
-    // const decoded = jwtDecode(token!);
-    // console.log(decoded);
-    setUser({
-      id: "0",
-      username: "Georgi",
-      pfp: "/images/pfp.jpeg",
-    });
+    const decoded = jwtDecode(token!);
+    console.log(decoded);
+    const userId = decoded.sub;
+    const fetched = async () => {
+      const res = await AuthService.getUser(userId!);
+    };
+    fetched();
   }, []);
 
   const onLogin = useCallback(

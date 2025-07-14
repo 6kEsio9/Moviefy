@@ -9,9 +9,9 @@ import { redirect } from "next/navigation";
 export default function Edit() {
   const { user } = useAuth();
 
-  useEffect(() => {
-    user ? "" : redirect("/auth");
-  }, []);
+  // useEffect(() => {
+  //   if (!user) redirect("/auth");
+  // }, [user]);
 
   return <EditProfile />;
 }

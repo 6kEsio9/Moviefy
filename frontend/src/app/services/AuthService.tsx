@@ -1,7 +1,7 @@
-import { Axios } from "axios";
+import axios from "axios";
 import { Movie } from "./MovieService";
 
-const url = "https://localhost:(port)";
+const url = "http://keycloak.martinkurtev.com:1235";
 
 const movies = [
   {
@@ -153,16 +153,22 @@ const movies = [
   },
 ];
 
-const axios = new Axios({ baseURL: url });
+const instance = axios.create({
+  baseURL: url,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-axios.interceptors.request.use(
-  function (config) {
-    config.headers["content-type"] = "application/json";
-    config.headers["Authorization"] = localStorage.getItem("token");
+instance.interceptors.request.use(
+  function (config: any) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers["Authorization"] = token;
+    }
     return config;
   },
-  function (error) {
-    // Do something with request error
+  function (error: any) {
     return Promise.reject(error);
   }
 );
@@ -176,7 +182,7 @@ export type ReviewUser = {
 };
 
 export type UserReq = {
-  token: string;
+  Token: { accessToken: string; refreshToken: string; expiresIn: number };
   id: string;
   username: string;
   pfp: string;
@@ -227,51 +233,53 @@ interface EditDto {
 }
 
 export async function login(formData: LoginDto) {
-  // const res = await axios.post<UserReq>("/login", formData);
+  const res = await instance.post<UserReq>("/login", { ...formData });
 
-  // return res;
-  return {
-    data: {
-      id: "0",
-      username: "Georgi",
-      pfp: "/images/pfp.jpeg",
-      token: "token",
-    },
-  };
+  return res;
+  // return {
+  //   data: {
+  //     id: "0",
+  //     username: "Georgi",
+  //     pfp: "/images/pfp.jpeg",
+  //     token: "token",
+  //   },
+  // };
 }
 
-export async function register(formData: RegisterDto) {
-  // const res = await axios.post<UserReq>("/register", formData);
+export async function register(data: RegisterDto) {
+  const res = await instance.post<UserReq>("/register", { ...data });
 
-  // return res;
+  return res;
 
-  return {
-    data: {
-      id: "0",
-      username: "Georgi",
-      pfp: "/images/pfp.jpeg",
-      token: "token",
-    },
-  };
+  // return {
+  //   data: {
+  //     id: "0",
+  //     username: "Georgi",
+  //     pfp: "/images/pfp.jpeg",
+  //     token: "token",
+  //   },
+  // };
 }
 
 export async function getUser(userId: string) {
-  // const res = await axios.get("/users", {params: {userId: userId}});
-  // return res;
+  const res = await instance.get("/users", { params: { userId: userId } });
+  return res;
 
-  const user = users.find((x) => x.id === userId);
+  // const user = users.find((x) => x.id === userId);
 
-  return {
-    data: {
-      ...user!,
-      email: "primerenemail@gmail.com",
-      bio: "I like watching movies.",
-    },
-  };
+  // console.log(user);
+
+  // return {
+  //   data: {
+  //     ...user!,
+  //     email: "primerenemail@gmail.com",
+  //     bio: "I like watching movies.",
+  //   },
+  // };
 }
 
 export async function getWatchList(userId: string) {
-  // const res = await axios.get('/users/watchList', {params: {userId: userId}});
+  // const res = await instance.get('/users/watchList', {params: {userId: userId}});
   // return res;
 
   return {
@@ -287,7 +295,7 @@ export async function changeMovieStatus(
   status: number,
   authToken: string
 ) {
-  // const res = await axios.put('/change', {userId, movieId, status, authToken});
+  // const res = await instance.put('/change', {userId, movieId, status, authToken});
   // return res;
 }
 
@@ -296,7 +304,7 @@ export async function getReviews(userId: string) {
   // const res = await req.json();
   // return res;
 
-  // const res = await axios.get('/users/reviews', {params: {userId: userId}});
+  // const res = await instance.get('/users/reviews', {params: {userId: userId}});
   // return res;
 
   return [
@@ -313,20 +321,9 @@ export async function getReviews(userId: string) {
 export async function editReview(
   userId: string,
   movieId: string,
-  comment: string,
-  accessToken: string
+  comment: string
 ) {
-  // const req = await fetch(`${url}/users/reviews/edit`, {
-  //   method: "PUT",
-  //   headers: {
-  //     "content-type": "application/json",
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({ userId, movieId, comment }),
-  // });
-  // const res = await req.json();
-  // return res;
-  // const res = await axios.put('/users/review/edit', {userId, movieId, comment, accessToken});
+  // const res = await instance.put('/users/review/edit', {userId, movieId, comment, accessToken});
   // return res;
 }
 
@@ -346,7 +343,7 @@ export async function editUser(
   // const res = await req.json();
   // return res;
 
-  // const res = await axios.put("/users/edit", { userId, formData, accessToken });
+  // const res = await instance.put("/users/edit", { userId, formData, accessToken });
   // return res;
 
   console.log(formData);

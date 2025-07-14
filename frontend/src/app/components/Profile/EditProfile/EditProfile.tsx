@@ -22,12 +22,14 @@ export default function EditProfile() {
   const [editUser, setEditUser] = useState<UserProfile>();
 
   useEffect(() => {
+    if (!user) return;
     const fetched = async () => {
-      const res = await AuthService.getUser(user?.id!);
-      setEditUser(res);
+      const res = await AuthService.getUser(user.id);
+      console.log(res);
+      setEditUser(res.data);
     };
     fetched();
-  }, []);
+  }, [user]);
 
   const onSubmitHandler = (formData: FormData) => {
     const username = formData.get("username")?.toString() || "";

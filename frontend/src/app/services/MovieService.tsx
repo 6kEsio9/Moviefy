@@ -1,14 +1,21 @@
-import { Axios } from "axios";
+import axios from "axios";
 import { users } from "./AuthService";
 
 const url = "";
 
-const axios = new Axios({ baseURL: url });
+const instance = axios.create({
+  baseURL: url, // <-- тук задаваш базовия URL
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   function (config) {
-    config.headers["content-type"] = "application/json";
-    config.headers["Authorization"] = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers["Authorization"] = token;
+    }
     return config;
   },
   function (error) {
@@ -190,14 +197,14 @@ const movies: Movie[] = [
 ];
 
 export async function getAll() {
-  // const res = await axios.get('/movies');
+  // const res = await instance.get('/movies');
   // return res;
 
   return movies;
 }
 
 export async function getMovie(movieId: string) {
-  // const res = await axios.get('/movies', {params: {movieId: movieId}});
+  // const res = await instance.get('/movies', {params: {movieId: movieId}});
   // return res;
 
   const movie = movies.find((x) => x.id === movieId);
@@ -217,7 +224,7 @@ export async function search(searchInput: string, usersB: boolean) {
   // const res = await req.json();
   // return res;
 
-  // const res = await axios.get('/search', {params: {input: searchInput, users: usersB}});
+  // const res = await instance.get('/search', {params: {input: searchInput, users: usersB}});
   // return res;
 
   const result: any = {};
@@ -248,7 +255,7 @@ export async function rate(
   rating: number,
   comment?: string
 ) {
-  // const res = await axios.post("/movies/rate", {
+  // const res = await instance.post("/movies/rate", {
   //   userId: userId,
   //   movieId: movieId,
   //   rating: rating,
@@ -264,7 +271,7 @@ export async function editReview(
   movieId: string,
   comment: string
 ) {
-  const res = await axios.put("/movies/reviews/edit", {
+  const res = await instance.put("/movies/reviews/edit", {
     userId: userId,
     movieId: movieId,
     comment: comment,
@@ -296,7 +303,7 @@ export async function like(userId: string, movieId: string, like: boolean) {
   // });
   // const res = await req.json();
   // return res;
-  // const res = await axios.post('/movies/like', {
+  // const res = await instance.post('/movies/like', {
   //   userId: userId,
   //   movieId: movieId,
   //   like: like
@@ -324,7 +331,7 @@ interface MovieDto {
 }
 
 export async function addMovie(userId: string, formData: MovieDto) {
-  // const res = await axios.post("/movies/add", {
+  // const res = await instance.post("/movies/add", {
   //   userId: userId,
   //   formData: formData,
   // });
@@ -332,6 +339,6 @@ export async function addMovie(userId: string, formData: MovieDto) {
 }
 
 export async function filterMovies(filterType: string, filter: string) {
-  // const res = await axios.get('/movies/filter', {params: {filterType: filterType, filter: filter}});
+  // const res = await instance.get('/movies/filter', {params: {filterType: filterType, filter: filter}});
   // return res;
 }
