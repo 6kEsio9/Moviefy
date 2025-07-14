@@ -15,7 +15,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetched = async () => {
       const res = await MovieService.getAll();
-      setMovies(res);
+      setMovies(res.data);
     };
     fetched();
   }, []);

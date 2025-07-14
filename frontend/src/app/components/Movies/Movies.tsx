@@ -7,20 +7,33 @@ import Sidebar from "./Sidebar/Sidebar";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../services/MovieService";
 import { Pagination, Stack } from "@mui/material";
+import { useAuth } from "@/app/hooks/useAuth";
+import { getReviews } from "@/app/services/AuthService";
 
 const movieCountPerPage = 21;
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<Movie[]>();
   const [page, setPage] = useState(1);
+  const { user } = useAuth();
+  const [userReviews, setUserReviews] = useState([])
 
   useEffect(() => {
     const fetched = async () => {
       const res = await MovieService.getAll(movieCountPerPage, (page - 1) * movieCountPerPage);
-      setMovies(res as Movie[]);
+      setMovies(res.data as Movie[]);
     };
     fetched();
   }, [page]);
+
+  useEffect(() => {
+    if(!user) return;
+    const fetched = async () => {
+      const res = await getReviews(user?.id);
+      setUserReviews(res.data)
+    };
+    fetched();
+  }, [])
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -55,7 +68,7 @@ export default function MoviesPage() {
         >
           {movies && movies.length > 0 ? (
             movies.map((movie) => {
-              return <MovieCard key={movie.id} movie={movie} movies={movies} />;
+              return <MovieCard key={movie.id} movie={movie} userReviews={userReviews} />;
             })
           ) : (
             <Loading />

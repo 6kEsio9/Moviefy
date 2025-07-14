@@ -8,13 +8,14 @@ import IconButton from "@mui/material/IconButton";
 import RatingLine from "./RatingLine";
 import Link from "next/link";
 import { Movie } from "@/app/services/MovieService";
+import { ReviewUser } from "@/app/services/AuthService";
 
 interface MovieCardProps {
   movie: Movie;
-  movies: Movie[];
+  userReviews: ReviewUser[];
 }
 
-export default function MovieCard({ movie, movies }: MovieCardProps) {
+export default function MovieCard({ movie, userReviews }: MovieCardProps) {
   const [hover, setHover] = React.useState(false);
 
   return (
@@ -65,7 +66,7 @@ export default function MovieCard({ movie, movies }: MovieCardProps) {
       </Link>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <RatingLine movie={movie} movies={movies} />
+          <RatingLine movie={movie} userReviews={userReviews} />
         </IconButton>
       </CardActions>
     </Card>
