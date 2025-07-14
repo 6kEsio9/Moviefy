@@ -249,6 +249,7 @@ export async function login(formData: LoginDto) {
     .catch((err) => err);
 
   return res;
+  //done
 }
 
 export async function register(data: RegisterDto) {
@@ -257,6 +258,7 @@ export async function register(data: RegisterDto) {
     .catch((err) => err);
 
   return res;
+  //done
 }
 
 export async function getUser(userId: string) {
@@ -264,6 +266,7 @@ export async function getUser(userId: string) {
     .get("/users", { params: { userId: userId } })
     .catch((err) => err);
   return res;
+  //done
 }
 
 export async function getWatchList(userId: string) {
@@ -272,6 +275,7 @@ export async function getWatchList(userId: string) {
     params: { userId: userId },
   });
   return res;
+  //done
 }
 
 export async function changeMovieStatus(movieId: string, status: number) {
@@ -279,6 +283,7 @@ export async function changeMovieStatus(movieId: string, status: number) {
     .put("/change", { movieId, status })
     .catch((err) => err);
   return res;
+  //done
 }
 
 export async function getReviews(userId: string) {
@@ -286,6 +291,7 @@ export async function getReviews(userId: string) {
     params: { userId: userId },
   });
   return res;
+  //done
 }
 
 export async function editReview(reviewId: number, comment: string) {

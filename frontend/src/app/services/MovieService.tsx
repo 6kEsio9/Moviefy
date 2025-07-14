@@ -196,7 +196,9 @@ const movies: Movie[] = [
 ];
 
 export async function getAll(limit?: number, offset?: number) {
-  const res = await instance.get('/movies', {params: { limit: limit, offset: offset } });
+  const res = await instance.get("/movies", {
+    params: { limit: limit, offset: offset },
+  });
   return res;
 
   // return movies;
@@ -206,9 +208,7 @@ export async function getMovie(movieId: string) {
   const res = await instance.get("/movies", { params: { movieId: movieId } });
   return res;
 
-  // const movie = movies.find((x) => x.id === movieId);
-
-  // return movie;
+  //done
 }
 
 export async function search(searchInput: string, usersB: boolean) {
@@ -255,6 +255,7 @@ export async function rate(movieId: string, rating: number, comment?: string) {
     comment: comment,
   });
   return res;
+  //done
 }
 
 export async function editReview(
