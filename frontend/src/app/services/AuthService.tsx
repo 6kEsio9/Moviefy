@@ -227,7 +227,7 @@ interface EditDto {
   username: string;
   email: string;
   bio: string;
-  pfp: string;
+  pfp: File;
   password?: string;
   confirm?: string;
 }
@@ -331,7 +331,12 @@ export async function editUser(
   // const res = await req.json();
   // return res;
 
-  // const res = await instance.put("/users/edit", { userId, formData, accessToken });
+  // const res = await instance.put("/users/edit", { userId, formData, accessToken }, {
+  //   headers: {
+  //     Authorization: `Bearer ${accessToken}`,
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  // });
   // return res;
 
   console.log(formData);
