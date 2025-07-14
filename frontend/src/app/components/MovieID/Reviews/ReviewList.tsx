@@ -5,10 +5,9 @@ import ReviewItem from "./ReviewItem";
 
 interface ReviewListProps {
   movie: Movie;
-  setMovie: React.Dispatch<React.SetStateAction<Movie | undefined>>;
 }
 
-export default function ReviewList({ movie, setMovie }: ReviewListProps) {
+export default function ReviewList({ movie }: ReviewListProps) {
   return (
     <Grid>
       <Container>
@@ -26,7 +25,6 @@ export default function ReviewList({ movie, setMovie }: ReviewListProps) {
                   <ReviewItem
                     review={review}
                     movie={movie}
-                    setMovie={setMovie}
                   />
                 </div>
               );

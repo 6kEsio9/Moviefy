@@ -2,7 +2,6 @@ import Link from "next/link";
 interface ReviewProps {
   movie: ms.Movie;
   review: ms.ReviewMovie;
-  setMovie: React.Dispatch<React.SetStateAction<ms.Movie | undefined>>;
 }
 import { Grid, IconButton, Rating, Typography } from "@mui/material";
 import * as ms from "@/app/services/MovieService";
@@ -11,10 +10,11 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 
-export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
+export default function ReviewItem({ review, movie }: ReviewProps) {
   const [displayUser, setDisplayUser] = useState<User>();
 
   const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(review.likes.length)
 
   const { user } = useAuth();
   const authToken = localStorage.getItem("user");
@@ -22,7 +22,7 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
   useEffect(() => {
     const fetched = async () => {
       const resUser = await getUser(review.userId);
-      setDisplayUser(resUser);
+      setDisplayUser(resUser.data);
     };
     fetched();
 
@@ -32,28 +32,29 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
   const handleLike = () => {
     const newLiked = !liked;
     setLiked(newLiked);
-    const updatedReview = review;
-    newLiked
-      ? updatedReview.likes.push(user!.id)
-      : (updatedReview.likes = updatedReview.likes.filter(
-          (x) => x !== user!.id
-        ));
+    setLikeCount(newLiked ? likeCount + 1 : likeCount - 1)
+    // const updatedReview = review;
+    // newLiked
+    //   ? updatedReview.likes.push(user!.id)
+    //   : (updatedReview.likes = updatedReview.likes.filter(
+    //       (x) => x !== user!.id
+    //     ));
 
-    const updatedReviews = movie!.reviews.map((review) => {
-      if (review.userId === user?.id) {
-        return updatedReview;
-      }
-      return review;
-    });
+    // const updatedReviews = movie!.reviews.map((review) => {
+    //   if (review.userId === user?.id) {
+    //     return updatedReview;
+    //   }
+    //   return review;
+    // });
 
-    const updatedMovie = { ...movie!, reviews: updatedReviews };
+    // const updatedMovie = { ...movie!, reviews: updatedReviews };
 
     const fetched = async () => {
-      await ms.like(user?.id!, movie.id, newLiked ? true : false, authToken!);
+      await ms.like(user?.id!, movie.id, newLiked, authToken!);
     };
     fetched();
 
-    setMovie(updatedMovie);
+    // setMovie(updatedMovie);
   };
 
   return (
@@ -81,7 +82,7 @@ export default function ReviewItem({ review, movie, setMovie }: ReviewProps) {
           >
             {liked ? <Favorite color="error" /> : <FavoriteBorder />}
           </IconButton>
-          <Typography>{review.likes.length}</Typography>
+          <Typography>{likeCount}</Typography>
         </Grid>
       </Grid>
     </Grid>
