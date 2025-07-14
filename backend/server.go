@@ -65,9 +65,21 @@ func main() {
 	mux.HandleFunc("/search", api.SearchMovies)
 
 	/*
+				userId := r.URL.Query().Get("userId")
+		poluchavash:
+		type ratingSingleFilm struct {
+			Id        int     `json:"id"`
+			Content   string  `json:"content"`
+			LikeCount int     `json:"likeCount"`
+			Username  string  `json:"username"`
+			PfpUrl    string  `json:"pfpUrl"`
+			Rating    float32 `json:"rating"`
+			IsLiked   bool    `json:"isLiked"`
+		}
+			* */
+	mux.HandleFunc("/user/reviews", api.GetReviews) /*
 		userId := r.URL.Query().Get("userId")
 	* */
-	mux.HandleFunc("/user/reviews", api.GetReviews)
 	mux.HandleFunc("/watchlist", api.GetWatchList)
 	mux.HandleFunc("/users", api.GetUser)
 

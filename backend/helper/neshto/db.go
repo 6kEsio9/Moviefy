@@ -12,11 +12,12 @@ type LoginResponse struct {
 }
 
 type SearchMovie struct {
-	Id            string
-	Title         string
-	PosterUrl     *string
-	StartYear     int
-	AverageRating float32
+	Id            string  `json:"id"`
+	Title         string  `json:"title"`
+	PosterUrl     *string `json:"posterUrl"`
+	StartYear     int     `json:"startYear"`
+	AverageRating float32 `json:"averageRating,omitempty"`
+	ItemType      int     `json:"itemType,omitempty"`
 }
 
 type DB struct {

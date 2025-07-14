@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"moviefy/main/helper/keycloak"
 	"moviefy/main/helper/neshto"
 	"net/http"
@@ -181,11 +182,7 @@ func ChangeMovieStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, ok := r.Context().Value("username").(string)
-	if !ok {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
-		return
-	}
+	userId := r.Context().Value("user_id")
 
 	var Params struct {
 		MovieId string `json:"movieId"`
@@ -203,13 +200,22 @@ func ChangeMovieStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := neshto.MovieDB.QueryRow(r.Context(), `
-		UPDATE watchlist 
-		SET type = $1
-		WHERE filmId = $2 AND userId = (
-		SELECT id FROM users WHERE username = $3 
-		LIMIT 1);`, Params.Status, Params.MovieId, username).Scan()
+		WITH updated_status AS (
+  UPDATE watchlist
+  SET type = $1
+  WHERE filmId = $2 AND userId = $3
+	RETURNING *
+)
+INSERT INTO watchlist (filmId, userId, type)
+SELECT 
+  $2,
+	$3,
+  $1
+WHERE NOT EXISTS (SELECT 1 FROM updated_status)
+SELECT 1;`, Params.Status, Params.MovieId, userId).Scan()
 
 	if err != nil {
+		log.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
 		return
 	}

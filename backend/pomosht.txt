@@ -1,5 +1,12 @@
-
- jorobg@jorobg ~/..../backend  backend  go run server.go
-2025/07/11 14:30:28 Failed to create auth service : failed to login as admin: could not get token: Post "http://localhost:3000/realms/master/protocol/openid-
-connect/token": dial tcp [::1]:3000: connect: connection refused
-exit status 1
+WITH updated_status AS (
+  UPDATE watchlist
+  SET type = $1
+  WHERE filmId = $2 AND userId = $3
+	RETURNING *
+)
+INSERT INTO watchlist (filmId, userId, type)
+SELECT 
+  $2,
+  (SELECT id FROM users WHERE username = $3 LIMIT 1),
+  $1
+WHERE NOT EXISTS (SELECT 1 FROM updated_status);

@@ -43,6 +43,7 @@ type WatchlistItem struct {
 	TitleId   string `json:"titleId"`
 	Title     string `json:"title"`
 	PosterUrl string `json:"posterUrl"`
+	StartYear int    `json:"startYear"`
 }
 
 type User struct {
@@ -357,12 +358,13 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 	userId := r.URL.Query().Get("userId")
 
 	if userId == "" {
-		keycloak.SendErrorResponse(w, http.StatusNoContent, "You should give userId")
+		log.Println("ccccccccc")
+		keycloak.SendErrorResponse(w, http.StatusNotAcceptable, "You should give userId")
 		return
 	}
 
 	ratingsRow, err := neshto.MovieDB.Query(ctx, `
-		SELECT w.type, tb.tconst, tb.primaryTitle, p.posterId FROM watchlist w
+		SELECT w.type, tb.tconst, tb.primaryTitle, p.posterId, tb.startYear FROM watchlist w
 		JOIN title_basics tb ON w.filmId = tb.tconst
 		JOIN posters p ON w.filmId = p.titleId
 		WHERE w.userId = $1;`, userId)
@@ -373,17 +375,20 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ratingsRow.Close()
 
-	var watchlistItems []WatchlistItem
+	var watchlistItems []neshto.SearchMovie
 	for ratingsRow.Next() {
-		var item WatchlistItem
+		var item neshto.SearchMovie
 		err := ratingsRow.Scan(
 			&item.ItemType,
-			&item.TitleId,
+			&item.Id,
 			&item.Title,
 			&item.PosterUrl,
+			&item.StartYear,
 		)
 
 		if err != nil {
+			log.Println("aaaaaaaa")
+			log.Println(err)
 			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 			return
 		}
@@ -391,10 +396,10 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 		watchlistItems = append(watchlistItems, item)
 	}
 
-	watchlist := map[string][]WatchlistItem{
-		"watched":    []WatchlistItem{},
-		"isWatching": []WatchlistItem{},
-		"willWatch":  []WatchlistItem{},
+	watchlist := map[string][]neshto.SearchMovie{
+		"watched":    []neshto.SearchMovie{},
+		"isWatching": []neshto.SearchMovie{},
+		"willWatch":  []neshto.SearchMovie{},
 	}
 
 	for _, item := range watchlistItems {
@@ -402,6 +407,7 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 		watchlist[itemType] = append(watchlist[itemType], item)
 	}
 
+	log.Println(watchlist)
 	keycloak.SendJSONResponse(w, http.StatusOK, watchlist)
 }
 
@@ -421,7 +427,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ratingsRow := neshto.MovieDB.QueryRow(ctx, `
-		SELECT id, username, email, bio, pfpUrl FROM users
+		SELECT keycloak_user_id, username, email, bio, pfpUrl FROM users
 		WHERE keycloak_user_id = $1
 		LIMIT 1;`, userId)
 
@@ -435,6 +441,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
+		log.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
 		return
 	}

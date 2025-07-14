@@ -121,6 +121,10 @@ func (c *CollyCollector) setupHandlers() {
 	c.OnHTML("div[data-testid='hero-media__poster'] a", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
+		if len(urlArr) < 5 {
+			fmt.Println("urlArr : ", urlArr)
+			return
+		}
 		id := urlArr[4]
 		secret := e.Request.URL.Query().Get("secret")
 
@@ -136,7 +140,9 @@ func (c *CollyCollector) setupHandlers() {
 
 			if err != nil {
 				c.mu.Lock()
-				c.ResultSingleFilm[id].Error = fmt.Errorf("failed to visit media viewer page : %v", err)
+				if c.ResultSingleFilm[id] != nil {
+					c.ResultSingleFilm[id].Error = fmt.Errorf("failed to visit media viewer page : %v", err)
+				}
 				c.mu.Unlock()
 			}
 
@@ -146,6 +152,10 @@ func (c *CollyCollector) setupHandlers() {
 	c.OnHTML("div[data-testid='media-viewer']", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
+		if len(urlArr) < 5 {
+			fmt.Println("urlArr : ", urlArr)
+			return
+		}
 		id := urlArr[4]
 		secret := e.Request.URL.Query().Get("secret")
 
@@ -153,12 +163,33 @@ func (c *CollyCollector) setupHandlers() {
 
 		src, _ := firstImg.Attr("src")
 		if src != "" && strings.Contains(src, "https://m.media-amazon.com") {
+			c.mu.Lock()
 			if secret != "" {
-				c.ResultsSearch[secret][id].PosterUrl = &src
-				c.wg[secret].Done()
+				if secretMap, exists := c.ResultsSearch[secret]; exists {
+					if movie, exists := secretMap[id]; exists && movie != nil {
+
+						movie.PosterUrl = &src
+						c.mu.Unlock()
+						if wg, exists := c.wg[secret]; exists && wg != nil {
+							wg.Done()
+
+						}
+					} else {
+						c.mu.Unlock()
+					}
+				} else {
+					c.mu.Unlock()
+				}
 			} else {
-				c.ResultSingleFilm[id].PosterURL = src
-				c.wg[id].Done()
+				if film, exists := c.ResultSingleFilm[id]; exists && film != nil {
+					film.PosterURL = src
+					c.mu.Unlock()
+					if wg, exists := c.wg[id]; exists && wg != nil {
+						wg.Done()
+					}
+				} else {
+					c.mu.Unlock()
+				}
 			}
 		}
 	})
@@ -166,25 +197,41 @@ func (c *CollyCollector) setupHandlers() {
 	c.OnHTML("p[data-testid='plot'] span:last-child", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
+		if len(urlArr) < 5 {
+			fmt.Println("urlArr : ", urlArr)
+			return
+		}
 		id := urlArr[4]
 
-		if urlArr[5] != "mediaviewer" {
+		if len(urlArr) < 6 || urlArr[5] != "mediaviewer" {
 			return
 		}
 
 		plotText := e.Text
 
-		c.ResultSingleFilm[id].PlotText = plotText
+		c.mu.Lock()
+		if film, exists := c.ResultSingleFilm[id]; exists && film != nil {
+			film.PlotText = plotText
+		}
+		c.mu.Unlock()
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
 		pageUrl := r.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
+		if len(urlArr) < 5 {
+			fmt.Println("errrrrrrrrrror ")
+			fmt.Println("urlArr : ", urlArr)
+			return
+		}
 		id := urlArr[4]
 
 		c.mu.Lock()
-		c.ResultSingleFilm[id].Error = fmt.Errorf("got the error %v: ", err)
+		if film, exists := c.ResultSingleFilm[id]; exists && film != nil {
+			film.Error = fmt.Errorf("got the error %v: ", err)
+		}
 		c.mu.Unlock()
+
 		log.Println("Got the error : ", err)
 	})
 }
@@ -209,7 +256,7 @@ func (c *CollyCollector) ScrapeSingleFilmDetails(id string) (*SingleFilmDetails,
 	neshto.MovieDB.Exec(context.Background(), `
 		UPDATE posters
 		SET posterId = $1,
-				description = $2
+		description = $2
 		WHERE titleId = $3`, c.ResultSingleFilm[id].PosterURL, c.ResultSingleFilm[id].PlotText, id)
 
 	delete(c.ResultSingleFilm, id)
