@@ -152,6 +152,7 @@ CREATE TABLE title_ratings (
 
 CREATE INDEX idx_title_basics_genres ON title_basics USING GIN(genres);
 CREATE INDEX idx_name_basics_professions ON name_basics USING GIN(primaryProfession);
+CREATE INDEX idx_posters ON posters USING GIN(titleId);
 CREATE INDEX idx_title_akas_region ON title_akas(region);
 CREATE INDEX idx_title_episode_parent ON title_episode(parentTconst);
 CREATE INDEX idx_title_principals_name ON title_principals(nconst);

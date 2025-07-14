@@ -5,9 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"moviefy/main/helper/neshto"
+	"moviefy/main/helper/queries"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/golang-jwt/jwt/v5"
@@ -29,14 +33,6 @@ type AuthService struct {
 	config     *Config
 	ctx        context.Context
 	adminToken *gocloak.JWT
-}
-
-type LoginResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	ExpiresIn    int    `json:"expiresIn"`
-	TokenType    string `json:"tokenType"`
-	UserId       string `json:"userId,omitempty"`
 }
 
 type ErrorResponse struct {
@@ -96,7 +92,37 @@ func NewAuthService(config *Config) (*AuthService, error) {
 	}, nil
 }
 
-func (a *AuthService) login(username, password string) (*LoginResponse, error) {
+func (a *AuthService) createUser(password string, email string, username string) error {
+
+	user := gocloak.User{
+		Username:      gocloak.StringP(username),
+		Email:         gocloak.StringP(email),
+		EmailVerified: gocloak.BoolP(true),
+		Enabled:       gocloak.BoolP(true),
+		Credentials: &[]gocloak.CredentialRepresentation{
+			{
+				Type:      gocloak.StringP("password"),
+				Value:     gocloak.StringP(password),
+				Temporary: gocloak.BoolP(false),
+			},
+		},
+	}
+
+	fmt.Println(a.adminToken.AccessToken)
+	userID, err := a.client.CreateUser(a.ctx, a.adminToken.AccessToken, a.config.KeycloakRealm, user)
+	if err != nil {
+		return err
+	}
+
+	error := queries.CreateUserInDB(username, email, userID, neshto.MovieDB)
+	if error != nil {
+		return error
+	}
+
+	return nil
+}
+
+func (a *AuthService) login(username, password string) (*queries.User, error) {
 	token, err := a.client.Login(a.ctx, a.config.ClientID, a.config.ClientSecret, a.config.KeycloakRealm, username, password)
 	if err != nil {
 		return nil, fmt.Errorf("login failed: %w", err)
@@ -106,23 +132,31 @@ func (a *AuthService) login(username, password string) (*LoginResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user info: %w", err)
 	}
+	user := &queries.User{
+		Token: neshto.LoginResponse{
+			AccessToken:  token.AccessToken,
+			RefreshToken: token.RefreshToken,
+			ExpiresIn:    token.ExpiresIn,
+			TokenType:    token.TokenType,
+		},
+	}
 
-	return &LoginResponse{
-		AccessToken:  token.AccessToken,
-		RefreshToken: token.RefreshToken,
-		ExpiresIn:    token.ExpiresIn,
-		TokenType:    token.TokenType,
-		UserId:       *userInfo.Sub,
-	}, nil
+	error := queries.GetUser(*userInfo.Sub, user, neshto.MovieDB)
+
+	if error != nil {
+		return nil, nil
+	}
+
+	return user, nil
 }
 
-func (a *AuthService) refreshToken(refreshToken string) (*LoginResponse, error) {
+func (a *AuthService) refreshToken(refreshToken string) (*neshto.LoginResponse, error) {
 	token, err := a.client.RefreshToken(a.ctx, refreshToken, a.config.ClientID, a.config.ClientSecret, a.config.KeycloakRealm)
 	if err != nil {
 		return nil, fmt.Errorf("token refresh failed: %w", err)
 	}
 
-	return &LoginResponse{
+	return &neshto.LoginResponse{
 		AccessToken:  token.AccessToken,
 		RefreshToken: token.RefreshToken,
 		ExpiresIn:    token.ExpiresIn,
@@ -157,7 +191,29 @@ func (a *AuthService) logout(refreshToken string) error {
 	return a.client.Logout(a.ctx, a.config.ClientID, a.config.ClientSecret, a.config.KeycloakRealm, refreshToken)
 }
 
-func (a *AuthService) sendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
+func (a *AuthService) getTokenAndInspect() error {
+
+	token, err := a.client.GetToken(a.ctx, a.config.KeycloakRealm, gocloak.TokenOptions{
+		ClientID:     gocloak.StringP("your-client-id"),
+		ClientSecret: gocloak.StringP("your-client-secret"),
+		Username:     gocloak.StringP("username"),
+		Password:     gocloak.StringP("password"),
+	})
+	if err != nil {
+		return err
+	}
+
+	_, claims, err := a.client.DecodeAccessToken(a.ctx, token.AccessToken, a.config.KeycloakRealm)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Token claims: %+v\n", claims)
+
+	return nil
+}
+
+func SendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(ErrorResponse{
@@ -166,69 +222,157 @@ func (a *AuthService) sendErrorResponse(w http.ResponseWriter, statusCode int, m
 	})
 }
 
-func (a *AuthService) sendJSONResponse(w http.ResponseWriter, statusCode int, data interface{}) {
+func SendJSONResponse(w http.ResponseWriter, statusCode int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(data)
 }
 
+func (a *AuthService) shouldRefreshAdminToken() bool {
+	if a.adminToken == nil {
+		return true
+	}
+
+	expiryBuffer := time.Duration(5) * time.Minute
+	expiryTime := time.Now().Add(expiryBuffer)
+
+	tokenExpiry := time.Now().Add(time.Duration(a.adminToken.ExpiresIn) * time.Second)
+
+	return tokenExpiry.Before(expiryTime)
+}
+
+func (a *AuthService) refreshAdminToken() error {
+	if a.adminToken != nil && a.adminToken.RefreshToken != "" {
+		newToken, err := a.client.RefreshToken(
+			a.ctx,
+			a.adminToken.RefreshToken,
+			a.config.ClientID,
+			a.config.ClientSecret,
+			"master",
+		)
+		if err != nil {
+			return fmt.Errorf(" Failed to  refresh admin token: %v", err)
+		}
+		a.adminToken = newToken
+		return nil
+	}
+
+	adminToken, err := a.client.LoginAdmin(
+		a.ctx,
+		a.config.AdminUsername,
+		a.config.AdminPassword,
+		"master",
+	)
+	if err != nil {
+		return err
+	}
+
+	a.adminToken = adminToken
+	return nil
+}
+
+func (a *AuthService) GetValidAdminToken() (string, error) {
+	if a.shouldRefreshAdminToken() {
+		if err := a.refreshAdminToken(); err != nil {
+			return "", err
+		}
+	}
+	return a.adminToken.AccessToken, nil
+}
+func (a *AuthService) SetUserPassword(userID, newPassword string) error {
+
+	err := a.client.SetPassword(a.ctx, a.adminToken.AccessToken, a.config.KeycloakRealm, userID, newPassword, false)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func (a *AuthService) AuthMiddleware(next http.Handler) http.Handler {
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			a.sendErrorResponse(w, http.StatusUnauthorized, "Authorization header required")
+			SendErrorResponse(w, http.StatusUnauthorized, "Authorization header required")
 			return
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
-			a.sendErrorResponse(w, http.StatusUnauthorized, "Bearer token required")
+			SendErrorResponse(w, http.StatusUnauthorized, "Bearer token required")
 			return
 		}
 
 		claims, err := a.verifyToken(tokenString)
 		if err != nil {
-			a.sendErrorResponse(w, http.StatusUnauthorized, fmt.Sprintf("Invalid token: %v", err))
+			SendErrorResponse(w, http.StatusUnauthorized, fmt.Sprintf("Invalid token: %v", err))
 			return
 		}
 
 		ctx := context.WithValue(r.Context(), "user_claims", claims)
 		ctx = context.WithValue(ctx, "user_id", claims.Subject)
 		ctx = context.WithValue(ctx, "username", claims.PreferredUsername)
+		ctx = context.WithValue(ctx, "AuthService", a)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
+func (a *AuthService) AdminTokenMiddleware(next http.Handler) http.Handler {
+	var mu sync.Mutex
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("SHould refresh token: ", a.shouldRefreshAdminToken())
+		if a.shouldRefreshAdminToken() {
+			mu.Lock()
+			defer mu.Unlock()
+
+			fmt.Println("ddddddddddddd")
+			if a.shouldRefreshAdminToken() {
+				if err := a.refreshAdminToken(); err != nil {
+					fmt.Println("cccccccccc")
+					SendErrorResponse(w, http.StatusInternalServerError, "Authentication not available")
+					return
+				}
+				fmt.Println(time.Duration(a.adminToken.ExpiresIn) * time.Second)
+				fmt.Println("aaaaaaaa")
+			}
+			fmt.Println("bbbbbbbbbb")
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (a *AuthService) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		a.sendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		SendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
 	var loginReq LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
+		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if loginReq.Username == "" || loginReq.Password == "" {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Username and password are required")
+		SendErrorResponse(w, http.StatusBadRequest, "Username and password are required")
 		return
 	}
 
 	response, err := a.login(loginReq.Username, loginReq.Password)
 	if err != nil {
-		a.sendErrorResponse(w, http.StatusUnauthorized, err.Error())
+		SendErrorResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
+	fmt.Println(response)
 
-	a.sendJSONResponse(w, http.StatusOK, response)
+	SendJSONResponse(w, http.StatusOK, response)
 }
 
 func (a *AuthService) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		a.sendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		SendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
@@ -237,27 +381,60 @@ func (a *AuthService) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&refreshReq); err != nil {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
+		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if refreshReq.RefreshToken == "" {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Refresh token is required")
+		SendErrorResponse(w, http.StatusBadRequest, "Refresh token is required")
 		return
 	}
 
 	response, err := a.refreshToken(refreshReq.RefreshToken)
 	if err != nil {
-		a.sendErrorResponse(w, http.StatusUnauthorized, err.Error())
+		SendErrorResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	a.sendJSONResponse(w, http.StatusOK, response)
+	SendJSONResponse(w, http.StatusOK, response)
+}
+
+func (a *AuthService) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		SendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	var registerBody struct {
+		Password string `json:"password"`
+		Email    string `json:"email"`
+		Username string `json:"username"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&registerBody); err != nil {
+		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	//SHOULD CHECK WEATHER the email is formatted correctly
+	if registerBody.Email == "" || registerBody.Password == "" || registerBody.Username == "" {
+		SendErrorResponse(w, http.StatusBadRequest, "One or more fields are empty.")
+		return
+	}
+
+	err := a.createUser(registerBody.Password, registerBody.Email, registerBody.Username)
+	if err != nil {
+		fmt.Println(err)
+		SendErrorResponse(w, http.StatusBadRequest, "Got an error creating the user")
+		return
+	}
+
+	SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Regitered successfully"})
 }
 
 func (a *AuthService) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		a.sendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		SendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 
@@ -266,21 +443,21 @@ func (a *AuthService) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&logoutReq); err != nil {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
+		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if logoutReq.RefreshToken == "" {
-		a.sendErrorResponse(w, http.StatusBadRequest, "Refresh token is required")
+		SendErrorResponse(w, http.StatusBadRequest, "Refresh token is required")
 		return
 	}
 
 	if err := a.logout(logoutReq.RefreshToken); err != nil {
-		a.sendErrorResponse(w, http.StatusBadRequest, err.Error())
+		SendErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	a.sendJSONResponse(w, http.StatusOK, map[string]string{"message": "Logged out successfully"})
+	SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Logged out successfully"})
 }
 
 func CorsMiddleware(next http.Handler) http.Handler {

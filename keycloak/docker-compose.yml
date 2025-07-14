@@ -23,15 +23,21 @@ services:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev
     restart: unless-stopped
+    #volumes:
+      #- /etc/letsencrypt/live/keycloak.martinkurtev.com/:/etc/letsencrypt/live/keycloak.martinkurtev.com/
+      #- /etc/letsencrypt/archive/keycloak.martinkurtev.com/:/etc/letsencrypt/archive/keycloak.martinkurtev.com/
     environment:
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: localhost 
+      #KC_HTTPS_CERTIFICATE_FILE: /etc/letsencrypt/live/keycloak.martinkurtev.com/fullchain.pem
+      #KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/letsencrypt/live/keycloak.martinkurtev.com/privkey.pem
       KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_HTTP_ENABLED: true
+      #KC_PROXY: edge
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HEALTH_ENABLED: true
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN: tajna
+      KEYCLOAK_ADMIN_PASSWORD: kachamak11
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: admin

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"moviefy/main/helper/webscraper"
+	"moviefy/main/helper/neshto"
 	"os"
 	"time"
 
@@ -95,13 +95,38 @@ OFFSET $3;
     `
 )
 
-type DB struct {
-	*pgxpool.Pool
+type User struct {
+	Username string `json:"username"`
+	PfpUrl   string `json:"pfp"`
+	Id       string `json:"id"`
+	Token    neshto.LoginResponse
 }
 
-var MovieDB *DB
+func CreateUserInDB(username string, email string, keycloakUUID string, db *neshto.DB) error {
+	_, err := db.Exec(context.Background(), `
+		INSERT INTO users(keycloak_user_id,username,email)
+		VALUES ($1,$2,$3);`, keycloakUUID, username, email)
+	if err != nil {
+		return fmt.Errorf("Couldnt insert the user : %s", err)
+	}
 
-func (db *DB) getMovieSearchResults(searchString string, offset int, limit int) ([]webscraper.SearchItem, error) {
+	return nil
+}
+
+func GetUser(keycloakUUID string, user *User, db *neshto.DB) error {
+	row := db.QueryRow(context.Background(), `
+		SELECT id, pfpUrl, username
+		FROM users
+		WHERE keycloak_user_id = $1;`, keycloakUUID)
+
+	err := row.Scan(&user.Id, &user.PfpUrl, &user.Username)
+	if err != nil {
+		return fmt.Errorf("scan failed: %w", err)
+	}
+	return nil
+}
+
+func getMovieSearchResults(searchString string, offset int, limit int, db *neshto.DB) ([]neshto.SearchMovie, error) {
 
 	rows, err := db.Query(context.Background(), MovieSearchQuery, searchString, limit, offset)
 	if err != nil {
@@ -109,10 +134,10 @@ func (db *DB) getMovieSearchResults(searchString string, offset int, limit int) 
 	}
 	defer rows.Close()
 
-	var movies []webscraper.SearchItem
-	var m webscraper.SearchItem
+	var movies []neshto.SearchMovie
+	var m neshto.SearchMovie
 	for rows.Next() {
-		err := rows.Scan(&m.ID, &m.MovieName, &m.MovieStart, &m.PosterURL)
+		err := rows.Scan(&m.Id, &m.Title, &m.AverageRating, &m.PosterUrl)
 		if err != nil {
 			return nil, fmt.Errorf("scan failed: %w", err)
 		}
@@ -122,7 +147,7 @@ func (db *DB) getMovieSearchResults(searchString string, offset int, limit int) 
 	return movies, nil
 }
 
-func (db *DB) InitDb() {
+func InitDb(db *neshto.DB) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Could not load .env file")

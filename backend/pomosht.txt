@@ -1,0 +1,5 @@
+
+ jorobg@jorobg ~/..../backend  backend  go run server.go
+2025/07/11 14:30:28 Failed to create auth service : failed to login as admin: could not get token: Post "http://localhost:3000/realms/master/protocol/openid-
+connect/token": dial tcp [::1]:3000: connect: connection refused
+exit status 1

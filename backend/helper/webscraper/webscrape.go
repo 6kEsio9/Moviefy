@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand/v2"
-	"moviefy/main/helper/queries"
+	"moviefy/main/helper/neshto"
 	"strings"
 	"sync"
 	"time"
@@ -25,19 +25,12 @@ type SingleFilmDetails struct {
 	Error     error
 }
 
-type SearchItem struct {
-	ID         *string
-	PosterURL  *string
-	MovieName  *string
-	MovieStart *int
-}
-
 type CollyCollector struct {
 	*colly.Collector
 
 	wg               map[string]*sync.WaitGroup
 	mu               sync.RWMutex
-	ResultsSearch    map[string]map[string]*SearchItem
+	ResultsSearch    map[string]map[string]*neshto.SearchMovie
 	ResultSingleFilm map[string]*SingleFilmDetails
 }
 
@@ -55,7 +48,7 @@ func (c *CollyCollector) InitCollector() {
 	)
 
 	c.wg = make(map[string]*sync.WaitGroup)
-	c.ResultsSearch = make(map[string]map[string]*SearchItem)
+	c.ResultsSearch = make(map[string]map[string]*neshto.SearchMovie)
 	c.ResultSingleFilm = make(map[string]*SingleFilmDetails)
 
 	c.Limit(&colly.LimitRule{
@@ -161,7 +154,7 @@ func (c *CollyCollector) setupHandlers() {
 		src, _ := firstImg.Attr("src")
 		if src != "" && strings.Contains(src, "https://m.media-amazon.com") {
 			if secret != "" {
-				c.ResultsSearch[secret][id].PosterURL = &src
+				c.ResultsSearch[secret][id].PosterUrl = &src
 				c.wg[secret].Done()
 			} else {
 				c.ResultSingleFilm[id].PosterURL = src
@@ -213,7 +206,7 @@ func (c *CollyCollector) ScrapeSingleFilmDetails(id string) (*SingleFilmDetails,
 
 	c.wg[id].Wait()
 
-	queries.MovieDB.Exec(context.Background(), `
+	neshto.MovieDB.Exec(context.Background(), `
 		UPDATE posters
 		SET posterId = $1,
 				description = $2
@@ -225,11 +218,11 @@ func (c *CollyCollector) ScrapeSingleFilmDetails(id string) (*SingleFilmDetails,
 	return result, result.Error
 }
 
-func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*SearchItem) error {
-	var SearchUndetailedResults = make(map[string]*SearchItem)
+func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*neshto.SearchMovie) error {
+	var SearchUndetailedResults = make(map[string]*neshto.SearchMovie)
 	for _, item := range *searchItems {
-		if item.PosterURL == nil {
-			SearchUndetailedResults[*item.ID] = item
+		if item.PosterUrl == nil {
+			SearchUndetailedResults[item.Id] = item
 		}
 	}
 
@@ -240,12 +233,12 @@ func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*SearchItem) e
 
 	for _, item := range SearchUndetailedResults {
 		c.wg[randomId].Add(1)
-		c.Visit(baseURL + *item.ID + "/?secret=" + randomId)
+		c.Visit(baseURL + item.Id + "/?secret=" + randomId)
 	}
 
 	c.wg[randomId].Wait()
 
-	err := bulkUpdateFilms(randomId, searchItems, SearchUndetailedResults)
+	err := bulkUpdateFilms(searchItems, SearchUndetailedResults)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -257,27 +250,27 @@ func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*SearchItem) e
 	return nil
 }
 
-func bulkUpdateFilms(id string, searchItems *[]*SearchItem, SearchUndetailedResults map[string]*SearchItem) error {
+func bulkUpdateFilms(searchItems *[]*neshto.SearchMovie, SearchUndetailedResults map[string]*neshto.SearchMovie) error {
 	ctx := context.Background()
-	tx, err := queries.MovieDB.BeginTx(ctx, pgx.TxOptions{})
+	tx, err := neshto.MovieDB.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback(ctx)
 
 	for i, item := range *searchItems {
-		newItem, exists := SearchUndetailedResults[*item.ID]
+		newItem, exists := SearchUndetailedResults[item.Id]
 		if !exists {
 			continue
 		}
 
-		if item.PosterURL != newItem.PosterURL {
-			(*searchItems)[i] = SearchUndetailedResults[*item.ID]
+		if item.PosterUrl != newItem.PosterUrl {
+			(*searchItems)[i] = SearchUndetailedResults[item.Id]
 			_, err := tx.Exec(ctx, `
 				UPDATE posters 
 				SET posterId = $1
 				WHERE titleId = $2
-				`, SearchUndetailedResults[*item.ID].PosterURL, item.ID)
+				`, SearchUndetailedResults[item.Id].PosterUrl, item.Id)
 			if err != nil {
 				return err
 			}
