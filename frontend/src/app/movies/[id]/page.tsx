@@ -20,7 +20,7 @@ export default function MovieDetails() {
   useEffect(() => {
     const fetched = async () => {
       const result = await MovieSerivce.getMovie(String(movieId!));
-      setMovie(result);
+      setMovie(result as Movie);
     };
     fetched();
   }, []);
