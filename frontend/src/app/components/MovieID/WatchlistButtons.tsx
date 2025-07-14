@@ -18,12 +18,11 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
   const [watchStatus, setWatchStatus] = useState("none");
   const [watchList, setWatchList] = useState<WatchList>();
 
-  const authToken = localStorage.getItem("user");
-
   useEffect(() => {
     const fetched = async () => {
-      const res = await AuthService.getWatchList(user!.id);
-      setWatchList(res);
+      // const res = await AuthService.getWatchList(movie.id);
+      // console.log(res);
+      // setWatchList(res);
     };
     fetched();
   }, [user]);
@@ -62,7 +61,6 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       case "plan": {
         if (watchStatus === "plan") {
           setWatchStatus("none");
-          console.log(updatedPlan);
           updatedPlan = updatedPlan!.filter((x) => x.id !== movie.id);
         } else {
           setWatchStatus("plan");
@@ -93,16 +91,15 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
       isWatching: updatedWatching,
     });
 
-    // const fetched = async () => {
-    //   const req = await AuthService.changeMovieStatus(
-    //     user?.id!,
-    //     movie.id!,
-    //     AuthService.statusToNum(watchStatus)!,
-    //     authToken!
-    //   );
-    //   console.log(req);
-    // };
-    // fetched();
+    const index = AuthService.statusToNum(
+      state === watchStatus ? "none" : state
+    );
+
+    const fetched = async () => {
+      const req = await AuthService.changeMovieStatus(movie.id, index!);
+      console.log(req);
+    };
+    fetched();
   };
 
   return (

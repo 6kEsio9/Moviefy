@@ -18,10 +18,11 @@ export default function TabsButtons({ profileUser }: TabsButtonsProps) {
   useEffect(() => {
     const fetched = async () => {
       const res = await AuthService.getWatchList(profileUser?.id!);
-      setWatchList(res);
+      console.log(res);
+      // setWatchList(res);
     };
     fetched();
-  }, []);
+  }, [profileUser]);
 
   return (
     <>

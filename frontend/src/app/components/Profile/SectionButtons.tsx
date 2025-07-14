@@ -1,6 +1,5 @@
 import { CardContent, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import { Movie } from "@/app/services/MovieService";
 import { useState } from "react";
 import { UserProfile, WatchList } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -8,7 +7,7 @@ import * as AuthService from "../../services/AuthService";
 
 interface SectionButtonsProps {
   watchStatus: string;
-  movie: Movie;
+  movie: AuthService.MovieWatchList;
   profileUser: UserProfile | undefined;
   setWatchList: React.Dispatch<React.SetStateAction<WatchList | undefined>>;
 }
@@ -22,7 +21,6 @@ export default function SectionButtons({
   const [hover, setHover] = useState(false);
 
   const { user } = useAuth();
-  const authToken = localStorage.getItem("user");
 
   const [status, setStatus] = useState(false);
 
@@ -31,14 +29,18 @@ export default function SectionButtons({
     setStatus(false);
     if (watchStatus === state) return;
 
-    switch(state){
+    switch (state) {
       case "watched": {
         setWatchList((prevWatchlist) => {
           return {
             watched: [...prevWatchlist!.watched, movie],
-            isWatching: prevWatchlist!.isWatching.filter((x) => x.id !== movie.id),
-            willWatch: prevWatchlist!.willWatch.filter((x) => x.id !== movie.id)
-          }
+            isWatching: prevWatchlist!.isWatching.filter(
+              (x) => x.id !== movie.id
+            ),
+            willWatch: prevWatchlist!.willWatch.filter(
+              (x) => x.id !== movie.id
+            ),
+          };
         });
         break;
       }
@@ -47,8 +49,10 @@ export default function SectionButtons({
           return {
             watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
             isWatching: [...prevWatchlist!.isWatching, movie],
-            willWatch: prevWatchlist!.willWatch.filter((x) => x.id !== movie.id)
-          }
+            willWatch: prevWatchlist!.willWatch.filter(
+              (x) => x.id !== movie.id
+            ),
+          };
         });
         break;
       }
@@ -56,9 +60,11 @@ export default function SectionButtons({
         setWatchList((prevWatchlist) => {
           return {
             watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
-            isWatching: prevWatchlist!.isWatching.filter((x) => x.id !== movie.id),
-            willWatch: [...prevWatchlist!.willWatch, movie]
-          }
+            isWatching: prevWatchlist!.isWatching.filter(
+              (x) => x.id !== movie.id
+            ),
+            willWatch: [...prevWatchlist!.willWatch, movie],
+          };
         });
         break;
       }
@@ -66,24 +72,27 @@ export default function SectionButtons({
         setWatchList((prevWatchlist) => {
           return {
             watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
-            isWatching: prevWatchlist!.isWatching.filter((x) => x.id !== movie.id),
-            willWatch: prevWatchlist!.willWatch.filter((x) => x.id !== movie.id)
-          }
+            isWatching: prevWatchlist!.isWatching.filter(
+              (x) => x.id !== movie.id
+            ),
+            willWatch: prevWatchlist!.willWatch.filter(
+              (x) => x.id !== movie.id
+            ),
+          };
         });
         break;
       }
     }
 
-    // const fetched = async () => {
-    //   const req = await AuthService.changeMovieStatus(
-    //     user?.id!,
-    //     movie.id!,
-    //     AuthService.statusToNum(watchStatus)!,
-    //     authToken!
-    //   );
-    //   console.log(req);
-    // };
-    // fetched();
+    const index = AuthService.statusToNum(
+      state === watchStatus ? "none" : state
+    );
+
+    const fetched = async () => {
+      const req = await AuthService.changeMovieStatus(movie.id!, index);
+      console.log(req);
+    };
+    fetched();
   };
 
   return (

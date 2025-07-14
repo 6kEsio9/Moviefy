@@ -31,12 +31,8 @@ export default function RatingLine({ movie, movies }: RatingLineProps) {
     setValue(newValue);
 
     const fetched = async () => {
-      await MovieService.rate(
-        user.id,
-        movie.id,
-        newValue ? newValue : 0,
-        authToken!
-      );
+      const res = await MovieService.rate(movie.id, newValue ? newValue : 0);
+      console.log(res);
     };
     fetched();
   };

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { users } from "./AuthService";
 
-const url = "";
+const url = "http://keycloak.martinkurtev.com:1235";
 
 const instance = axios.create({
-  baseURL: url, // <-- тук задаваш базовия URL
+  baseURL: url,
   headers: {
     "Content-Type": "application/json",
   },
@@ -14,12 +14,11 @@ instance.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers["Authorization"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
@@ -48,6 +47,7 @@ export type Movie = {
 
 const movies: Movie[] = [
   {
+    // id: "tt6723592",
     id: "0",
     title: "Tenet",
     imageUrl: "/images/tennet.jpeg",
@@ -204,7 +204,7 @@ export async function getAll() {
 }
 
 export async function getMovie(movieId: string) {
-  // const res = await instance.get('/movies', {params: {movieId: movieId}});
+  // const res = await instance.get("/movies", { params: { movieId: movieId } });
   // return res;
 
   const movie = movies.find((x) => x.id === movieId);
@@ -249,21 +249,13 @@ export async function search(searchInput: string, usersB: boolean) {
   //   .then(res => res.json());
 }
 
-export async function rate(
-  userId: string,
-  movieId: string,
-  rating: number,
-  comment?: string
-) {
-  // const res = await instance.post("/movies/rate", {
-  //   userId: userId,
-  //   movieId: movieId,
-  //   rating: rating,
-  //   comment: comment
-  // });
-  // return res;
-
-  console.log("movie rated");
+export async function rate(movieId: string, rating: number, comment?: string) {
+  const res = await instance.post("/movies/rate", {
+    movieId: "tt0816692",
+    rating: rating,
+    comment: comment,
+  });
+  return res;
 }
 
 export async function editReview(
@@ -292,7 +284,12 @@ export async function deleteReview(userId: string, movieId: string) {
   // return res;
 }
 
-export async function like(userId: string, movieId: string, like: boolean, authToken: string) {
+export async function like(
+  userId: string,
+  movieId: string,
+  like: boolean,
+  authToken: string
+) {
   // const req = await fetch(`${url}/movies/like`, {
   //   method: "POST",
   //   headers: {

@@ -164,7 +164,7 @@ instance.interceptors.request.use(
   function (config: any) {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers["Authorization"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
@@ -174,11 +174,14 @@ instance.interceptors.request.use(
 );
 
 export type ReviewUser = {
-  movieId: string;
-  movieTitle: string;
+  id: number;
+  content: string;
+  likeCount: number;
+  username: string;
+  pfpUrl: string;
   rating: number;
-  comment: string;
-  likes: string[];
+  isLiked: boolean;
+  movieId: string;
 };
 
 export type UserReq = {
@@ -198,10 +201,17 @@ export type UserProfile = {
   pfp: string;
 };
 
+export type MovieWatchList = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  year: number;
+};
+
 export type WatchList = {
-  watched: Movie[];
-  isWatching: Movie[];
-  willWatch: Movie[];
+  watched: MovieWatchList[];
+  isWatching: MovieWatchList[];
+  willWatch: MovieWatchList[];
 };
 
 export const users: User[] = [
@@ -236,29 +246,12 @@ export async function login(formData: LoginDto) {
   const res = await instance.post<UserReq>("/login", { ...formData });
 
   return res;
-  // return {
-  //   data: {
-  //     id: "0",
-  //     username: "Georgi",
-  //     pfp: "/images/pfp.jpeg",
-  //     token: "token",
-  //   },
-  // };
 }
 
 export async function register(data: RegisterDto) {
   const res = await instance.post<UserReq>("/register", { ...data });
 
   return res;
-
-  // return {
-  //   data: {
-  //     id: "0",
-  //     username: "Georgi",
-  //     pfp: "/images/pfp.jpeg",
-  //     token: "token",
-  //   },
-  // };
 }
 
 export async function getUser(userId: string) {
@@ -267,24 +260,21 @@ export async function getUser(userId: string) {
 }
 
 export async function getWatchList(userId: string) {
-  // const res = await instance.get('/users/watchList', {params: {userId: userId}});
-  // return res;
-
-  return {
-    watched: [movies[0]],
-    isWatching: [movies[1]],
-    willWatch: [movies[2]],
-  };
+  console.log(userId);
+  const res = await instance.get("/watchlist", {
+    params: { userId: userId },
+  });
+  return res;
+  // return {
+  //   watched: [movies[0]],
+  //   isWatching: [movies[1]],
+  //   willWatch: [movies[2]],
+  // };
 }
 
-export async function changeMovieStatus(
-  userId: string,
-  movieId: string,
-  status: number,
-  authToken: string
-) {
-  // const res = await instance.put('/change', {userId, movieId, status, authToken});
-  // return res;
+export async function changeMovieStatus(movieId: string, status: number) {
+  const res = await instance.put("/change", { movieId, status });
+  return res;
 }
 
 export async function getReviews(userId: string) {
@@ -306,31 +296,15 @@ export async function getReviews(userId: string) {
   ];
 }
 
-export async function editReview(
-  userId: string,
-  movieId: string,
-  comment: string
-) {
-  // const res = await instance.put('/users/review/edit', {userId, movieId, comment, accessToken});
-  // return res;
+export async function editReview(reviewId: number, comment: string) {
+  const res = await instance.put("/users/reviews/edit", {
+    id: reviewId,
+    content: comment,
+  });
+  return res;
 }
 
-export async function editUser(
-  userId: string,
-  formData: EditDto,
-  accessToken: string
-) {
-  // const req = await fetch(`${url}/users/edit`, {
-  //   method: 'PUT',
-  //   headers: {
-  //     'content-type': 'application/json',
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({userId, formData})
-  // })
-  // const res = await req.json();
-  // return res;
-
+export async function editUser(userId: string, formData: EditDto) {
   // const res = await instance.put("/users/edit", { userId, formData, accessToken });
   // return res;
 
@@ -339,6 +313,7 @@ export async function editUser(
 
 export function statusToNum(watchStatus: string) {
   if (watchStatus === "watched") return 0;
-  if (watchStatus === "watching") return 1;
-  if (watchStatus === "plan") return 2;
+  else if (watchStatus === "watching") return 1;
+  else if (watchStatus === "plan") return 2;
+  else return 3;
 }

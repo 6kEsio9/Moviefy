@@ -18,7 +18,7 @@ export default function Reviews({ profileUser }: ReviewProps) {
   useEffect(() => {
     const fetched = async () => {
       const res = await AuthService.getReviews(profileUser?.id!);
-      setReviews(res);
+      // setReviews(res);
     };
     fetched();
   }, []);
@@ -29,7 +29,7 @@ export default function Reviews({ profileUser }: ReviewProps) {
         reviews.map((review) => {
           return (
             <Review
-              key={review.movieTitle}
+              key={review.username}
               review={review}
               profileUser={profileUser}
               setReviews={setReviews}

@@ -33,12 +33,7 @@ export default function EditReviews({
 
     setEdit(false);
     const fetched = async () => {
-      await AuthService.editReview(
-        user?.id!,
-        review.movieId,
-        newComment,
-        authToken!
-      );
+      await AuthService.editReview(review.id, newComment);
     };
     fetched();
   };

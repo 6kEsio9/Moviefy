@@ -1,15 +1,18 @@
 import { Box, Card, Grid, Typography } from "@mui/material";
 
-import { Movie } from "../../services/MovieService";
 import Link from "next/link";
-import { UserProfile, WatchList } from "@/app/services/AuthService";
+import {
+  MovieWatchList,
+  UserProfile,
+  WatchList,
+} from "@/app/services/AuthService";
 import Loading from "../Movies/Loading";
 import SectionButtons from "./SectionButtons";
 import React from "react";
 
 interface SectionProps {
   title: string;
-  movies: Movie[] | undefined;
+  movies: MovieWatchList[] | undefined;
   profileUser: UserProfile | undefined;
   setWatchList: React.Dispatch<React.SetStateAction<WatchList | undefined>>;
   watchStatus: string;

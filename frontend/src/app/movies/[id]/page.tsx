@@ -9,10 +9,8 @@ import Loading from "@/app/components/Movies/Loading";
 import { useEffect, useState } from "react";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieSerivce from "../../services/MovieService";
-import { useAuth } from "@/app/hooks/useAuth";
 
 export default function MovieDetails() {
-  const { user } = useAuth();
   const [movie, setMovie] = useState<Movie>();
 
   const movieId = useParams().id;
@@ -20,6 +18,7 @@ export default function MovieDetails() {
   useEffect(() => {
     const fetched = async () => {
       const result = await MovieSerivce.getMovie(String(movieId!));
+      // setMovie(result);
       setMovie(result);
     };
     fetched();

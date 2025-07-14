@@ -12,7 +12,6 @@ import EditReviews from "./EditReviews";
 import { ReviewUser, UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
-import * as ms from "@/app/services/MovieService";
 
 interface ReviewProps {
   review: ReviewUser;
@@ -26,7 +25,6 @@ export default function Review({
   setReviews,
 }: ReviewProps) {
   const { user } = useAuth();
-  const authToken = localStorage.getItem("user");
   const [edit, setEdit] = useState(false);
 
   const handleRemove = () => {
@@ -53,18 +51,18 @@ export default function Review({
               href={`/movies/${review.movieId}`}
               style={{ textDecoration: "none", color: "black" }}
             >
-              <Typography variant="h6">{review.movieTitle}</Typography>
+              {/* <Typography variant="h6">{review.movieTitle}</Typography> */}
             </Link>
             <Rating value={review.rating} readOnly />
             {edit ? (
               <EditReviews
-                comment={review.comment}
+                comment={review.content}
                 setEdit={setEdit}
                 review={review}
                 setReviews={setReviews}
               />
             ) : (
-              <Typography variant="body2">{review.comment}</Typography>
+              <Typography variant="body2">{review.content}</Typography>
             )}
           </Box>
         </Box>
