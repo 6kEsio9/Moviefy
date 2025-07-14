@@ -19,16 +19,16 @@ func DeleteReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var params struct {
+	var Params struct {
 		MovieId string `json:"movieId,omitempty"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&Params); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if params.MovieId == "" {
+	if Params.MovieId == "" {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid param")
 		return
 	}
@@ -49,7 +49,7 @@ func DeleteReview(w http.ResponseWriter, r *http.Request) {
 		RETURNING id
 		)
 		DELETE FROM comment_likes
-		WHERE commentId = (SELECT id FROM deleted_comment);`, params.MovieId, username).Scan()
+		WHERE commentId = (SELECT id FROM deleted_comment);`, Params.MovieId, username).Scan()
 
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
@@ -72,16 +72,16 @@ func LikeReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var params struct {
+	var Params struct {
 		CommentId string `json:"commentId"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&Params); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if params.CommentId == "" {
+	if Params.CommentId == "" {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid param")
 		return
 	}
@@ -113,7 +113,7 @@ func LikeReview(w http.ResponseWriter, r *http.Request) {
 		SET likeCount = likeCount - 1
 		WHERE id= $2 AND EXISTS (SELECT 1 FROM deleted_like)
 		)
-		SELECT 1;`, username, params.CommentId).Scan()
+		SELECT 1;`, username, Params.CommentId).Scan()
 
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
@@ -136,17 +136,17 @@ func EditReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var params struct {
+	var Params struct {
 		CommentId string `json:"commentId,omitempty"`
 		Comment   string `json:"comment,omitempty"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&Params); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if params.CommentId == "" || params.Comment == "" {
+	if Params.CommentId == "" || Params.Comment == "" {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid param")
 		return
 	}
@@ -164,7 +164,7 @@ func EditReview(w http.ResponseWriter, r *http.Request) {
 		SET content = $3
 		WHERE comments.ratingId = (SELECT rating_id FROM current_user) AND comments.id = $2
 		)
-		SELECT 1;`, username, params.CommentId, params.Comment).Scan()
+		SELECT 1;`, username, Params.CommentId, Params.Comment).Scan()
 
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
@@ -187,17 +187,17 @@ func ChangeMovieStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var params struct {
+	var Params struct {
 		MovieId string `json:"movieId"`
 		Status  int    `json:"status"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&Params); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if params.MovieId == "" || params.Status < 0 || params.Status >= 4 {
+	if Params.MovieId == "" || Params.Status < 0 || Params.Status >= 4 {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid param")
 		return
 	}
@@ -207,7 +207,7 @@ func ChangeMovieStatus(w http.ResponseWriter, r *http.Request) {
 		SET type = $1
 		WHERE filmId = $2 AND userId = (
 		SELECT id FROM users WHERE username = $3 
-		LIMIT 1);`, params.Status, params.MovieId, username).Scan()
+		LIMIT 1);`, Params.Status, Params.MovieId, username).Scan()
 
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
@@ -236,30 +236,30 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//trqbva da e multipart form data za da dava snimki
-	var params struct {
+	var Params struct {
 		Bio string `json:"bio,omitempty"`
 		//	Pfp         string `json:"pfp,omitempty"`
 		//	Email string
 		NewPassword string `json:"NewPassword,omitempty"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&Params); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if params.NewPassword != "" {
-		err := authService.SetUserPassword(userId, params.NewPassword)
+	if Params.NewPassword != "" {
+		err := authService.SetUserPassword(userId, Params.NewPassword)
 		if err != nil {
 			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to update password")
 			return
 		}
 	}
-	if params.Bio != "" {
+	if Params.Bio != "" {
 		err := neshto.MovieDB.QueryRow(r.Context(), `
 		UPDATE users
 		SET bio = $1
-		WHERE username = $2;`, params.Bio).Scan()
+		WHERE username = $2;`, Params.Bio).Scan()
 
 		if err != nil {
 			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")

@@ -213,7 +213,6 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		movie.Summary = &result.PlotText
 	}
 	keycloak.SendJSONResponse(w, http.StatusOK, movie)
-	return
 }
 
 func SearchMovies(w http.ResponseWriter, r *http.Request) {
@@ -223,22 +222,22 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var searchParams struct {
-		input string
-		users bool
+	var SearchParams struct {
+		Input string `json:"input"`
+		Users bool   `json:"users"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&searchParams); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&SearchParams); err != nil {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if searchParams.input == "" {
+	if SearchParams.Input == "" {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	rows, err := neshto.MovieDB.Query(ctx, queries.MovieSearchQuery, searchParams.input)
+	rows, err := neshto.MovieDB.Query(ctx, queries.MovieSearchQuery, SearchParams.Input)
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
 		return
@@ -391,9 +390,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Status method not allowed")
 		return
 	}
-	pathParts := strings.Split(r.URL.Path, "/")
-
-	username := pathParts[len(pathParts)-1]
+	username := r.URL.Query().Get("username")
 
 	ctx := context.Background()
 
@@ -448,7 +445,7 @@ func RateMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if Params.MovieId == "" || params.Rating == 0 {
+	if Params.MovieId == "" || Params.Rating == 0 {
 		keycloak.SendErrorResponse(w, http.StatusNotAcceptable, "Invalid Params")
 		return
 	}

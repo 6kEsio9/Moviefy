@@ -10,18 +10,6 @@ import (
 	"net/http"
 )
 
-type MovieBasics struct {
-	tconst         string
-	titleType      string
-	primaryTitle   string
-	originalTitle  string
-	isAdult        bool
-	startYear      int
-	endYear        int
-	runtimeMinutes int
-	genres         []string
-}
-
 func main() {
 
 	neshto.MovieDB = &neshto.DB{}
