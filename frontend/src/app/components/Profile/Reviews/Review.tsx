@@ -12,6 +12,7 @@ import EditReviews from "./EditReviews";
 import { ReviewUser, UserProfile } from "@/app/services/AuthService";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
+import { deleteReview } from "@/app/services/MovieService";
 
 interface ReviewProps {
   review: ReviewUser;
@@ -32,10 +33,10 @@ export default function Review({
       return prevReviews!.filter((x) => x.movieId !== user?.id);
     });
 
-    // const fetched = async () => {
-    //   await ms.deleteReview(user!.id, review.movieId, authToken!);
-    // };
-    // fetched();
+    const fetched = async () => {
+      await deleteReview(user!.id, review.movieId);
+    };
+    fetched();
   };
 
   return (

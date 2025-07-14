@@ -303,8 +303,8 @@ export async function editReview(movieId: string, comment: string) {
 }
 
 export async function editUser(formData: EditDto) {
-  // const res = await instance.put("/users/edit", { userId, formData, accessToken });
-  // return res;
+  const res = await instance.put("/users/edit", { ...formData });
+  return res;
 
   console.log(formData);
 }

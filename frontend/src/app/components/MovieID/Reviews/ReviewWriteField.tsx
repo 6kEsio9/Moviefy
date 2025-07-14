@@ -42,8 +42,14 @@ export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldPr
       const newReview: ms.ReviewMovie = {
       userId: user!.id,
       rating: rating,
-      comment: reviewText,
-      likes: []
+      content: reviewText,
+      likeCount: 0,
+      isLiked: false, 
+      id: 0,
+      username: user!.username,
+      pfpUrl: user!.pfp,
+      movieId: movie.id,
+      title: movie.title
     }
 
     setMovie((prevMovie) => {

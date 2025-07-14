@@ -18,7 +18,7 @@ export default function ReviewsPage() {
   useEffect(() => {
     const fetched = async () => {
       const movieResult = await MovieService.getMovie(movieId!);
-      setMovie(movieResult);
+      setMovie(movieResult.data);
     };
     fetched();
   }, []);
@@ -53,11 +53,11 @@ export default function ReviewsPage() {
   };
 
   const sortAscending = () => {
-    setReviews([...reviews].sort((a, b) => a.likes.length - b.likes.length));
+    setReviews([...reviews].sort((a, b) => a.likeCount - b.likeCount));
   };
 
   const sortDescending = () => {
-    setReviews([...reviews].sort((a, b) => b.likes.length - a.likes.length));
+    setReviews([...reviews].sort((a, b) => b.likeCount - a.likeCount));
   };
 
   const clearSort = () => {
@@ -85,7 +85,7 @@ export default function ReviewsPage() {
         }}
       >
         <img
-          src={movie?.imageUrl}
+          src={movie?.posterUrl}
           alt="Movie Poster"
           style={{
             width: "160px",

@@ -1,33 +1,20 @@
 import Link from "next/link";
 interface ReviewProps {
-  movie: ms.Movie;
   review: ms.ReviewMovie;
 }
-import { Grid, IconButton, Rating, Typography } from "@mui/material";
+import { Avatar, Grid, IconButton, Rating, Typography } from "@mui/material";
 import * as ms from "@/app/services/MovieService";
-import { getUser, User } from "@/app/services/AuthService";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 
-export default function ReviewItem({ review, movie }: ReviewProps) {
-  const [displayUser, setDisplayUser] = useState<User>();
+export default function ReviewItem({ review }: ReviewProps) {
 
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(review.likes.length)
+  const [liked, setLiked] = useState(review.isLiked);
+  const [likeCount, setLikeCount] = useState(review.likeCount)
 
   const { user } = useAuth();
   const authToken = localStorage.getItem("user");
-
-  useEffect(() => {
-    const fetched = async () => {
-      const resUser = await getUser(review.userId);
-      setDisplayUser(resUser.data);
-    };
-    fetched();
-
-    if (user) if (review.likes.includes(user.id)) setLiked(true);
-  }, []);
 
   const handleLike = () => {
     const newLiked = !liked;
@@ -50,7 +37,7 @@ export default function ReviewItem({ review, movie }: ReviewProps) {
     // const updatedMovie = { ...movie!, reviews: updatedReviews };
 
     const fetched = async () => {
-      await ms.like(user?.id!, movie.id, newLiked, authToken!);
+      await ms.like(String(review.id));
     };
     fetched();
 
@@ -60,19 +47,19 @@ export default function ReviewItem({ review, movie }: ReviewProps) {
   return (
     <Grid container columnGap={5} spacing={2} sx={{ margin: 2 }}>
       <Grid>
-        <Link href={`/profile/${user?.id}`}>
-          <img
-            src={displayUser?.pfp}
-            style={{ borderRadius: "100%", width: "50px" }}
+        <Link href={`/profile/${review.userId}`}>
+          <Avatar
+            src={review.pfpUrl}
+            sx={{ width: 60, height: 60}}
           />
         </Link>
       </Grid>
       <Grid container direction={"column"} spacing={3}>
         <Grid container direction={"row"} spacing={2}>
-          <Typography>{user?.username}</Typography>
+          <Typography>{review.username}</Typography>
           <Rating value={review.rating} readOnly />
         </Grid>
-        <Typography>{review.comment}</Typography>
+        <Typography>{review.content}</Typography>
         <Grid container direction={"row"}>
           <IconButton
             disabled={!user}

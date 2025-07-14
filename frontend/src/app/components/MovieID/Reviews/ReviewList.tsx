@@ -17,14 +17,13 @@ export default function ReviewList({ movie }: ReviewListProps) {
 
         <Grid container direction={"column"} spacing={3}>
           {movie.reviews
-            .sort((a, b) => b.likes.length - a.likes.length)
+            .sort((a, b) => b.likeCount - a.likeCount)
             .map((review) => {
               return (
                 <div key={review.userId}>
                   <Divider orientation="horizontal" />
                   <ReviewItem
                     review={review}
-                    movie={movie}
                   />
                 </div>
               );

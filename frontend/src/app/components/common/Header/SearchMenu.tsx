@@ -50,7 +50,7 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
                 <Avatar>
                   <img
                     style={{ width: "100%", height: "100%" }}
-                    src={x.imageUrl}
+                    src={x.posterUrl}
                     alt={x.title}
                   ></img>
                 </Avatar>

@@ -65,23 +65,23 @@ export default function ReviewPageItem({
               />
             </Link>
             <Box>
-              <Typography variant="h6">{displayUser?.username}</Typography>
+              <Typography variant="h6">{review.username}</Typography>
               <Rating value={review.rating} readOnly />
               {edit ? (
                 <EditReviews
-                  comment={review?.comment}
+                  comment={review?.content}
                   setEdit={setEdit}
                   movie={movie!}
                   setReviews={setReviews}
                   review={review}
                 />
               ) : (
-                <Typography variant="body2">{review?.comment}</Typography>
+                <Typography variant="body2">{review?.content}</Typography>
               )}
             </Box>
           </Box>
 
-          {user && user?.id === displayUser?.id && (
+          {user && user?.id === review.userId && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Button
                 variant="contained"

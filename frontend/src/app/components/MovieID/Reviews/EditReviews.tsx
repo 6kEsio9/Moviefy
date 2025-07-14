@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Movie, ReviewMovie } from "@/app/services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
-import * as MovieService from "../../../services/MovieService";
+import { editReview } from "@/app/services/AuthService";
 
 interface EditReviewsProps {
   comment: string | undefined;
@@ -30,18 +30,16 @@ export default function EditReviews({
     const newComment = event.currentTarget[0].value;
 
     const fetched = async () => {
-      await MovieService.editReview(
-        user?.id!,
+      await editReview(
         movie.id,
         newComment,
-        authToken!
       );
     };
     fetched();
 
     setReviews((prevReviews) =>
       prevReviews?.map((r) =>
-        r.userId === review.userId ? { ...r, comment: newComment } : r
+        r.userId === review.userId ? { ...r, content: newComment } : r
       )
     );
 
