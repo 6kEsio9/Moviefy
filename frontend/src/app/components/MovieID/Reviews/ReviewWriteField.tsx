@@ -44,10 +44,10 @@ export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldPr
       return {...prevMovie!, reviews: [...prevMovie!.reviews, newReview]}
     });
 
-    // const fetched = async () => {
-    //   await ms.rate(user!.id, movie.id, rating, authToken!, reviewText)
-    // };
-    // fetched();
+    const fetched = async () => {
+      await ms.rate(user!.id, movie.id, rating, reviewText)
+    };
+    fetched();
     
     setShouldRender(false);
   }

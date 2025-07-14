@@ -1,10 +1,10 @@
 import axios from "axios";
 import { users } from "./AuthService";
 
-const url = "";
+const url = "http://keycloak.martinkurtev.com:1235";
 
 const instance = axios.create({
-  baseURL: url, // <-- тук задаваш базовия URL
+  baseURL: url,
   headers: {
     "Content-Type": "application/json",
   },
@@ -19,7 +19,6 @@ instance.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
@@ -255,13 +254,13 @@ export async function rate(
   rating: number,
   comment?: string
 ) {
-  // const res = await instance.post("/movies/rate", {
-  //   userId: userId,
-  //   movieId: movieId,
-  //   rating: rating,
-  //   comment: comment
-  // });
-  // return res;
+  const res = await instance.post("/movies/rate", {
+    userId: userId,
+    movieId: movieId,
+    rating: rating,
+    comment: comment
+  });
+  return res;
 
   console.log("movie rated");
 }
@@ -280,15 +279,7 @@ export async function editReview(
 }
 
 export async function deleteReview(userId: string, movieId: string) {
-  // const req = await fetch(`${url}/movies/reviews/delete`, {
-  //   method: 'PUT',
-  //   headers: {
-  //     'content-type': 'application/json',
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({userId, movieId}),
-  // });
-  // const res = await req.json();
+  // const res = await instance.delete(`${url}/movies/reviews/delete`, {params: {userId: userId, movieId: movieId}});
   // return res;
 }
 
@@ -303,6 +294,7 @@ export async function like(userId: string, movieId: string, like: boolean, authT
   // });
   // const res = await req.json();
   // return res;
+  
   // const res = await instance.post('/movies/like', {
   //   userId: userId,
   //   movieId: movieId,
