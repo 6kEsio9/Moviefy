@@ -71,8 +71,26 @@ func main() {
 	mux.Handle("/change", authService.AuthMiddleware(http.HandlerFunc(api.ChangeMovieStatus)))
 	//zashto samo comentara se smenq,a
 	mux.Handle("/users/reviews/edit", authService.AuthMiddleware(http.HandlerFunc(api.EditReview)))
+	/*
+		var Params struct {
+			MovieId string `json:"movieId,omitempty"`
+		}
+	* */
 	mux.Handle("/users/reviews/delete", authService.AuthMiddleware(http.HandlerFunc(api.DeleteReview)))
+	/*
+		var Params struct {
+			CommentId string `json:"commentId"`
+		}
+	* */
 	mux.Handle("/users/reviews/like", authService.AuthMiddleware(http.HandlerFunc(api.LikeReview)))
+	/*
+		*
+			var Params struct {
+				MovieId string `json:"movieId,omitempty"`
+				Rating  int    `json:"rating,omitempty"`
+				Comment string `json:"comment,omitempty"`
+			}
+		**/
 	mux.Handle("/movies/rate", authService.AuthMiddleware(http.HandlerFunc(api.RateMovie)))
 	//mux.Handle("/user/edit", authService.AuthMiddleware(http.HandlerFunc(editUser)))
 

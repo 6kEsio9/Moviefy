@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"moviefy/main/helper/keycloak"
 	"moviefy/main/helper/neshto"
 	"moviefy/main/helper/queries"
@@ -55,12 +56,17 @@ type User struct {
 func GetMovies(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if r.Method != http.MethodGet {
-		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")
+		keycloak.SendErrorResponse(w, 500, "Method not allowed")
 		return
 	}
 
 	movieId := r.URL.Query().Get("movieId")
 	offset := r.URL.Query().Get("offset")
+	log.Println(movieId == "")
+
+	if offset == "" {
+		offset = "0"
+	}
 
 	if movieId == "" {
 		movies := []*neshto.SearchMovie{}
@@ -74,7 +80,9 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 			LIMIT 20;`, offset)
 
 		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
+			fmt.Println(err)
+			fmt.Println("a")
+			keycloak.SendErrorResponse(w, 400, "Database error")
 			return
 		}
 		defer movieRows.Close()
@@ -88,7 +96,9 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 			)
 
 			if err != nil {
-				keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+				fmt.Println(err)
+				fmt.Println("b")
+				keycloak.SendErrorResponse(w, 400, "Got an error in the db ")
 				return
 			}
 			movies = append(movies, &movie)
@@ -96,6 +106,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		webscraper.C.ScrapeSearchResultDetails(&movies)
 
 		keycloak.SendJSONResponse(w, http.StatusOK, movies)
+		return
 	}
 
 	movie := Movie{}
@@ -122,7 +133,9 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if error != nil {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
+		fmt.Println(error)
+		fmt.Println("c")
+		keycloak.SendErrorResponse(w, 400, "Database error")
 		return
 	}
 	cast := []string{}
@@ -132,6 +145,8 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		 WHERE tb.tconst = $1`, movieId)
 
 	if err != nil {
+		fmt.Println(err)
+		fmt.Println("d")
 		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 		return
 	}
@@ -142,6 +157,8 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		err := castRow.Scan(&r)
 
 		if err != nil {
+			fmt.Println(err)
+			fmt.Println("e")
 			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 			return
 		}
@@ -161,6 +178,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 	if tokenString == authHeader && haveToken {
+		fmt.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusUnauthorized, "Bearer token required")
 		return
 	}
@@ -180,6 +198,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		 WHERE ur.filmId = $1;`, movieId)
 
 	if err != nil {
+		fmt.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 		return
 	}
@@ -196,6 +215,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 			&r.Username,
 		)
 		if err != nil {
+			fmt.Println(err)
 			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 			return
 		}
@@ -206,6 +226,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 	if movie.PosterUrl == nil || movie.Summary == nil {
 		result, err := webscraper.C.ScrapeSingleFilmDetails(movieId)
 		if err != nil {
+			fmt.Println(err)
 			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error while scraping film details ")
 			return
 		}

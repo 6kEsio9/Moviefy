@@ -215,6 +215,7 @@ func (a *AuthService) getTokenAndInspect() error {
 
 func SendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.Header().Set("Content-Type", "application/json")
+	log.Println("status code : ", statusCode)
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(ErrorResponse{
 		Error:   http.StatusText(statusCode),
