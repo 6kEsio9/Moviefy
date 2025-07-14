@@ -7,7 +7,6 @@ import TabsButtons from "./TabsButtons";
 import { useParams } from "next/navigation";
 import * as AuthService from "../../services/AuthService";
 import { UserProfile } from "../../services/AuthService";
-
 export default function ProfilePage() {
   const [profileUser, setProfileUser] = useState<UserProfile>();
 

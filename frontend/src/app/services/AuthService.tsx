@@ -264,18 +264,6 @@ export async function register(data: RegisterDto) {
 export async function getUser(userId: string) {
   const res = await instance.get("/users", { params: { userId: userId } });
   return res;
-
-  // const user = users.find((x) => x.id === userId);
-
-  // console.log(user);
-
-  // return {
-  //   data: {
-  //     ...user!,
-  //     email: "primerenemail@gmail.com",
-  //     bio: "I like watching movies.",
-  //   },
-  // };
 }
 
 export async function getWatchList(userId: string) {

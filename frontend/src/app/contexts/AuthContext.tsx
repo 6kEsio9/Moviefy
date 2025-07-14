@@ -32,10 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!token) return;
     const decoded = jwtDecode(token!);
-    console.log(decoded);
     const userId = decoded.sub;
     const fetched = async () => {
       const res = await AuthService.getUser(userId!);
+      setUser({
+        id: res.data.id,
+        username: res.data.username,
+        pfp: res.data.pfp,
+      });
     };
     fetched();
   }, []);
