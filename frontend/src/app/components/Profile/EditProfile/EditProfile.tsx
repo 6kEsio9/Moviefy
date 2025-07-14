@@ -10,16 +10,30 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { CloudUpload } from "@mui/icons-material";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import * as AuthService from "../../../services/AuthService";
+import styled from "@emotion/styled";
 
 export default function EditProfile() {
   const { user } = useAuth();
   const authToken = localStorage.getItem("user");
 
   const [editUser, setEditUser] = useState<UserProfile>();
+
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -35,7 +49,7 @@ export default function EditProfile() {
     const username = formData.get("username")?.toString() || "";
     const email = formData.get("email")?.toString() || "";
     const bio = formData.get("bio")?.toString() || "";
-    const pfp = formData.get("pfp")?.toString() || "";
+    const pfp = (formData.get("pfp") as File);
     const password = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
@@ -99,15 +113,21 @@ export default function EditProfile() {
               placeholder="Bio"
             />
 
-            <TextField
-              name="pfp"
-              margin="normal"
+            <Button
               fullWidth
-              autoComplete="off"
-              autoFocus
-              defaultValue={editUser && editUser.pfp}
-              placeholder="Profile Picture Url"
-            />
+              component="label"
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUpload />}
+              sx={{mt: 1, mb: 1, padding:   2}}
+            >
+              Upload Profile Picture
+              <VisuallyHiddenInput
+                accept="image/*"
+                name="pfp"
+                type="file"
+              />
+            </Button>
 
             <TextField
               name="password"

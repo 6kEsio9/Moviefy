@@ -25,7 +25,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
       <Grid size={{xs: 12, md: 4, lg: 3}}>
         <Box
           component="img"
-          src={movie.imageUrl}
+          src={movie.posterUrl}
           alt={movie.title}
           sx={{
             height: { xs: 400, md: 500 },
@@ -41,7 +41,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
           <Box>
             <Typography variant="h3">{movie.title}</Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              {movie.year} &bull; Directed by {movie.director}
+              {movie.year}
             </Typography>
           </Box>
 
@@ -56,17 +56,11 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
           <Divider />
 
           <Grid container spacing={4}>
-            <Grid size={{xs: 12, sm: 6}}>
+            <Grid size={12}>
               <Typography variant="h5" gutterBottom>
                 Cast
               </Typography>
               {renderCastOrCrew(movie.cast)}
-            </Grid>
-            <Grid size={{xs: 12, sm: 6}}>
-              <Typography variant="h5" gutterBottom>
-                Crew
-              </Typography>
-              {renderCastOrCrew(movie.crew)}
             </Grid>
           </Grid>
         </Stack>

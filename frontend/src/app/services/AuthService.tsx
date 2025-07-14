@@ -237,7 +237,7 @@ interface EditDto {
   username: string;
   email: string;
   bio: string;
-  pfp: string;
+  pfp: File;
   password?: string;
   confirm?: string;
 }

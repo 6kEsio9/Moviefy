@@ -33,11 +33,11 @@ export type ReviewMovie = {
 export type Movie = {
   id: string;
   title: string;
-  imageUrl: string;
+  posterUrl: string;
   year: number;
   avgRating: number;
   genre: string;
-  ageRating: number;
+  isAdult: boolean;
   summary: string;
   director: string;
   cast: string[];
@@ -47,14 +47,13 @@ export type Movie = {
 
 const movies: Movie[] = [
   {
-    // id: "tt6723592",
-    id: "0",
+    id: "tt6723592",
     title: "Tenet",
-    imageUrl: "/images/tennet.jpeg",
+    posterUrl: "/images/tennet.jpeg",
     year: 2005,
     avgRating: 5,
     genre: "Action",
-    ageRating: 16,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -64,13 +63,13 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "1",
+    id: "tt0317219",
     title: "Cars",
-    imageUrl: "/images/cars.jpeg",
+    posterUrl: "/images/cars.jpeg",
     year: 2010,
     avgRating: 4,
     genre: "Fantasy",
-    ageRating: 3,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -79,13 +78,13 @@ const movies: Movie[] = [
     reviews: [],
   },
   {
-    id: "2",
+    id: "tt0944947",
     title: "Game Of Thrones",
-    imageUrl: "/images/gameOfThrones.jpeg",
+    posterUrl: "/images/gameOfThrones.jpeg",
     year: 2015,
     avgRating: 2,
     genre: "Fantasy",
-    ageRating: 18,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -96,13 +95,13 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "3",
+    id: "tt3563338",
     title: "Inglourious Basterds",
-    imageUrl: "/images/inglouriousBasterds.jpeg",
+    posterUrl: "/images/inglouriousBasterds.jpeg",
     year: 2009,
     avgRating: 1,
     genre: "Comedy",
-    ageRating: 16,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -112,13 +111,13 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "4",
+    id: "tt0816692",
     title: "Interstellar",
-    imageUrl: "/images/interstellar.jpeg",
+    posterUrl: "/images/interstellar.jpeg",
     year: 2004,
     avgRating: 3,
     genre: "Sci-Fi",
-    ageRating: 12,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -128,13 +127,13 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "5",
+    id: "tt0076759",
     title: "Star Wars",
-    imageUrl: "/images/starWars.jpeg",
+    posterUrl: "/images/starWars.jpeg",
     year: 1999,
     avgRating: 4,
     genre: "Sci-Fi",
-    ageRating: 12,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -144,13 +143,13 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "6",
+    id: "tt0152930",
     title: "Taxi",
-    imageUrl: "/images/taxi.jpeg",
+    posterUrl: "/images/taxi.jpeg",
     year: 2012,
     avgRating: 5,
     genre: "Comedy",
-    ageRating: 12,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -160,14 +159,14 @@ const movies: Movie[] = [
     ],
   },
   {
-    id: "7",
+    id: "tt5914996",
     title: "No Game No Life Zero",
-    imageUrl:
+    posterUrl:
       "//upload.wikimedia.org/wikipedia/en/3/3d/No_Game%2C_No_Life_Zero_poster.jpg",
     year: 2012,
     avgRating: 5,
     genre: "Comedy",
-    ageRating: 12,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -179,12 +178,12 @@ const movies: Movie[] = [
   {
     id: "8",
     title: "Pokemon: Firered Version",
-    imageUrl:
+    posterUrl:
       "https://m.media-amazon.com/images/M/MV5BYjViMDU3MmItMzM0ZC00OWNmLWEyZWYtMWEyNjAyNjg1YWU4XkEyXkFqcGc@._V1_.jpg",
     year: 2012,
     avgRating: 5,
     genre: "Comedy",
-    ageRating: 12,
+    isAdult: true,
     summary: "Interesting movie",
     director: "John Doe",
     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
@@ -204,12 +203,13 @@ export async function getAll() {
 }
 
 export async function getMovie(movieId: string) {
-  // const res = await instance.get("/movies", { params: { movieId: movieId } });
-  // return res;
+  const res = await instance.get("/movies", { params: { movieId: movieId } });
+  // console.log({...res.data, genre: res.data.genres[0]});
+  return res.data;
 
-  const movie = movies.find((x) => x.id === movieId);
+  // const movie = movies.find((x) => x.id === movieId);
 
-  return movie;
+  // return movie;
 }
 
 export async function search(searchInput: string, usersB: boolean) {
@@ -272,15 +272,7 @@ export async function editReview(
 }
 
 export async function deleteReview(userId: string, movieId: string) {
-  // const req = await fetch(`${url}/movies/reviews/delete`, {
-  //   method: 'PUT',
-  //   headers: {
-  //     'content-type': 'application/json',
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({userId, movieId}),
-  // });
-  // const res = await req.json();
+  // const res = await instance.delete(`${url}/movies/reviews/delete`, {params: {userId: userId, movieId: movieId}});
   // return res;
 }
 
@@ -317,11 +309,11 @@ export function getGenreList() {
 }
 
 interface MovieDto {
-  imageUrl: string;
+  posterUrl: string;
   title: string;
   summary: string;
   year: number;
-  ageRating: number;
+  isAdult: boolean;
   director: string;
   cast: string[];
   crew: string[];
