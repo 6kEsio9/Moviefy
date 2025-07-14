@@ -4,12 +4,17 @@ import { Image } from "@mui/icons-material";
 import GenreSelect from "../components/AddMovie/GenreSelect";
 import { getGenreList, addMovie } from "../services/MovieService";
 import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
 export default function AddMoviePage() {
   const possibleGenres = getGenreList();
 
   const { user } = useAuth();
-  const authToken = localStorage.getItem("user");
+
+  // useEffect(() => {
+  //   if (user?.username !== "Todor") redirect("/");
+  // }, []);
 
   const submitHandler = (formData: FormData) => {
     const imageUrl = formData.get("imageUrl")?.toString() || "";
@@ -22,11 +27,16 @@ export default function AddMoviePage() {
     const crew = (formData.get("crew")?.toString() || "").split(", ");
 
     const fetched = async () => {
-      await addMovie(
-        user?.id!,
-        { imageUrl, title, summary, year, ageRating, director, cast, crew },
-        authToken!
-      ).catch((err) => console.log(err));
+      await addMovie(user?.id!, {
+        imageUrl,
+        title,
+        summary,
+        year,
+        ageRating,
+        director,
+        cast,
+        crew,
+      }).catch((err) => console.log(err));
     };
     fetched();
   };
@@ -70,7 +80,7 @@ export default function AddMoviePage() {
           <TextField required name="year" label="Year" />
           <TextField required name="ageRating" label="Age rating" />
           <Typography>Genre</Typography>
-          {/* <GenreSelect possibleGenres={possibleGenres} /> */}
+          <GenreSelect possibleGenres={possibleGenres} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }} marginRight={4}>
