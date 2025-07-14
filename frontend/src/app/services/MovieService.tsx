@@ -251,7 +251,7 @@ export async function search(searchInput: string, usersB: boolean) {
 
 export async function rate(movieId: string, rating: number, comment?: string) {
   const res = await instance.post("/movies/rate", {
-    movieId: "tt0816692",
+    movieId: movieId,
     rating: rating,
     comment: comment,
   });

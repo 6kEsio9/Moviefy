@@ -33,7 +33,13 @@ export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldPr
       return;
     }
 
-    const newReview: ms.ReviewMovie = {
+    const fetched = async () => {
+      await ms.rate(movie.id, rating, reviewText)
+    };
+
+    fetched()
+    .then(() => {
+      const newReview: ms.ReviewMovie = {
       userId: user!.id,
       rating: rating,
       comment: reviewText,
@@ -43,13 +49,9 @@ export default function ReviewWriteField({ movie, setMovie }: ReviewWriteFieldPr
     setMovie((prevMovie) => {
       return {...prevMovie!, reviews: [...prevMovie!.reviews, newReview]}
     });
-
-    const fetched = async () => {
-      await ms.rate(user!.id, movie.id, rating, reviewText)
-    };
-    fetched();
     
     setShouldRender(false);
+    });
   }
 
   useEffect(() => {

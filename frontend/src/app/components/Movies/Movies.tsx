@@ -8,7 +8,7 @@ import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../services/MovieService";
 import { Pagination, Stack } from "@mui/material";
 
-const movieCountPerPage = 6;
+const movieCountPerPage = 21;
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<Movie[]>();

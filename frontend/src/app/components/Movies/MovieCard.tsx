@@ -4,7 +4,7 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActions from "@mui/material/CardActions";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
 import RatingLine from "./RatingLine";
 import Link from "next/link";
 import { Movie } from "@/app/services/MovieService";
@@ -37,7 +37,7 @@ export default function MovieCard({ movie, movies }: MovieCardProps) {
         >
           <CardMedia
             component="img"
-            image={movie.imageUrl}
+            image={movie.posterUrl}
             alt={movie.title}
             style={{
               width: "100%",
