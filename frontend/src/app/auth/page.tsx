@@ -7,13 +7,14 @@ import {
   Container,
   Paper,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import * as AuthService from "../services/AuthService";
 import { useAuth } from "../hooks/useAuth";
 import { redirect } from "next/navigation";
 
 export default function Auth() {
+  const { user } = useAuth();
   const [login, setLogin] = useState(true);
 
   const { onLogin } = useAuth();
@@ -54,6 +55,10 @@ export default function Auth() {
     }
   };
 
+  useEffect(() => {
+    if(user)redirect("/")
+  }, [user])
+
   return (
     <Container maxWidth="xs" sx={{ display: "full" }}>
       <Paper elevation={5} sx={{ padding: 4, mt: 15 }}>
@@ -64,6 +69,7 @@ export default function Auth() {
             alignItems: "center",
           }}
         >
+          {!user ? (<>
           <Typography component="h1" variant="h5">
             {login ? "Sign In" : "Sign Up"}
           </Typography>
@@ -121,6 +127,10 @@ export default function Auth() {
                 : "Already have an account? Sign in"}
             </Button>
           </Box>
+          </>
+          ) : (
+            <Typography component="h1" variant="h5">You are already signed in</Typography>
+          )}
         </Box>
       </Paper>
     </Container>
