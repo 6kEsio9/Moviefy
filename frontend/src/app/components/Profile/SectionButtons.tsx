@@ -150,7 +150,7 @@ export default function SectionButtons({
         <div>
           <Typography variant="subtitle1">{movie.title}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {movie.year}
+            {movie.startYear}
           </Typography>
         </div>
       )}

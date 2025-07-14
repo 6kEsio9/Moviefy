@@ -204,8 +204,8 @@ export type UserProfile = {
 export type MovieWatchList = {
   id: string;
   title: string;
-  imageUrl: string;
-  year: number;
+  posterUrl: string;
+  startYear: number;
 };
 
 export type WatchList = {
@@ -271,11 +271,6 @@ export async function getWatchList(userId: string) {
     params: { userId: userId },
   });
   return res;
-  // return {
-  //   watched: [movies[0]],
-  //   isWatching: [movies[1]],
-  //   willWatch: [movies[2]],
-  // };
 }
 
 export async function changeMovieStatus(movieId: string, status: number) {
@@ -290,18 +285,10 @@ export async function getReviews(userId: string) {
   // const res = await req.json();
   // return res;
 
-  // const res = await instance.get('/users/reviews', {params: {userId: userId}});
-  // return res;
-
-  return [
-    {
-      movieId: "0",
-      movieTitle: "Tenet",
-      rating: 3,
-      comment: "Great movie!",
-      likes: ["1", "2"],
-    },
-  ];
+  const res = await instance.get("/users/reviews", {
+    params: { userId: userId },
+  });
+  return res;
 }
 
 export async function editReview(reviewId: number, comment: string) {

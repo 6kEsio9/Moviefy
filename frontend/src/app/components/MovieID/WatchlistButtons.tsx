@@ -6,10 +6,9 @@ import * as AuthService from "../../services/AuthService";
 import { AccessTime, List, RemoveRedEyeRounded } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Movie } from "@/app/services/MovieService";
 
 interface WatchListButtonsProps {
-  movie: Movie;
+  movie: AuthService.MovieWatchList;
 }
 
 export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
@@ -20,9 +19,9 @@ export default function WatchlistButtons({ movie }: WatchListButtonsProps) {
 
   useEffect(() => {
     const fetched = async () => {
-      // const res = await AuthService.getWatchList(movie.id);
-      // console.log(res);
-      // setWatchList(res);
+      const res = await AuthService.getWatchList(user?.id!);
+      console.log(res);
+      setWatchList(res.data);
     };
     fetched();
   }, [user]);

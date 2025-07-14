@@ -50,7 +50,7 @@ export default function Section({
                       style={{ textDecoration: "none", color: "black" }}
                     >
                       <img
-                        src={movie.imageUrl}
+                        src={movie.posterUrl ? movie.posterUrl : undefined}
                         alt={movie.title}
                         style={{
                           width: "100%",

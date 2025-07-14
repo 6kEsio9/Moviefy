@@ -19,7 +19,7 @@ export default function TabsButtons({ profileUser }: TabsButtonsProps) {
     const fetched = async () => {
       const res = await AuthService.getWatchList(profileUser?.id!);
       console.log(res);
-      // setWatchList(res);
+      setWatchList(res.data);
     };
     fetched();
   }, [profileUser]);

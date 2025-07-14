@@ -18,6 +18,7 @@ export default function Reviews({ profileUser }: ReviewProps) {
   useEffect(() => {
     const fetched = async () => {
       const res = await AuthService.getReviews(profileUser?.id!);
+      console.log(res);
       // setReviews(res);
     };
     fetched();
