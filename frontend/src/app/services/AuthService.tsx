@@ -290,18 +290,18 @@ export async function getReviews(userId: string) {
   // const res = await req.json();
   // return res;
 
-  // const res = await instance.get('/users/reviews', {params: {userId: userId}});
-  // return res;
+  const res = await instance.get('/users/reviews', {params: {userId: userId}});
+  return res;
 
-  return [
-    {
-      movieId: "0",
-      movieTitle: "Tenet",
-      rating: 3,
-      comment: "Great movie!",
-      likes: ["1", "2"],
-    },
-  ];
+  // return [
+  //   {
+  //     movieId: "0",
+  //     movieTitle: "Tenet",
+  //     rating: 3,
+  //     comment: "Great movie!",
+  //     likes: ["1", "2"],
+  //   },
+  // ];
 }
 
 export async function editReview(reviewId: number, comment: string) {

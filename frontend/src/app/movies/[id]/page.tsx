@@ -18,7 +18,7 @@ export default function MovieDetails() {
   useEffect(() => {
     const fetched = async () => {
       const result = await MovieSerivce.getMovie(String(movieId!));
-      setMovie(result as Movie);
+      setMovie(result.data as Movie);
     };
     fetched();
   }, []);

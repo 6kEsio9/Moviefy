@@ -4,22 +4,21 @@ import Rating from "@mui/material/Rating";
 import { useAuth } from "@/app/hooks/useAuth";
 import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../services/MovieService";
+import { ReviewUser } from "@/app/services/AuthService";
 
 interface RatingLineProps {
   movie: Movie;
-  movies: Movie[];
+  userReviews: ReviewUser[];
 }
 
-export default function RatingLine({ movie, movies }: RatingLineProps) {
+export default function RatingLine({ movie, userReviews }: RatingLineProps) {
   const [value, setValue] = React.useState<number | null>(0);
 
   const { user } = useAuth();
   const authToken = localStorage.getItem("user");
 
   React.useEffect(() => {
-    const initialValue = movies
-      .find((x) => x.id === movie.id)
-      ?.reviews.find((x) => x.userId === user?.id);
+    const initialValue = userReviews.find((x) => x.movieId === movie.id);
     setValue(initialValue?.rating!);
   }, []);
 

@@ -16,7 +16,7 @@ export default function Image({ item, index }: ImageProps) {
       onMouseLeave={() => setHover(false)}
     >
       <img
-        src={item.posterUrl}
+        src={item.posterUrl !== "" ? item.posterUrl : undefined}
         alt={`img-${index}`}
         loading="lazy"
         style={{

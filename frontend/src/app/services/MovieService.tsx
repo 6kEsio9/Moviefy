@@ -195,17 +195,16 @@ const movies: Movie[] = [
   },
 ];
 
-export async function getAll(limit: number, offset: number) {
-  // const res = await instance.get('/movies?limit=${limit}&offset=${offset}');
-  // return res.data;
+export async function getAll(limit?: number, offset?: number) {
+  const res = await instance.get('/movies', {params: { limit: limit, offset: offset } });
+  return res;
 
-  return movies;
+  // return movies;
 }
 
 export async function getMovie(movieId: string) {
   const res = await instance.get("/movies", { params: { movieId: movieId } });
-  // console.log({...res.data, genre: res.data.genres[0]});
-  return res.data;
+  return res;
 
   // const movie = movies.find((x) => x.id === movieId);
 
