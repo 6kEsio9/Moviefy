@@ -1,6 +1,21 @@
+import { Axios } from "axios";
 import { users } from "./AuthService";
 
 const url = "";
+
+const axios = new Axios({ baseURL: url });
+
+axios.interceptors.request.use(
+  function (config) {
+    config.headers["content-type"] = "application/json";
+    config.headers["Authorization"] = localStorage.getItem("token");
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
 
 export type ReviewMovie = {
   userId: string;
@@ -175,16 +190,14 @@ const movies: Movie[] = [
 ];
 
 export async function getAll() {
-  // const req = await fetch(`${url}/movies`);
-  // const res = await req.json();
+  // const res = await axios.get('/movies');
   // return res;
 
   return movies;
 }
 
 export async function getMovie(movieId: string) {
-  // const req = await fetch(`${url}/movies?` + new URLSearchParams({movieId: movieId}));
-  // const res = await req.json();
+  // const res = await axios.get('/movies', {params: {movieId: movieId}});
   // return res;
 
   const movie = movies.find((x) => x.id === movieId);
@@ -202,6 +215,9 @@ export async function search(searchInput: string, usersB: boolean) {
   // );
 
   // const res = await req.json();
+  // return res;
+
+  // const res = await axios.get('/search', {params: {input: searchInput, users: usersB}});
   // return res;
 
   const result: any = {};
@@ -230,43 +246,33 @@ export async function rate(
   userId: string,
   movieId: string,
   rating: number,
-  authToken: string,
   comment?: string
 ) {
-  // const req = await fetch(`${url}/movies/rate`, {
-  //   method: "POST",
-  //   headers: {
-  //     "content-type": "application/json",
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({ userId, movieId, rating, comment }),
+  // const res = await axios.post("/movies/rate", {
+  //   userId: userId,
+  //   movieId: movieId,
+  //   rating: rating,
+  //   comment: comment
   // });
+  // return res;
+
   console.log("movie rated");
 }
 
 export async function editReview(
   userId: string,
   movieId: string,
-  comment: string,
-  authToken: string
+  comment: string
 ) {
-  // const req = await fetch(`${url}/movies/reviews/edit`, {
-  //   method: 'PUT',
-  //   headers: {
-  //     'content-type': 'application/json',
-  //     "Authorization": 'Bearer ' + authToken,
-  //   },
-  //   body: JSON.stringify({userId, movieId, comment}),
-  // });
-  // const res = await req.json();
-  // return res;
+  const res = await axios.put("/movies/reviews/edit", {
+    userId: userId,
+    movieId: movieId,
+    comment: comment,
+  });
+  return res;
 }
 
-export async function deleteReview(
-  userId: string,
-  movieId: string,
-  authToken: string
-) {
+export async function deleteReview(userId: string, movieId: string) {
   // const req = await fetch(`${url}/movies/reviews/delete`, {
   //   method: 'PUT',
   //   headers: {
@@ -279,22 +285,23 @@ export async function deleteReview(
   // return res;
 }
 
-export async function like(
-  userId: string,
-  movieId: string,
-  like: boolean,
-  authToken: string
-) {
-  const req = await fetch(`${url}/movies/like`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: "Bearer " + authToken,
-    },
-    body: JSON.stringify({ userId, movieId, like }),
-  });
-  const res = await req.json();
-  return res;
+export async function like(userId: string, movieId: string, like: boolean) {
+  // const req = await fetch(`${url}/movies/like`, {
+  //   method: "POST",
+  //   headers: {
+  //     "content-type": "application/json",
+  //     Authorization: "Bearer " + authToken,
+  //   },
+  //   body: JSON.stringify({ userId, movieId, like }),
+  // });
+  // const res = await req.json();
+  // return res;
+  // const res = await axios.post('/movies/like', {
+  //   userId: userId,
+  //   movieId: movieId,
+  //   like: like
+  // });
+  // return res;
 }
 
 export function getGenreList() {
@@ -305,34 +312,26 @@ export function getGenreList() {
   return genreList;
 }
 
-export async function addMovie(
-  userId: string,
-  formData: object,
-  authToken: string
-) {
-  console.log(userId, formData, authToken);
+interface MovieDto {
+  imageUrl: string;
+  title: string;
+  summary: string;
+  year: number;
+  ageRating: number;
+  director: string;
+  cast: string[];
+  crew: string[];
+}
 
-  const req = await fetch(`${url}/movies/add`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: "Bearer " + authToken,
-    },
-    body: JSON.stringify({ userId, formData }),
-  });
-  const res = req.json();
-  return res;
+export async function addMovie(userId: string, formData: MovieDto) {
+  // const res = await axios.post("/movies/add", {
+  //   userId: userId,
+  //   formData: formData,
+  // });
+  // return res;
 }
 
 export async function filterMovies(filterType: string, filter: string) {
-  const req = await fetch(
-    `${url}/movies/filter?` +
-      new URLSearchParams({
-        filterType: filterType,
-        filter: filter,
-      })
-  );
-
-  const res = await req.json();
-  return res;
+  // const res = await axios.get('/movies/filter', {params: {filterType: filterType, filter: filter}});
+  // return res;
 }

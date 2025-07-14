@@ -27,9 +27,7 @@ export default function ReviewPageItem({
   movie,
   setReviews,
 }: ReviewPageItemProps) {
-  const [displayUser, setDisplayUser] = useState<AuthService.User | null>(
-    null
-  );
+  const [displayUser, setDisplayUser] = useState<AuthService.User | null>(null);
 
   const { user } = useAuth();
   const authToken = localStorage.getItem("user");
@@ -46,14 +44,14 @@ export default function ReviewPageItem({
 
   const handleRemove = () => {
     setReviews((prevReviews) => {
-      return prevReviews.filter((x) => x.userId !== user?.id)
-    })
+      return prevReviews.filter((x) => x.userId !== user?.id);
+    });
 
     // const fetched = async () => {
     //   await MovieService.deleteReview(user!.id, movie.id, authToken!);
     // };
     // fetched();
-  }
+  };
 
   if (displayUser) {
     return (
@@ -83,7 +81,7 @@ export default function ReviewPageItem({
             </Box>
           </Box>
 
-          {user?.id === displayUser?.id && (
+          {user && user?.id === displayUser?.id && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Button
                 variant="contained"

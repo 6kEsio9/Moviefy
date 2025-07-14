@@ -48,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const onLogout = useCallback(() => {
     setToken(null);
+    setUser(null);
   }, [setToken]);
 
   return (
