@@ -16,7 +16,7 @@ import { redirect } from "next/navigation";
 export default function Auth() {
   const [login, setLogin] = useState(true);
 
-  const { onLogin } = useAuth();
+  const { user, onLogin } = useAuth();
 
   const changeLogin = () => {
     login ? setLogin(false) : setLogin(true);
@@ -43,6 +43,7 @@ export default function Auth() {
         });
       };
       fetched();
+      if (user) redirect("/home");
     } else {
       const fetched = async () => {
         const res = await AuthService.login({
@@ -56,6 +57,7 @@ export default function Auth() {
         });
       };
       fetched();
+      if (user) redirect("/home");
     }
   };
 
