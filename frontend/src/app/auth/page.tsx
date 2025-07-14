@@ -14,7 +14,6 @@ import { useAuth } from "../hooks/useAuth";
 import { redirect } from "next/navigation";
 
 export default function Auth() {
-  const { user } = useAuth();
   const [login, setLogin] = useState(true);
 
   const { user, onLogin } = useAuth();
