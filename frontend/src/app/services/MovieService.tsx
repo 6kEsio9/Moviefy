@@ -195,9 +195,9 @@ const movies: Movie[] = [
   },
 ];
 
-export async function getAll() {
-  // const res = await instance.get('/movies');
-  // return res;
+export async function getAll(limit: number, offset: number) {
+  // const res = await instance.get('/movies?limit=${limit}&offset=${offset}');
+  // return res.data;
 
   return movies;
 }

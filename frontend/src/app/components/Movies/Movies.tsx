@@ -16,11 +16,11 @@ export default function MoviesPage() {
 
   useEffect(() => {
     const fetched = async () => {
-      const res = await MovieService.getAll();
-      setMovies(res);
+      const res = await MovieService.getAll(movieCountPerPage, (page - 1) * movieCountPerPage);
+      setMovies(res as Movie[]);
     };
     fetched();
-  }, []);
+  }, [page]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -28,11 +28,6 @@ export default function MoviesPage() {
   ) => {
     setPage(value);
   };
-
-  useEffect(() => {
-    //GET next movieCountPerPage # of movies
-    // setDisplayMovies(movies.filter((x) => x.id < page * movieCountPerPage && x.id >= (page - 1) * movieCountPerPage ));
-  }, [movies, page, movieCountPerPage]);
 
   return (
     <div
@@ -71,7 +66,7 @@ export default function MoviesPage() {
             <Pagination
               variant="outlined"
               shape="rounded"
-              count={Math.ceil(movies.length / movieCountPerPage)}
+              count={100}
               size="large"
               sx={{ mt: 5 }}
               page={page}
