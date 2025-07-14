@@ -64,6 +64,9 @@ func main() {
 	mux.HandleFunc("/movies", api.GetMovies)
 	mux.HandleFunc("/search", api.SearchMovies)
 
+	/*
+		userId := r.URL.Query().Get("userId")
+	* */
 	mux.HandleFunc("/user/reviews", api.GetReviews)
 	mux.HandleFunc("/watchlist", api.GetWatchList)
 	mux.HandleFunc("/users", api.GetUser)
