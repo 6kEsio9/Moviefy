@@ -292,7 +292,7 @@ export async function deleteReview(userId: string, movieId: string) {
   // return res;
 }
 
-export async function like(userId: string, movieId: string, like: boolean) {
+export async function like(userId: string, movieId: string, like: boolean, authToken: string) {
   // const req = await fetch(`${url}/movies/like`, {
   //   method: "POST",
   //   headers: {

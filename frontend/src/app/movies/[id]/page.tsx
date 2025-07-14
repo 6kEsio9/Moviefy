@@ -39,7 +39,7 @@ export default function MovieDetails() {
     >
       <MovieInfo movie={movie} />
 
-      <ReviewList movie={movie} setMovie={setMovie} />
+      <ReviewList movie={movie} />
 
       <ReviewWriteField movie={movie} setMovie={setMovie} />
 
