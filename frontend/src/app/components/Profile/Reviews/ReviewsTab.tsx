@@ -19,7 +19,7 @@ export default function Reviews({ profileUser }: ReviewProps) {
     const fetched = async () => {
       const res = await AuthService.getReviews(profileUser?.id!);
       console.log(res);
-      // setReviews(res);
+      setReviews(res.data);
     };
     fetched();
   }, []);

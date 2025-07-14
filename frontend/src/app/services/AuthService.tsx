@@ -182,6 +182,7 @@ export type ReviewUser = {
   rating: number;
   isLiked: boolean;
   movieId: string;
+  title: string;
 };
 
 export type UserReq = {
@@ -281,10 +282,6 @@ export async function changeMovieStatus(movieId: string, status: number) {
 }
 
 export async function getReviews(userId: string) {
-  // const req = await fetch(`${url}/users/reviews?` + new URLSearchParams({ userId: userId}));
-  // const res = await req.json();
-  // return res;
-
   const res = await instance.get("/users/reviews", {
     params: { userId: userId },
   });

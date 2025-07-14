@@ -51,7 +51,7 @@ export default function Review({
               href={`/movies/${review.movieId}`}
               style={{ textDecoration: "none", color: "black" }}
             >
-              {/* <Typography variant="h6">{review.movieTitle}</Typography> */}
+              <Typography variant="h6">{review.title}</Typography>
             </Link>
             <Rating value={review.rating} readOnly />
             {edit ? (

@@ -15,7 +15,6 @@ export default function RatingLine({ movie, userReviews }: RatingLineProps) {
   const [value, setValue] = React.useState<number | null>(0);
 
   const { user } = useAuth();
-  const authToken = localStorage.getItem("user");
 
   React.useEffect(() => {
     const initialValue = userReviews.find((x) => x.movieId === movie.id);
