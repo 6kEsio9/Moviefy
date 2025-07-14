@@ -31,11 +31,16 @@ export default function Auth() {
     if (!login) {
       if (password !== confirm) alert("Passwords don't match!");
       const fetched = async () => {
-        await AuthService.register({
+        const res = await AuthService.register({
           username,
           email,
           password,
-        }).then(() => redirect("/login"));
+        });
+        onLogin(res.data.token, {
+          id: res.data.id,
+          username: res.data.username,
+          pfp: res.data.pfp,
+        });
       };
       fetched();
     } else {

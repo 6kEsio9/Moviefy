@@ -241,9 +241,18 @@ export async function login(formData: LoginDto) {
 }
 
 export async function register(formData: RegisterDto) {
-  const res = await axios.post<UserReq>("/register", formData);
+  // const res = await axios.post<UserReq>("/register", formData);
 
-  return res;
+  // return res;
+
+  return {
+    data: {
+      id: "0",
+      username: "Georgi",
+      pfp: "/images/pfp.jpeg",
+      token: "token",
+    },
+  };
 }
 
 export async function getUser(userId: string) {
@@ -253,9 +262,11 @@ export async function getUser(userId: string) {
   const user = users.find((x) => x.id === userId);
 
   return {
-    ...user!,
-    email: "primerenemail@gmail.com",
-    bio: "I like watching movies.",
+    data: {
+      ...user!,
+      email: "primerenemail@gmail.com",
+      bio: "I like watching movies.",
+    },
   };
 }
 

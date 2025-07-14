@@ -16,7 +16,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetched = async () => {
       const res = await AuthService.getUser(String(userId!));
-      setProfileUser(res);
+      setProfileUser(res.data);
     };
     fetched();
   }, []);
