@@ -294,10 +294,10 @@ export async function getReviews(userId: string) {
   //done
 }
 
-export async function editReview(reviewId: number, comment: string) {
+export async function editReview(movieId: string, comment: string) {
   const res = await instance.put("/users/reviews/edit", {
-    id: reviewId,
-    content: comment,
+    movieId: movieId,
+    comment: comment,
   });
   return res;
 }

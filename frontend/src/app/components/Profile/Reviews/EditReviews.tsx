@@ -27,13 +27,13 @@ export default function EditReviews({
 
     setReviews((prevReviews) =>
       prevReviews?.map((r) =>
-        r.movieId === review.movieId ? { ...r, comment: newComment } : r
+        r.movieId === review.movieId ? { ...r, content: newComment } : r
       )
     );
 
     setEdit(false);
     const fetched = async () => {
-      await AuthService.editReview(review.id, newComment);
+      await AuthService.editReview(review.movieId, newComment);
     };
     fetched();
   };
