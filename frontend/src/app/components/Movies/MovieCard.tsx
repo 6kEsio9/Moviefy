@@ -37,7 +37,7 @@ export default function MovieCard({ movie, movies }: MovieCardProps) {
         >
           <CardMedia
             component="img"
-            image={movie.imageUrl}
+            image={movie.posterUrl}
             alt={movie.title}
             style={{
               width: "100%",
