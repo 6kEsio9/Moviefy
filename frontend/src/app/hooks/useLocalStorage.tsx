@@ -7,7 +7,7 @@ export function useLocalStorage(key: string, initialValue: null) {
     if (typeof window === "undefined") return initialValue;
 
     const stored = localStorage.getItem(key);
-    return stored ? stored : initialValue;
+    return stored && stored !== "null" ? stored : initialValue;
   });
 
   const setLocalStorageValue = (newValue: string | null) => {

@@ -243,19 +243,25 @@ interface EditDto {
 }
 
 export async function login(formData: LoginDto) {
-  const res = await instance.post<UserReq>("/login", { ...formData });
+  const res = await instance
+    .post<UserReq>("/login", { ...formData })
+    .catch((err) => err);
 
   return res;
 }
 
 export async function register(data: RegisterDto) {
-  const res = await instance.post<UserReq>("/register", { ...data });
+  const res = await instance
+    .post<UserReq>("/register", { ...data })
+    .catch((err) => err);
 
   return res;
 }
 
 export async function getUser(userId: string) {
-  const res = await instance.get("/users", { params: { userId: userId } });
+  const res = await instance
+    .get("/users", { params: { userId: userId } })
+    .catch((err) => err);
   return res;
 }
 
@@ -273,7 +279,9 @@ export async function getWatchList(userId: string) {
 }
 
 export async function changeMovieStatus(movieId: string, status: number) {
-  const res = await instance.put("/change", { movieId, status });
+  const res = await instance
+    .put("/change", { movieId, status })
+    .catch((err) => err);
   return res;
 }
 
@@ -304,7 +312,7 @@ export async function editReview(reviewId: number, comment: string) {
   return res;
 }
 
-export async function editUser(userId: string, formData: EditDto) {
+export async function editUser(formData: EditDto) {
   // const res = await instance.put("/users/edit", { userId, formData, accessToken });
   // return res;
 

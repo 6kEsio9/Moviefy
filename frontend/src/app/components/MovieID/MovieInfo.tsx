@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  Stack,
-  useTheme
-} from "@mui/material";
+import { Box, Divider, Grid, Typography, Stack, useTheme } from "@mui/material";
 import { renderCastOrCrew } from "./RenderFunctions";
 import { Movie } from "@/app/services/MovieService";
 import { Star } from "@mui/icons-material";
@@ -22,10 +15,10 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
 
   return (
     <Grid container spacing={4} padding={4}>
-      <Grid size={{xs: 12, md: 4, lg: 3}}>
+      <Grid size={{ xs: 12, md: 4, lg: 3 }}>
         <Box
           component="img"
-          src={movie.posterUrl}
+          src={movie.posterUrl ? movie.posterUrl : undefined}
           alt={movie.title}
           sx={{
             height: { xs: 400, md: 500 },
@@ -36,7 +29,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
         />
       </Grid>
 
-      <Grid size={{xs: 12, md: 8, lg: 6}}>
+      <Grid size={{ xs: 12, md: 8, lg: 6 }}>
         <Stack spacing={2}>
           <Box>
             <Typography variant="h3">{movie.title}</Typography>
@@ -66,7 +59,7 @@ export default function MovieInfo({ movie }: MovieInfoProps) {
         </Stack>
       </Grid>
 
-      <Grid size={{xs: 12, lg: 3}}>
+      <Grid size={{ xs: 12, lg: 3 }}>
         <Box
           display="flex"
           flexDirection="column"
