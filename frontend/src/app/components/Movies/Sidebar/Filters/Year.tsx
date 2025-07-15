@@ -29,7 +29,7 @@ export default function Year({ setFilter }: YearProps) {
     // };
     // fetched();
     setFilter((prevFilter) => {
-      return {...prevFilter, year: e.currentTarget.textContent.toLowerCase() === "newest"}
+      return {...prevFilter, year: e.currentTarget.textContent.toLowerCase() as string === "newest"}
     });
   };
 

@@ -5,7 +5,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../../../services/MovieService";
 
 interface AgeRatingProps {
@@ -29,7 +28,7 @@ export default function AgeRating({ setFilter }: AgeRatingProps) {
     // };
     // fetched();
     setFilter((prevFilter) => {
-      return {...prevFilter, year: e.currentTarget.textContent === ">18"}
+      return {...prevFilter, year: e.currentTarget.textContent as string === ">18"}
     });
   };
 

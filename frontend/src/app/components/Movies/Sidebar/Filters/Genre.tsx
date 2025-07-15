@@ -29,7 +29,7 @@ export default function Genre({ setFilter }: GenreProps) {
     // };
     // fetched();
     setFilter((prevFilter) => {
-      const genre = e.currentTarget.textContent;
+      const genre = e.currentTarget.textContent as string;
       console.log(genre);
       return {...prevFilter, genre: genre}
     });
