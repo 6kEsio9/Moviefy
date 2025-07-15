@@ -42,7 +42,6 @@ func main() {
 	mux.HandleFunc("/users", api.GetUser)
 
 	mux.Handle("/change", authService.AuthMiddleware(http.HandlerFunc(api.ChangeMovieStatus)))
-	mux.Handle("/movies/add", authService.AuthMiddleware(http.HandlerFunc(api.AddFilm)))
 	mux.Handle("/users/reviews/edit", authService.AuthMiddleware(http.HandlerFunc(api.EditReview)))
 	mux.Handle("/users/reviews/delete", authService.AuthMiddleware(http.HandlerFunc(api.DeleteReview)))
 	mux.Handle("/users/reviews/like", authService.AuthMiddleware(http.HandlerFunc(api.LikeReview)))

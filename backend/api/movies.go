@@ -8,10 +8,8 @@ import (
 	"moviefy/main/helper/keycloak"
 	"moviefy/main/helper/neshto"
 	"moviefy/main/helper/queries"
-	s3helper "moviefy/main/helper/s3"
 	"moviefy/main/helper/webscraper"
 	"net/http"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -532,99 +530,6 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	keycloak.SendJSONResponse(w, http.StatusOK, ratings)
-}
-
-func AddFilm(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
-		log.Println(r.Method)
-		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Status method not allowed")
-		return
-	}
-
-	err := r.ParseMultipartForm(32 << 20)
-	if err != nil {
-		log.Println(err)
-		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Error parsing the form ")
-		return
-	}
-
-	var s3key string
-
-	//	primaryTitle := r.FormValue("title")
-	//titleId := r.FormValue("titleId")
-	//	isAdult := r.FormValue("isAdult")
-	NewPassword := r.FormValue("newPassword")
-	file, handler, err := r.FormFile("poster")
-	if err == nil {
-		defer file.Close()
-		s3key = s3helper.S3Instance.GenerateFileNameWithFolder("pfp", handler.Filename)
-
-		contentType := "image/jpeg"
-		ext := strings.ToLower(filepath.Ext(handler.Filename))
-		switch ext {
-		case ".png":
-			contentType = "image/png"
-		case ".gif":
-			contentType = "image/gif"
-		case ".webp":
-			contentType = "image/webp"
-		case ".bmp":
-			contentType = "image/bmp"
-		}
-
-		err = s3helper.S3Instance.UploadPicture(r.Context(), s3key, file, contentType)
-		if err != nil {
-			log.Println(err)
-			keycloak.SendErrorResponse(w, http.StatusBadRequest, "Got an error while uploading the file to s3")
-			return
-		}
-
-	} else {
-		s3key = ""
-	}
-
-	userId, ok := r.Context().Value("user_id").(string)
-	if !ok {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
-		return
-	}
-
-	authService, ok := r.Context().Value("AuthService").(*keycloak.AuthService)
-	if !ok {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get auth service")
-	}
-
-	if NewPassword != "" {
-		err := authService.SetUserPassword(userId, NewPassword)
-		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to update password")
-			return
-		}
-	}
-	if false {
-		_, err := neshto.MovieDB.Exec(r.Context(), `
-		UPDATE users
-		SET bio = $1
-		WHERE keycloak_user_id = $2;`, userId)
-
-		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
-			return
-		}
-	}
-
-	if s3key != "" {
-		_, err := neshto.MovieDB.Exec(r.Context(), `
-			UPDATE users
-			SET pfpUrl = $1
-			WHERE keycloak_user_id = $2;`, s3key, userId)
-		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
-			return
-		}
-	}
-
-	keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Edited user data successfully", "pfpUrl": s3key})
 }
 
 var watchlistType = []string{"watched", "isWatching", "willWatch"}
