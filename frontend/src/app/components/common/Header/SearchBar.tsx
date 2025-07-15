@@ -157,13 +157,13 @@ export default function PrimarySearchAppBar() {
 
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
-  const [movies, setMovies] = React.useState<Movie[]>([]);
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [movies, setMovies] = React.useState<MovieService.SearchMovie[]>([]);
+  const [users, setUsers] = React.useState<MovieService.SearchUser[]>([]);
 
   React.useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(input);
-    }, 300);
+    }, 700);
 
     return () => {
       clearTimeout(handler);
@@ -174,8 +174,8 @@ export default function PrimarySearchAppBar() {
     const fetched = async () => {
       if (debouncedInput) {
         const result = await MovieService.search(debouncedInput, true);
-        setMovies(result.movies);
-        setUsers(result.users);
+        setMovies(result.data.movies);
+        setUsers(result.data.users);
       }
     };
     fetched();

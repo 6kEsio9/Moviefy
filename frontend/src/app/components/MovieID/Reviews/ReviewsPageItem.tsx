@@ -47,10 +47,10 @@ export default function ReviewPageItem({
       return prevReviews.filter((x) => x.userId !== user?.id);
     });
 
-    // const fetched = async () => {
-    //   await MovieService.deleteReview(user!.id, movie.id, authToken!);
-    // };
-    // fetched();
+    const fetched = async () => {
+      await MovieService.deleteReview(movie.id);
+    };
+    fetched();
   };
 
   if (displayUser) {

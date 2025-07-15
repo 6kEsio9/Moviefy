@@ -1,5 +1,6 @@
 import axios from "axios";
 import { users } from "./AuthService";
+import { off } from "process";
 
 const url = "http://keycloak.martinkurtev.com:1235";
 
@@ -48,6 +49,21 @@ export type Movie = {
   crew: string[];
   reviews: ReviewMovie[];
 };
+
+export type SearchMovie = {
+    id: string;
+    title: string;
+    posterUrl: string;
+    startYear: number
+    averageRating: number;
+}
+
+export type SearchUser = {
+    id: string;
+    username: string;
+    pfpUrl: string;
+}
+
 
 // const movies: Movie[] = [
 //   {
@@ -215,7 +231,7 @@ export async function getMovie(movieId: string) {
   //done
 }
 
-export async function search(searchInput: string, usersB: boolean) {
+export async function search(searchInput: string, usersB: boolean, limit?: number, offset?: number) {
   // const req = await fetch(
   //   `${url}/search?` +
   //     new URLSearchParams({
@@ -250,6 +266,13 @@ export async function search(searchInput: string, usersB: boolean) {
 
   // return fetch(url + '/search' + '/searchInput')
   //   .then(res => res.json());
+  const res = await instance.get('/search', {params: {
+    input: searchInput,
+    limit: limit,
+    offset: offset,
+    users: usersB
+  }});
+  return res;
 }
 
 export async function rate(movieId: string, rating: number, comment?: string) {
@@ -262,8 +285,10 @@ export async function rate(movieId: string, rating: number, comment?: string) {
   //done
 }
 
-export async function deleteReview(userId: string, movieId: string) {
-  const res = await instance.delete(`${url}/movies/reviews/delete`, {params: {userId: userId, movieId: movieId}});
+export async function deleteReview(movieId: string) {
+  const res = await instance.post('/users/reviews/delete', {
+    movieId
+  });
   return res;
 }
 

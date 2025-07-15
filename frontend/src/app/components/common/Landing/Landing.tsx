@@ -9,7 +9,6 @@ import AuthButton from "./AuthButton";
 import SearchMenuLanding from "./SearchMenuLanding";
 
 import * as MovieService from "../../../services/MovieService";
-import { Movie } from "@/app/services/MovieService";
 import { useAuth } from "@/app/hooks/useAuth";
 
 export default function Landing() {
@@ -18,12 +17,12 @@ export default function Landing() {
   const [input, setInput] = React.useState("");
   const [debouncedInput, setDebouncedInput] = React.useState("");
 
-  const [movies, setMovies] = React.useState<Movie[]>([]);
+  const [movies, setMovies] = React.useState<MovieService.SearchMovie[]>([]);
 
   React.useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(input);
-    }, 300);
+    }, 700);
 
     return () => {
       clearTimeout(handler);
@@ -34,7 +33,7 @@ export default function Landing() {
     const fetched = async () => {
       if (debouncedInput) {
         const result = await MovieService.search(debouncedInput, false);
-        setMovies(result.movies);
+        setMovies(result.data.movies);
       }
     };
     fetched();

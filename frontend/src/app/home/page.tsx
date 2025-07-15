@@ -10,7 +10,7 @@ import { getGenreList } from "../services/MovieService";
 export default function HomePage() {
   const [movies, setMovies] = useState<Movie[]>();
 
-  const genreList = getGenreList();
+  const genreList = ["Action", "Comedy", "Sci-Fi"];
 
   useEffect(() => {
     const fetched = async () => {

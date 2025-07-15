@@ -30,11 +30,11 @@ export default function Review({
 
   const handleRemove = () => {
     setReviews((prevReviews) => {
-      return prevReviews!.filter((x) => x.movieId !== user?.id);
+      return prevReviews!.filter((x) => x.movieId !== review.movieId);
     });
 
     const fetched = async () => {
-      await deleteReview(user!.id, review.movieId);
+      await deleteReview(review.movieId);
     };
     fetched();
   };

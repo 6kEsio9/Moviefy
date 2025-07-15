@@ -4,13 +4,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import { Movie } from "@/app/services/MovieService";
+import { SearchMovie, SearchUser } from "@/app/services/MovieService";
 import Link from "next/link";
 import { User } from "@/app/services/AuthService";
 
 interface SearchMenuProps {
-  movies: Movie[];
-  users: User[];
+  movies: SearchMovie[];
+  users: SearchUser[];
 }
 
 export default function SearchMenu({ movies, users }: SearchMenuProps) {
@@ -57,7 +57,7 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
               </ListItemAvatar>
               <ListItemText
                 primary={x.title}
-                secondary={`Premiere: ${x.year}`}
+                secondary={`Premiere: ${x.startYear}`}
               />
             </ListItem>
           </Link>
@@ -85,7 +85,7 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
                 <Avatar>
                   <img
                     style={{ width: "100%", height: "100%" }}
-                    src={x.pfp}
+                    src={x.pfpUrl}
                     alt={x.username}
                   ></img>
                 </Avatar>
