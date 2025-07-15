@@ -10,17 +10,24 @@ import (
 	"moviefy/main/helper/queries"
 	"moviefy/main/helper/webscraper"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ratingSingleFilm struct {
-	Id        int     `json:"id"`
-	Content   string  `json:"content"`
-	LikeCount int     `json:"likeCount"`
-	Username  string  `json:"username"`
-	PfpUrl    string  `json:"pfpUrl"`
-	Rating    float32 `json:"rating"`
-	IsLiked   bool    `json:"isLiked"`
+	Id           int     `json:"id"`
+	Content      string  `json:"content"`
+	LikeCount    int     `json:"likeCount"`
+	Username     string  `json:"username"`
+	PfpUrl       string  `json:"pfpUrl"`
+	Rating       float32 `json:"rating"`
+	IsLiked      bool    `json:"isLiked"`
+	Title        string  `json:"title"`
+	MovieId      string  `json:"movieId"`
+	UserId       string  `json:"userId"`
+	isValidCheck pgtype.Int4
 }
 
 type Movie struct {
@@ -54,10 +61,22 @@ type User struct {
 	Pfp      string `json:"pfp"`
 }
 
+type SearchUser struct {
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	PfpUrl   string `json:"pfpUrl"`
+}
+
 func GetMovies(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if r.Method != http.MethodGet {
 		keycloak.SendErrorResponse(w, 500, "Method not allowed")
+		return
+	}
+
+	thereIsToken, ok := r.Context().Value("thereIsToken").(bool)
+	if !ok {
+		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
 		return
 	}
 
@@ -69,6 +88,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		offset = "0"
 	}
 
+	log.Println("maznichko")
 	if movieId == "" {
 		movies := []*neshto.SearchMovie{}
 		movieRows, err := neshto.MovieDB.Query(ctx, `
@@ -78,7 +98,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 			WHERE tb.startYear >= 2024
 			ORDER BY tr.numVotes DESC
 			OFFSET $1
-			LIMIT 20;`, offset)
+			LIMIT 21;`, offset)
 
 		if err != nil {
 			fmt.Println(err)
@@ -104,12 +124,16 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 			}
 			movies = append(movies, &movie)
 		}
+		log.Println("mazna")
 		webscraper.C.ScrapeSearchResultDetails(&movies)
+
+		log.Println("mazna  done")
 
 		keycloak.SendJSONResponse(w, http.StatusOK, movies)
 		return
 	}
 
+	log.Println("not mazna mn fr")
 	movie := Movie{}
 	row := neshto.MovieDB.QueryRow(ctx, `
 		 SELECT tb.tconst, tb.primaryTitle, tb.genres, tb.isAdult, tb.startYear, p.description, p.posterId, tr.averageRating, tc.directors, tc.writers  FROM title_basics tb 
@@ -184,51 +208,106 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//claims, err := a.verifyToken(tokenString)
-	//if err != nil {
-	//	///k	keycloak.SendErrorResponse(w, http.StatusUnauthorized, fmt.Sprintf("Invalid token: %v", err))
-	//		return
-	//	}
-
 	fmt.Println(query)
-	ratings := []ratingSingleFilm{}
-	ratingsRow, err := neshto.MovieDB.Query(ctx, `
-		 SELECT ur.id, ur.rating, c.likeCount, c.content, u.pfpUrl, u.username FROM user_rating ur
-		 JOIN users u ON ur.userId = u.id
-		 JOIN comments c ON ur.id = c.ratingId
-		 WHERE ur.filmId = $1;`, movieId)
 
-	if err != nil {
-		fmt.Println(err)
-		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
-		return
-	}
-	defer ratingsRow.Close()
+	if thereIsToken {
 
-	for ratingsRow.Next() {
-		var r ratingSingleFilm
-		err := ratingsRow.Scan(
-			&r.Id,
-			&r.Rating,
-			&r.LikeCount,
-			&r.Content,
-			&r.PfpUrl,
-			&r.Username,
-		)
+		userId, ok := r.Context().Value("user_id").(string)
+		if !ok {
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
+			return
+		}
+
+		ratings := []ratingSingleFilm{}
+		ratingsRow, err := neshto.MovieDB.Query(ctx, `
+		 WITH user_liked_comments AS(
+		 SELECT commentId AS liked_id FROM comment_likes WHERE userId = $1
+		 )
+		 SELECT ur.id, ur.rating, c.likecount, c.content, u.pfpurl, u.username, tb.primaryTitle, tb.tconst, u.keycloak_user_id, ulc.liked_id FROM user_rating ur
+		 JOIN users u ON ur.userid = u.keycloak_user_id
+		 JOIN title_basics tb ON ur.filmid = tb.tconst
+		 LEFT JOIN comments c ON ur.id = c.ratingid
+		 LEFT JOIN user_liked_comments ulc ON c.Id = ulc.liked_id
+		 WHERE ur.filmId = $2;`, userId, movieId)
+
 		if err != nil {
 			fmt.Println(err)
 			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
 			return
 		}
-		ratings = append(ratings, r)
+		defer ratingsRow.Close()
+
+		for ratingsRow.Next() {
+			var r ratingSingleFilm
+			err := ratingsRow.Scan(
+				&r.Id,
+				&r.Rating,
+				&r.LikeCount,
+				&r.Content,
+				&r.PfpUrl,
+				&r.Username,
+				&r.Title,
+				&r.MovieId,
+				&r.UserId,
+				&r.isValidCheck,
+			)
+			if err != nil {
+				fmt.Println(err)
+				keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Got an error in the db ")
+				return
+			}
+			if r.isValidCheck.Valid {
+				r.IsLiked = true
+			}
+			ratings = append(ratings, r)
+		}
+		movie.Reviews = ratings
+	} else {
+
+		ratings := []ratingSingleFilm{}
+		ratingsRow, err := neshto.MovieDB.Query(ctx, `
+		 SELECT ur.id, ur.rating, c.likecount, c.content, u.pfpurl, u.username, tb.primaryTitle, tb.tconst, u.keycloak_user_id FROM user_rating ur
+		 JOIN users u ON ur.userid = u.keycloak_user_id
+		 JOIN title_basics tb ON ur.filmid = tb.tconst
+		 LEFT JOIN comments c ON ur.id = c.ratingid
+		 WHERE ur.filmId = $1;`, movieId)
+
+		if err != nil {
+			fmt.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+			return
+		}
+		defer ratingsRow.Close()
+
+		for ratingsRow.Next() {
+			var r ratingSingleFilm
+			err := ratingsRow.Scan(
+				&r.Id,
+				&r.Rating,
+				&r.LikeCount,
+				&r.Content,
+				&r.PfpUrl,
+				&r.Username,
+				&r.Title,
+				&r.MovieId,
+				&r.UserId,
+			)
+			if err != nil {
+				fmt.Println(err)
+				keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Got an error in the db ")
+				return
+			}
+			ratings = append(ratings, r)
+		}
+		movie.Reviews = ratings
+
 	}
-	movie.Reviews = ratings
 
 	if movie.PosterUrl == nil || movie.Summary == nil {
 		result, err := webscraper.C.ScrapeSingleFilmDetails(movieId)
 		if err != nil {
 			fmt.Println(err)
-			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error while scraping film details ")
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Got an error while scraping film details ")
 			return
 		}
 		movie.PosterUrl = &result.PosterURL
@@ -244,23 +323,45 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var SearchParams struct {
-		Input string `json:"input"`
-		Users bool   `json:"users"`
+	var searchResults struct {
+		movies []*neshto.SearchMovie
+		users  []SearchUser
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&SearchParams); err != nil {
+	input := r.URL.Query().Get("input")
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+	users := r.URL.Query().Get("users")
+	limit := 10
+	offset := 0
+	var err error
+
+	if limitStr != "" {
+		limit, err = strconv.Atoi(limitStr)
+		if err != nil {
+			keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid limit")
+			return
+		}
+	}
+
+	if offsetStr != "" {
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil {
+			keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid offset")
+			return
+		}
+	}
+
+	limitPlusOffset := limit + offset
+
+	if input == "" {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
-	if SearchParams.Input == "" {
-		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid request body")
-		return
-	}
-
-	rows, err := neshto.MovieDB.Query(ctx, queries.MovieSearchQuery, SearchParams.Input)
+	rows, err := neshto.MovieDB.Query(ctx, queries.MovieSearchQuery, input, limit, offset, limitPlusOffset)
 	if err != nil {
+		log.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
 		return
 	}
@@ -283,14 +384,42 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 
 		movies = append(movies, &movie)
 	}
+	searchResults.movies = movies
 
-	err = webscraper.C.ScrapeSearchResultDetails(&movies)
-	if err != nil {
-		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error while scraping film details ")
-		return
+	if users == "true" {
+		rows, err := neshto.MovieDB.Query(ctx, `
+			SELECT keycloak_user_id, username, pfpUrl FROM users
+			WHERE username % $1
+			ORDER BY similarity(username, $1) DESC
+			LIMIT $2
+			OFFSET $3`, input, limit, offset)
+		if err != nil {
+			log.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
+			return
+		}
+		defer rows.Close()
+		var usersArr []SearchUser
+		for rows.Next() {
+			var user SearchUser
+
+			err := rows.Scan(
+				&user.Id,
+				&user.Username,
+				&user.PfpUrl,
+			)
+
+			if err != nil {
+				keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+				return
+			}
+
+			usersArr = append(usersArr, user)
+		}
+		searchResults.users = usersArr
 	}
 
-	keycloak.SendJSONResponse(w, http.StatusOK, movies)
+	keycloak.SendJSONResponse(w, http.StatusOK, searchResults)
 }
 
 // mux.HandleFunc("/user/reviews", getReviews)
@@ -309,37 +438,111 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO: SHOULD give if the user requesting has liked some of the posts
-	ratingsRow, err := neshto.MovieDB.Query(ctx, `
-		 SELECT ur.id, ur.rating, c.likecount, c.content, u.pfpurl, u.username FROM user_rating ur
-		 JOIN users u ON ur.userid = u.id
-		 JOIN comments c ONur.id = c.ratingid
-		 WHERE ur.userId = $1;`, userId)
-
-	if err != nil {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
+	thereIsToken, ok := r.Context().Value("thereIsToken").(bool)
+	if !ok {
+		log.Println("hello")
+		log.Println(thereIsToken)
+		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
 		return
 	}
-	defer ratingsRow.Close()
 
+	log.Println("hello oiut")
 	var ratings []ratingSingleFilm
-	for ratingsRow.Next() {
-		var rating ratingSingleFilm
-		err := ratingsRow.Scan(
-			&rating.Id,
-			&rating.Rating,
-			&rating.LikeCount,
-			&rating.Content,
-			&rating.PfpUrl,
-			&rating.Username,
-		)
 
-		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+	if thereIsToken {
+		log.Println("hello")
+		log.Println(r.Context())
+
+		userIdOwn, ok := r.Context().Value("user_id").(string)
+		if !ok {
+			log.Println("hello")
+			log.Println("hello")
+			log.Println("hello")
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
 			return
 		}
 
-		ratings = append(ratings, rating)
+		ratingsRow, err := neshto.MovieDB.Query(ctx, `
+		 WITH user_liked_comments AS(
+		 SELECT commentId AS liked_id FROM comment_likes WHERE userId = $1
+		 )
+		 SELECT ur.id, ur.rating, c.likecount, c.content, u.pfpurl, u.username, tb.primaryTitle, tb.tconst, u.keycloak_user_id, ulc.liked_id FROM user_rating ur
+		 JOIN users u ON ur.userid = u.keycloak_user_id
+		 JOIN title_basics tb ON ur.filmid = tb.tconst
+		 LEFT JOIN comments c ON ur.id = c.ratingid
+		 LEFT JOIN user_liked_comments ulc ON c.Id = ulc.liked_id
+		 WHERE u.userId = $2;`, userIdOwn, userId)
+
+		if err != nil {
+			fmt.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+			return
+		}
+		defer ratingsRow.Close()
+
+		for ratingsRow.Next() {
+			var r ratingSingleFilm
+			err := ratingsRow.Scan(
+				&r.Id,
+				&r.Rating,
+				&r.LikeCount,
+				&r.Content,
+				&r.PfpUrl,
+				&r.Username,
+				&r.Title,
+				&r.MovieId,
+				&r.UserId,
+				&r.isValidCheck,
+			)
+			if err != nil {
+				fmt.Println(err)
+				keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Got an error in the db ")
+				return
+			}
+			if r.isValidCheck.Valid {
+				r.IsLiked = true
+			}
+			ratings = append(ratings, r)
+		}
+	} else {
+		ratingsRow, err := neshto.MovieDB.Query(ctx, `
+		 SELECT ur.id, ur.rating, c.likecount, c.content, u.pfpurl, u.username, tb.primaryTitle, tb.tconst, u.keycloak_user_id FROM user_rating ur
+		 JOIN users u ON ur.userid = u.keycloak_user_id
+		 JOIN title_basics tb ON ur.filmid = tb.tconst
+		 LEFT JOIN comments c ON ur.id = c.ratingid
+		 WHERE ur.userId = $1;`, userId)
+
+		if err != nil {
+			log.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Database error")
+			return
+		}
+		defer ratingsRow.Close()
+
+		for ratingsRow.Next() {
+			var rating ratingSingleFilm
+			err := ratingsRow.Scan(
+				&rating.Id,
+				&rating.Rating,
+				&rating.LikeCount,
+				&rating.Content,
+				&rating.PfpUrl,
+				&rating.Username,
+				&rating.Title,
+				&rating.MovieId,
+				&rating.UserId,
+				&rating.isValidCheck,
+			)
+
+			if err != nil {
+				log.Println(err)
+				keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+				return
+			}
+
+			ratings = append(ratings, rating)
+		}
+
 	}
 
 	keycloak.SendJSONResponse(w, http.StatusOK, ratings)
@@ -375,7 +578,7 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ratingsRow.Close()
 
-	var watchlistItems []neshto.SearchMovie
+	var watchlistItems []*neshto.SearchMovie
 	for ratingsRow.Next() {
 		var item neshto.SearchMovie
 		err := ratingsRow.Scan(
@@ -393,8 +596,9 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		watchlistItems = append(watchlistItems, item)
+		watchlistItems = append(watchlistItems, &item)
 	}
+	webscraper.C.ScrapeSearchResultDetails(&watchlistItems)
 
 	watchlist := map[string][]neshto.SearchMovie{
 		"watched":    []neshto.SearchMovie{},
@@ -404,7 +608,7 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 
 	for _, item := range watchlistItems {
 		itemType := watchlistType[item.ItemType]
-		watchlist[itemType] = append(watchlist[itemType], item)
+		watchlist[itemType] = append(watchlist[itemType], *item)
 	}
 
 	log.Println(watchlist)
@@ -456,12 +660,11 @@ func RateMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, ok := r.Context().Value("username").(string)
+	userId, ok := r.Context().Value("user_id").(string)
 	if !ok {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
 		return
 	}
-
 	var Params struct {
 		MovieId string `json:"movieId,omitempty"`
 		Rating  int    `json:"rating,omitempty"`
@@ -477,25 +680,25 @@ func RateMovie(w http.ResponseWriter, r *http.Request) {
 		keycloak.SendErrorResponse(w, http.StatusNotAcceptable, "Invalid Params")
 		return
 	}
-	var ratingId int
-	err := neshto.MovieDB.QueryRow(r.Context(), `
+
+	if Params.Comment == "" {
+		Params.Comment = " "
+	}
+	_, err := neshto.MovieDB.Exec(r.Context(), `
+		WITH added_rating AS(
 		INSERT INTO user_rating (rating, filmId, userId)
-		VALUES ($1, $2, (SELECT id FROM users WHERE username = $3 LIMIT 1))
-		RETURNING id;`, Params.Rating, Params.MovieId, username).Scan(&ratingId)
+		VALUES ($1, $2, $3)
+		RETURNING id
+		),
+		added_comment AS(
+		INSERT INTO comments(ratingId, content)
+		VALUES ((SELECT id FROM added_rating), $4)
+		)
+		SELECT 1;`, Params.Rating, Params.MovieId, userId, Params.Comment)
 
 	if err != nil {
 		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
 		return
-	}
-
-	if Params.Comment != "" {
-		err := neshto.MovieDB.QueryRow(r.Context(), `
-			INSERT INTO comments(ratingId, content)
-			VALUES ($1, $2);`, ratingId, Params.Comment).Scan()
-		if err != nil {
-			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
-			return
-		}
 	}
 
 	keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Added rating successfully"})

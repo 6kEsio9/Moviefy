@@ -44,6 +44,7 @@ func randString(n int) string {
 
 func (c *CollyCollector) InitCollector() {
 	c.Collector = colly.NewCollector(
+		colly.AllowURLRevisit(),
 		colly.Async(true),
 	)
 
@@ -121,27 +122,32 @@ func (c *CollyCollector) setupHandlers() {
 	c.OnHTML("div[data-testid='hero-media__poster'] a", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
-		if len(urlArr) < 5 {
-			fmt.Println("urlArr : ", urlArr)
+		if len(urlArr) < 4 {
 			return
 		}
-		id := urlArr[4]
 		secret := e.Request.URL.Query().Get("secret")
+		singleId := e.Request.URL.Query().Get("singleId")
 
 		href := e.Attr("href")
 
 		if href != "" && strings.Contains(href, "/mediaviewer/") {
 			posterURL := "https://www.imdb.com" + href
 			if secret != "" {
-				posterURL = posterURL + "/?secret=" + secret
+				posterURL = posterURL + "&secret=" + secret
+			} else if singleId != "" {
+				posterURL = posterURL + "&singleId=" + singleId
+			} else {
+				log.Println("THIS SHOULD NOT HAPPEN")
 			}
 
 			err := c.Visit(posterURL)
 
 			if err != nil {
 				c.mu.Lock()
-				if c.ResultSingleFilm[id] != nil {
-					c.ResultSingleFilm[id].Error = fmt.Errorf("failed to visit media viewer page : %v", err)
+				if singleId != "" {
+					if c.ResultSingleFilm[singleId] != nil {
+						c.ResultSingleFilm[singleId].Error = fmt.Errorf("failed to visit media viewer page : %v", err)
+					}
 				}
 				c.mu.Unlock()
 			}
@@ -152,12 +158,26 @@ func (c *CollyCollector) setupHandlers() {
 	c.OnHTML("div[data-testid='media-viewer']", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
-		if len(urlArr) < 5 {
-			fmt.Println("urlArr : ", urlArr)
+		if len(urlArr) < 4 {
 			return
 		}
-		id := urlArr[4]
+		id := urlArr[3]
 		secret := e.Request.URL.Query().Get("secret")
+		singleId := e.Request.URL.Query().Get("singleId")
+
+		defer func() {
+			if secret != "" {
+				if wg, exists := c.wg[secret]; exists && wg != nil {
+					wg.Done()
+				}
+			} else if singleId != "" {
+				if wg, exists := c.wg[singleId]; exists && wg != nil {
+					wg.Done()
+				}
+			} else {
+				log.Println("THIS SHOULD NOT HAPPEN")
+			}
+		}()
 
 		firstImg := e.DOM.Find("img").First()
 
@@ -167,45 +187,25 @@ func (c *CollyCollector) setupHandlers() {
 			if secret != "" {
 				if secretMap, exists := c.ResultsSearch[secret]; exists {
 					if movie, exists := secretMap[id]; exists && movie != nil {
-
 						movie.PosterUrl = &src
-						c.mu.Unlock()
-						if wg, exists := c.wg[secret]; exists && wg != nil {
-							wg.Done()
-
-						}
-					} else {
-						c.mu.Unlock()
 					}
-				} else {
-					c.mu.Unlock()
 				}
 			} else {
-				if film, exists := c.ResultSingleFilm[id]; exists && film != nil {
-					film.PosterURL = src
-					c.mu.Unlock()
-					if wg, exists := c.wg[id]; exists && wg != nil {
-						wg.Done()
+				if singleId != "" {
+					if film, exists := c.ResultSingleFilm[singleId]; exists && film != nil {
+						film.PosterURL = src
+						log.Println("SRc : ", src)
 					}
-				} else {
-					c.mu.Unlock()
 				}
 			}
+			c.mu.Unlock()
 		}
 	})
 
 	c.OnHTML("p[data-testid='plot'] span:last-child", func(e *colly.HTMLElement) {
 		pageUrl := e.Request.URL.String()
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
-		if len(urlArr) < 5 {
-			fmt.Println("urlArr : ", urlArr)
-			return
-		}
-		id := urlArr[4]
-
-		if len(urlArr) < 6 || urlArr[5] != "mediaviewer" {
-			return
-		}
+		id := urlArr[3]
 
 		plotText := e.Text
 
@@ -221,10 +221,23 @@ func (c *CollyCollector) setupHandlers() {
 		urlArr := strings.FieldsFunc(pageUrl, func(SRune rune) bool { return SRune == '/' })
 		if len(urlArr) < 5 {
 			fmt.Println("errrrrrrrrrror ")
-			fmt.Println("urlArr : ", urlArr)
 			return
 		}
+
 		id := urlArr[4]
+		secret := r.Request.URL.Query().Get("secret")
+
+		defer func() {
+			if secret != "" {
+				if wg, exists := c.wg[secret]; exists && wg != nil {
+					wg.Done()
+				}
+			} else {
+				if wg, exists := c.wg[id]; exists && wg != nil {
+					wg.Done()
+				}
+			}
+		}()
 
 		c.mu.Lock()
 		if film, exists := c.ResultSingleFilm[id]; exists && film != nil {
@@ -241,35 +254,39 @@ func (c *CollyCollector) ScrapeSingleFilmDetails(id string) (*SingleFilmDetails,
 		ID: id,
 	}
 
-	c.wg[id] = &sync.WaitGroup{}
-	c.ResultSingleFilm[id] = result
+	randomId := randString(14)
+	c.wg[randomId] = &sync.WaitGroup{}
+	c.ResultSingleFilm[randomId] = result
 
-	mainURL := "https://www.imdb.com/title/" + id + "/"
+	mainURL := "https://www.imdb.com/title/" + id + "/?singleId=" + randomId
 
+	c.wg[randomId].Add(1)
 	err := c.Visit(mainURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to visit main URL: %v ", err)
 	}
 
-	c.wg[id].Wait()
+	c.wg[randomId].Wait()
 
 	neshto.MovieDB.Exec(context.Background(), `
 		UPDATE posters
 		SET posterId = $1,
 		description = $2
-		WHERE titleId = $3`, c.ResultSingleFilm[id].PosterURL, c.ResultSingleFilm[id].PlotText, id)
+		WHERE titleId = $3`, c.ResultSingleFilm[randomId].PosterURL, c.ResultSingleFilm[randomId].PlotText, id)
 
-	delete(c.ResultSingleFilm, id)
-	delete(c.wg, id)
+	defer delete(c.ResultSingleFilm, randomId)
+	defer delete(c.wg, randomId)
 
 	return result, result.Error
 }
 
 func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*neshto.SearchMovie) error {
 	var SearchUndetailedResults = make(map[string]*neshto.SearchMovie)
-	for _, item := range *searchItems {
+	itemsToUpdate := []int{}
+	for i, item := range *searchItems {
 		if item.PosterUrl == nil {
 			SearchUndetailedResults[item.Id] = item
+			itemsToUpdate = append(itemsToUpdate, i)
 		}
 	}
 
@@ -285,19 +302,21 @@ func (c *CollyCollector) ScrapeSearchResultDetails(searchItems *[]*neshto.Search
 
 	c.wg[randomId].Wait()
 
-	err := bulkUpdateFilms(searchItems, SearchUndetailedResults)
+	log.Println(c.ResultsSearch[randomId])
+	log.Println(searchItems)
+	err := bulkUpdateFilms(searchItems, itemsToUpdate)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	delete(c.wg, randomId)
-	delete(c.ResultsSearch, randomId)
+	defer delete(c.wg, randomId)
+	defer delete(c.ResultsSearch, randomId)
 
 	return nil
 }
 
-func bulkUpdateFilms(searchItems *[]*neshto.SearchMovie, SearchUndetailedResults map[string]*neshto.SearchMovie) error {
+func bulkUpdateFilms(searchItems *[]*neshto.SearchMovie, itemsToUpdate []int) error {
 	ctx := context.Background()
 	tx, err := neshto.MovieDB.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
@@ -305,25 +324,23 @@ func bulkUpdateFilms(searchItems *[]*neshto.SearchMovie, SearchUndetailedResults
 	}
 	defer tx.Rollback(ctx)
 
-	for i, item := range *searchItems {
-		newItem, exists := SearchUndetailedResults[item.Id]
-		if !exists {
-			continue
-		}
-
-		if item.PosterUrl != newItem.PosterUrl {
-			(*searchItems)[i] = SearchUndetailedResults[item.Id]
-			_, err := tx.Exec(ctx, `
-				UPDATE posters 
-				SET posterId = $1
-				WHERE titleId = $2
-				`, SearchUndetailedResults[item.Id].PosterUrl, item.Id)
-			if err != nil {
-				return err
-			}
+	fmt.Println("hello")
+	for _, item := range itemsToUpdate {
+		fmt.Println("hello manaf : ", *((*searchItems)[item].PosterUrl), (*searchItems)[item].Id)
+		_, err := tx.Exec(ctx, `
+			UPDATE posters 
+			SET posterId = $1
+			WHERE titleId = $2
+			`, *((*searchItems)[item].PosterUrl), (*searchItems)[item].Id)
+		if err != nil {
+			log.Println("ne stana manaf")
+			return err
 		}
 	}
-	tx.Commit(context.Background())
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit failed: %w", err)
+	}
 	return nil
 }
 

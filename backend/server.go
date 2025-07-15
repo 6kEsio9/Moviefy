@@ -6,6 +6,7 @@ import (
 	"moviefy/main/helper/keycloak"
 	"moviefy/main/helper/neshto"
 	"moviefy/main/helper/queries"
+	s3helper "moviefy/main/helper/s3"
 	"moviefy/main/helper/webscraper"
 	"net/http"
 )
@@ -15,6 +16,8 @@ func main() {
 	neshto.MovieDB = &neshto.DB{}
 	webscraper.C.InitCollector()
 	queries.InitDb(neshto.MovieDB)
+
+	s3helper.InitializeS3()
 
 	defer neshto.MovieDB.Close()
 	keycloakConfig := keycloak.LoadConfig()
@@ -77,11 +80,12 @@ func main() {
 			IsLiked   bool    `json:"isLiked"`
 		}
 			* */
-	mux.HandleFunc("/user/reviews", api.GetReviews) /*
+	mux.Handle("/users/reviews", authService.LoselyGetAuth(http.HandlerFunc(api.GetReviews)))
+	/*
 		userId := r.URL.Query().Get("userId")
 	* */
 	mux.HandleFunc("/watchlist", api.GetWatchList)
-	mux.HandleFunc("/users", api.GetUser)
+	mux.Handle("/users", authService.LoselyGetAuth(http.HandlerFunc(api.GetUser)))
 
 	mux.Handle("/change", authService.AuthMiddleware(http.HandlerFunc(api.ChangeMovieStatus)))
 	//zashto samo comentara se smenq,a
@@ -107,7 +111,7 @@ func main() {
 			}
 		**/
 	mux.Handle("/movies/rate", authService.AuthMiddleware(http.HandlerFunc(api.RateMovie)))
-	//mux.Handle("/user/edit", authService.AuthMiddleware(http.HandlerFunc(editUser)))
+	mux.Handle("/user/edit", authService.AuthMiddleware(http.HandlerFunc(api.EditUser)))
 
 	handler := keycloak.CorsMiddleware(authService.AdminTokenMiddleware(mux))
 

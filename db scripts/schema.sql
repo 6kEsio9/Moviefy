@@ -32,13 +32,13 @@ CREATE TABLE users (
   username VARCHAR(50) NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   pfpUrl TEXT DEFAULT 'default',
-  bio TEXT,
+  bio TEXT DEFAULT ' ',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE TABLE user_rating (
   id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  userId UUID REFERENCES users(keycloak_user_id) ON DELETE CASCADE,
   filmId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
   rating REAL CHECK (rating BETWEEN 1 AND 5),
   UNIQUE (userId, filmId)
@@ -53,14 +53,14 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE comment_likes(
-  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  userId UUID REFERENCES users(keycloak_user_id) ON DELETE CASCADE,
   commentId INTEGER REFERENCES comments(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   PRIMARY KEY (userId, commentId)
 );
 
 CREATE TABLE watchlist (
-  userId UUID REFERENCES users(id) ON DELETE CASCADE,
+  userId UUID REFERENCES users(keycloak_user_id) ON DELETE CASCADE,
   filmId TEXT REFERENCES title_basics(tconst) ON DELETE CASCADE,
   type SMALLINT CHECK (type BETWEEN 0 AND 3),
   PRIMARY KEY (userId, filmId)

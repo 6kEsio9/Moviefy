@@ -289,6 +289,39 @@ func (a *AuthService) SetUserPassword(userID, newPassword string) error {
 
 	return nil
 }
+func (a *AuthService) LoselyGetAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		thereIsToken := true
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			thereIsToken = false
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			thereIsToken = false
+		}
+
+		claims, err := a.verifyToken(tokenString)
+		if err != nil {
+			thereIsToken = false
+		}
+
+		if thereIsToken {
+			ctx := context.WithValue(r.Context(), "user_claims", claims)
+			ctx = context.WithValue(ctx, "thereIsToke", thereIsToken)
+			ctx = context.WithValue(ctx, "user_id", claims.Subject)
+			ctx = context.WithValue(ctx, "username", claims.PreferredUsername)
+			ctx = context.WithValue(ctx, "AuthService", a)
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (a *AuthService) AuthMiddleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

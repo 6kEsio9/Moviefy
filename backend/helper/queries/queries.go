@@ -22,27 +22,28 @@ const (
 WITH 
 popular_results AS (
   SELECT 
-		pf.startyear,
+		tb.startyear,
     pf.tconst, 
-    pf.primarytitle, 
+    tb.primarytitle, 
 		ps.posterId,
     tr.numVotes,
-    ts_rank(pf.title_tsvector, websearch_to_tsquery('english', '$1')) AS fts_rank,
-    similarity(pf.primarytitle, '$1') AS fuzzy_rank,
+	ts_rank(pf.title_tsvector, websearch_to_tsquery('english', $1::text)) AS fts_rank,
+	similarity(pf.primarytitle, $1::text) AS fuzzy_rank,
     'popular' AS source
   FROM popular_films pf
   JOIN title_ratings tr ON pf.tconst = tr.tconst
+	JOIN title_basics tb ON pf.tconst = tb.tconst
 	JOIN posters ps ON pf.tconst = ps.titleId
   WHERE 
-    pf.title_tsvector @@ websearch_to_tsquery('english', '$1') OR
-    pf.primarytitle % '$1'
+	pf.title_tsvector @@ websearch_to_tsquery('english', $1::text) OR
+	pf.primarytitle % $1::text
   ORDER BY 
     tr.numVotes DESC,
     GREATEST(
-      ts_rank(pf.title_tsvector, websearch_to_tsquery('english', '$1')),
-      similarity(pf.primarytitle, '$1')
+	ts_rank(pf.title_tsvector, websearch_to_tsquery('english', $1::text)),
+	similarity(pf.primarytitle, $1::text)
     ) DESC
-  LIMIT $2 + $3 
+  LIMIT $4 
 ),
 
 popular_count AS (
@@ -56,24 +57,24 @@ fallback_results AS (
     b.primarytitle, 
 		ps.posterId,
     COALESCE(tr.numVotes, 0) AS numVotes,
-    ts_rank(to_tsvector('english', b.primarytitle), websearch_to_tsquery('english', '$1')) AS fts_rank,
-    similarity(b.primarytitle, '$1') AS fuzzy_rank,
+	ts_rank(to_tsvector('english', b.primarytitle), websearch_to_tsquery('english', $1::text)) AS fts_rank,
+	similarity(b.primarytitle, $1::text) AS fuzzy_rank,
     'fallback' AS source
   FROM title_basics b
   LEFT JOIN title_ratings tr ON b.tconst = tr.tconst
 	JOIN posters ps ON b.tconst = ps.titleId
   WHERE 
-    (to_tsvector('english', b.primarytitle) @@ websearch_to_tsquery('english', '$1') OR
-     b.primarytitle % '$1')
+	(to_tsvector('english', b.primarytitle) @@ websearch_to_tsquery('english', $1::text) OR
+	b.primarytitle % $1::text)
     AND b.tconst NOT IN (SELECT tconst FROM popular_results)  
-    AND (SELECT count FROM popular_count) < $2 + $3  
+    AND (SELECT count FROM popular_count) < $4  
   ORDER BY 
     COALESCE(tr.numVotes, 0) DESC,
     GREATEST(
-      ts_rank(to_tsvector('english', b.primarytitle), websearch_to_tsquery('english', '$1')),
-      similarity(b.primarytitle, '$1')
+	ts_rank(to_tsvector('english', b.primarytitle), websearch_to_tsquery('english', $1::text)),
+	similarity(b.primarytitle, $1::text)
     ) DESC
-  LIMIT GREATEST(0, $2 + $3 - (SELECT count FROM popular_count))  
+  LIMIT GREATEST(0, $4 - (SELECT count FROM popular_count))  
 )
 
 SELECT 
