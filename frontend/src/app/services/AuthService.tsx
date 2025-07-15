@@ -171,3 +171,12 @@ export function statusToNum(watchStatus: string) {
   else if (watchStatus === "plan") return 2;
   else return 3;
 }
+
+export async function refreshToken(refreshToken: string) {
+  const res = await instance.post("/refresh", { refreshToken }).catch((err) => {
+    console.error("Failed to refresh token", err);
+    throw err;
+  });
+
+  return res;
+}

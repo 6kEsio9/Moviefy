@@ -18,9 +18,6 @@ export default function EditReviews({
   review,
   setReviews,
 }: EditReviewsProps) {
-  const { user } = useAuth();
-  const authToken = localStorage.getItem("user");
-
   const onSubmitHandler = (event: any) => {
     event?.preventDefault();
     const newComment = event.currentTarget[0].value;

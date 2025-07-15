@@ -143,7 +143,7 @@ function Header() {
                   alt=""
                   src={
                     user
-                      ? `ht tps://moviefy-bucket.s3.amazonaws.com/%${user.pfp}`
+                      ? `https://moviefy-bucket.s3.amazonaws.com/${user.pfp}`
                       : "https://www.pngarts.com/files/10/Default-Profile-Picture-Download-PNG-Image.png"
                   }
                 />

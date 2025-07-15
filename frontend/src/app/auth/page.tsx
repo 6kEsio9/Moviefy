@@ -46,11 +46,15 @@ export default function Auth() {
           username,
           password,
         });
-        onLogin(res.data.Token.accessToken, {
-          id: res.data.id,
-          username: res.data.username,
-          pfp: res.data.pfp,
-        });
+        onLogin(
+          res.data.Token.accessToken,
+          {
+            id: res.data.id,
+            username: res.data.username,
+            pfp: res.data.pfp,
+          },
+          res.data.Token.refreshToken
+        );
       };
       fetched();
       if (user) redirect("/home");

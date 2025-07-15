@@ -46,15 +46,6 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
             href={`/movies/${x.id}`}
           >
             <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <img
-                    style={{ width: "100%", height: "100%" }}
-                    src={x.posterUrl}
-                    alt={x.title}
-                  ></img>
-                </Avatar>
-              </ListItemAvatar>
               <ListItemText
                 primary={x.title}
                 secondary={`Premiere: ${x.startYear}`}
@@ -81,15 +72,6 @@ export default function SearchMenu({ movies, users }: SearchMenuProps) {
             href={`/profile/${x.id}`}
           >
             <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <img
-                    style={{ width: "100%", height: "100%" }}
-                    src={x.pfpUrl}
-                    alt={x.username}
-                  ></img>
-                </Avatar>
-              </ListItemAvatar>
               <ListItemText primary={x.username} />
             </ListItem>
           </Link>
