@@ -2,7 +2,7 @@ import * as React from "react";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import Trending from "./Trending";
+// import Trending from "./Trending";
 import Filters from "./Filters/Filters";
 import { Movie } from "@/app/services/MovieService";
 
@@ -25,7 +25,7 @@ export default function NestedList({ setMovies }: NestedListProps) {
       <ListItemButton>
         <ListItemText primary="Popular" />
       </ListItemButton>
-      <Trending setMovies={setMovies} />
+      {/* <Trending setMovies={setMovies} /> */}
       <Filters setMovies={setMovies} />
     </List>
   );
