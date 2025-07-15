@@ -22,11 +22,12 @@ export default function Genre({ setMovies }: GenreProps) {
   };
 
   const genreHandler = (e: any) => {
-    const genre = e.currentTarget.textContent.toLowerCase();
+    const genre = e.currentTarget.textContent;
     console.log(genre);
     const fetched = async () => {
-      const res = await MovieService.filterMovies("genre", genre);
-      // setMovies(res);
+      const res = await MovieService.filterMovies("genres", genre);
+      console.log(res);
+      setMovies(res.data);
     };
     fetched();
   };

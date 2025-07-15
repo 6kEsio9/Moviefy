@@ -333,6 +333,8 @@ export async function addMovie(userId: string, formData: MovieDto) {
 }
 
 export async function filterMovies(filterType: string, filter: string) {
-  // const res = await instance.get('/movies/filter', {params: {filterType: filterType, filter: filter}});
-  // return res;
+  const res = await instance.get(`/movies/${filterType}`, {
+    params: { genre: filter },
+  });
+  return res;
 }

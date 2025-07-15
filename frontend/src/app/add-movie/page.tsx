@@ -12,10 +12,6 @@ export default function AddMoviePage() {
 
   const { user } = useAuth();
 
-  // useEffect(() => {
-  //   if (user?.username !== "Todor") redirect("/");
-  // }, []);
-
   const submitHandler = (formData: FormData) => {
     const imageUrl = formData.get("imageUrl")?.toString() || "";
     const title = formData.get("title")?.toString() || "";
@@ -28,7 +24,7 @@ export default function AddMoviePage() {
 
     const fetched = async () => {
       await addMovie(user?.id!, {
-        imageUrl,
+        posterUrl,
         title,
         summary,
         year,
@@ -80,7 +76,6 @@ export default function AddMoviePage() {
           <TextField required name="year" label="Year" />
           <TextField required name="ageRating" label="Age rating" />
           <Typography>Genre</Typography>
-          <GenreSelect possibleGenres={possibleGenres} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }} marginRight={4}>
