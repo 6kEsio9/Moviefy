@@ -1,6 +1,4 @@
 import axios from "axios";
-import { users } from "./AuthService";
-import { off } from "process";
 
 const url = "http://keycloak.martinkurtev.com:1235";
 
@@ -64,163 +62,11 @@ export type SearchUser = {
   pfpUrl: string;
 };
 
-// const movies: Movie[] = [
-//   {
-//     id: "tt6723592",
-//     title: "Tenet",
-//     posterUrl: "/images/tennet.jpeg",
-//     year: 2005,
-//     avgRating: 5,
-//     genre: "Action",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 3, content: "Great movie!", likes: ["0", "1"] },
-//     ],
-//   },
-//   {
-//     id: "tt0317219",
-//     title: "Cars",
-//     posterUrl: "/images/cars.jpeg",
-//     year: 2010,
-//     avgRating: 4,
-//     genre: "Fantasy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-
-//     reviews: [],
-//   },
-//   {
-//     id: "tt0944947",
-//     title: "Game Of Thrones",
-//     posterUrl: "/images/gameOfThrones.jpeg",
-//     year: 2015,
-//     avgRating: 2,
-//     genre: "Fantasy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "tt3563338",
-//     title: "Inglourious Basterds",
-//     posterUrl: "/images/inglouriousBasterds.jpeg",
-//     year: 2009,
-//     avgRating: 1,
-//     genre: "Comedy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "tt0816692",
-//     title: "Interstellar",
-//     posterUrl: "/images/interstellar.jpeg",
-//     year: 2004,
-//     avgRating: 3,
-//     genre: "Sci-Fi",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "tt0076759",
-//     title: "Star Wars",
-//     posterUrl: "/images/starWars.jpeg",
-//     year: 1999,
-//     avgRating: 4,
-//     genre: "Sci-Fi",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "tt0152930",
-//     title: "Taxi",
-//     posterUrl: "/images/taxi.jpeg",
-//     year: 2012,
-//     avgRating: 5,
-//     genre: "Comedy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "tt5914996",
-//     title: "No Game No Life Zero",
-//     posterUrl:
-//       "//upload.wikimedia.org/wikipedia/en/3/3d/No_Game%2C_No_Life_Zero_poster.jpg",
-//     year: 2012,
-//     avgRating: 5,
-//     genre: "Comedy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-//   {
-//     id: "8",
-//     title: "Pokemon: Firered Version",
-//     posterUrl:
-//       "https://m.media-amazon.com/images/M/MV5BYjViMDU3MmItMzM0ZC00OWNmLWEyZWYtMWEyNjAyNjg1YWU4XkEyXkFqcGc@._V1_.jpg",
-//     year: 2012,
-//     avgRating: 5,
-//     genre: "Comedy",
-//     isAdult: true,
-//     summary: "Interesting movie",
-//     director: "John Doe",
-//     cast: ["Brad Pitt", "Mark Hamill", "Christian Bale"],
-//     crew: [],
-
-//     reviews: [
-//       { userId: "0", rating: 4, comment: "Great movie!", likes: ["1"] },
-//     ],
-//   },
-// ];
-
 export async function getAll(limit?: number, offset?: number) {
   const res = await instance.get("/movies", {
     params: { limit: limit, offset: offset },
   });
   return res;
-
-  // return movies;
 }
 
 export async function getMovie(movieId: string) {
@@ -324,12 +170,13 @@ interface MovieDto {
   cast: string[];
 }
 
-export async function addMovie(userId: string, formData: MovieDto) {
-  // const res = await instance.post("/movies/add", {
-  //   userId: userId,
-  //   formData: formData,
-  // });
-  // return res;
+export async function addMovie(formData: FormData) {
+  const res = await instance.post("/movies/add", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res;
 }
 
 export type MovieFilers = {
