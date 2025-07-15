@@ -8,8 +8,10 @@ import (
 	"moviefy/main/helper/keycloak"
 	"moviefy/main/helper/neshto"
 	"moviefy/main/helper/queries"
+	s3helper "moviefy/main/helper/s3"
 	"moviefy/main/helper/webscraper"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -75,10 +77,6 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	thereIsToken, ok := r.Context().Value("thereIsToken").(bool)
-	if !ok {
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
-		return
-	}
 
 	movieId := r.URL.Query().Get("movieId")
 	offset := r.URL.Query().Get("offset")
@@ -210,7 +208,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(query)
 
-	if thereIsToken {
+	if ok && thereIsToken {
 
 		userId, ok := r.Context().Value("user_id").(string)
 		if !ok {
@@ -324,8 +322,8 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var searchResults struct {
-		movies []*neshto.SearchMovie
-		users  []SearchUser
+		Movies []*neshto.SearchMovie `json:"movies"`
+		Users  []SearchUser          `json:"users,omitempty"`
 	}
 
 	input := r.URL.Query().Get("input")
@@ -384,7 +382,7 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 
 		movies = append(movies, &movie)
 	}
-	searchResults.movies = movies
+	searchResults.Movies = movies
 
 	if users == "true" {
 		rows, err := neshto.MovieDB.Query(ctx, `
@@ -416,7 +414,7 @@ func SearchMovies(w http.ResponseWriter, r *http.Request) {
 
 			usersArr = append(usersArr, user)
 		}
-		searchResults.users = usersArr
+		searchResults.Users = usersArr
 	}
 
 	keycloak.SendJSONResponse(w, http.StatusOK, searchResults)
@@ -439,25 +437,14 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	thereIsToken, ok := r.Context().Value("thereIsToken").(bool)
-	if !ok {
-		log.Println("hello")
-		log.Println(thereIsToken)
-		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
-		return
-	}
 
 	log.Println("hello oiut")
 	var ratings []ratingSingleFilm
 
-	if thereIsToken {
-		log.Println("hello")
-		log.Println(r.Context())
+	if thereIsToken && ok {
 
 		userIdOwn, ok := r.Context().Value("user_id").(string)
 		if !ok {
-			log.Println("hello")
-			log.Println("hello")
-			log.Println("hello")
 			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
 			return
 		}
@@ -471,11 +458,11 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 		 JOIN title_basics tb ON ur.filmid = tb.tconst
 		 LEFT JOIN comments c ON ur.id = c.ratingid
 		 LEFT JOIN user_liked_comments ulc ON c.Id = ulc.liked_id
-		 WHERE u.userId = $2;`, userIdOwn, userId)
+		 WHERE u.keycloak_user_id = $2;`, userIdOwn, userId)
 
 		if err != nil {
 			fmt.Println(err)
-			keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Got an error in the db ")
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Got an error in the db ")
 			return
 		}
 		defer ratingsRow.Close()
@@ -531,7 +518,6 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 				&rating.Title,
 				&rating.MovieId,
 				&rating.UserId,
-				&rating.isValidCheck,
 			)
 
 			if err != nil {
@@ -546,6 +532,99 @@ func GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	keycloak.SendJSONResponse(w, http.StatusOK, ratings)
+}
+
+func AddFilm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		log.Println(r.Method)
+		keycloak.SendErrorResponse(w, http.StatusMethodNotAllowed, "Status method not allowed")
+		return
+	}
+
+	err := r.ParseMultipartForm(32 << 20)
+	if err != nil {
+		log.Println(err)
+		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Error parsing the form ")
+		return
+	}
+
+	var s3key string
+
+	//	primaryTitle := r.FormValue("title")
+	//titleId := r.FormValue("titleId")
+	//	isAdult := r.FormValue("isAdult")
+	NewPassword := r.FormValue("newPassword")
+	file, handler, err := r.FormFile("poster")
+	if err == nil {
+		defer file.Close()
+		s3key = s3helper.S3Instance.GenerateFileNameWithFolder("pfp", handler.Filename)
+
+		contentType := "image/jpeg"
+		ext := strings.ToLower(filepath.Ext(handler.Filename))
+		switch ext {
+		case ".png":
+			contentType = "image/png"
+		case ".gif":
+			contentType = "image/gif"
+		case ".webp":
+			contentType = "image/webp"
+		case ".bmp":
+			contentType = "image/bmp"
+		}
+
+		err = s3helper.S3Instance.UploadPicture(r.Context(), s3key, file, contentType)
+		if err != nil {
+			log.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusBadRequest, "Got an error while uploading the file to s3")
+			return
+		}
+
+	} else {
+		s3key = ""
+	}
+
+	userId, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get username")
+		return
+	}
+
+	authService, ok := r.Context().Value("AuthService").(*keycloak.AuthService)
+	if !ok {
+		keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to get auth service")
+	}
+
+	if NewPassword != "" {
+		err := authService.SetUserPassword(userId, NewPassword)
+		if err != nil {
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "Failed to update password")
+			return
+		}
+	}
+	if false {
+		_, err := neshto.MovieDB.Exec(r.Context(), `
+		UPDATE users
+		SET bio = $1
+		WHERE keycloak_user_id = $2;`, userId)
+
+		if err != nil {
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
+			return
+		}
+	}
+
+	if s3key != "" {
+		_, err := neshto.MovieDB.Exec(r.Context(), `
+			UPDATE users
+			SET pfpUrl = $1
+			WHERE keycloak_user_id = $2;`, s3key, userId)
+		if err != nil {
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
+			return
+		}
+	}
+
+	keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Edited user data successfully", "pfpUrl": s3key})
 }
 
 var watchlistType = []string{"watched", "isWatching", "willWatch"}
@@ -613,6 +692,83 @@ func GetWatchList(w http.ResponseWriter, r *http.Request) {
 
 	log.Println(watchlist)
 	keycloak.SendJSONResponse(w, http.StatusOK, watchlist)
+}
+
+// mux.HandleFunc("/movies/genres", api.GetGenreMovies)
+func GetGenreMovies(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	if r.Method != http.MethodGet {
+		keycloak.SendErrorResponse(w, 500, "Method not allowed")
+		return
+	}
+
+	offset := r.URL.Query().Get("offset")
+	genre := r.URL.Query().Get("genre")
+	limit := r.URL.Query().Get("limit")
+	ageRating := r.URL.Query().Get("ageRating")
+	year := r.URL.Query().Get("year")
+
+	if offset == "" {
+		offset = "0"
+	}
+	if limit == "" {
+		limit = "21"
+	}
+	if ageRating == "" {
+		ageRating = "false"
+	}
+	if year == "" {
+		year = "false"
+	}
+	log.Println("genre")
+	log.Println(genre)
+	log.Println("genre")
+
+	movies := []*neshto.SearchMovie{}
+	movieRows, err := neshto.MovieDB.Query(ctx, `
+		SELECT pf.tconst, tb.primaryTitle, p.posterId, tr.averageRating FROM popular_films pf
+		JOIN title_basics tb ON pf.tconst = tb.tconst 
+		JOIN posters p ON tb.tconst = p.titleId
+		JOIN title_ratings tr ON tb.tconst = tr.tconst
+		WHERE (($1 = 'true' AND tb.startYear >= 2024)
+    OR ($1 = 'false' AND tb.startYear <= 2000))
+  	AND(($2 = 'true'  AND tb.isAdult = true)
+    OR ($2 = 'false' AND tb.isAdult = false))
+  	AND($3 = '' OR $3 = ANY(genres))
+		ORDER BY tr.numVotes DESC
+		OFFSET $4
+		LIMIT $5;`, year, ageRating, genre, offset, limit)
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("a")
+		keycloak.SendErrorResponse(w, 400, "Database error")
+		return
+	}
+	defer movieRows.Close()
+	for movieRows.Next() {
+		var movie neshto.SearchMovie
+		err := movieRows.Scan(
+			&movie.Id,
+			&movie.Title,
+			&movie.PosterUrl,
+			&movie.AverageRating,
+		)
+
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("b")
+			keycloak.SendErrorResponse(w, 400, "Got an error in the db ")
+			return
+		}
+		movies = append(movies, &movie)
+	}
+	log.Println("mazna")
+	webscraper.C.ScrapeSearchResultDetails(&movies)
+
+	log.Println("mazna  done")
+
+	keycloak.SendJSONResponse(w, http.StatusOK, movies)
 }
 
 // mux.HandleFunc("/user", getUser)

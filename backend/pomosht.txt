@@ -1,2 +1,71 @@
-2025/07/14 16:41:08 ERROR: insert or update on table "user_rating" violates
- foreign key constraint "user_rating_userid_fkey" (SQLSTATE 23503)
+	ctx := context.Background()
+	if r.Method != http.MethodGet {
+		keycloak.SendErrorResponse(w, 500, "Method not allowed")
+		return
+	}
+
+	offset := r.URL.Query().Get("offset")
+	genre := r.URL.Query().Get("genre")
+	limit := r.URL.Query().Get("limit")
+	ageRating := r.URL.Query().Get("ageRating")
+	year := r.URL.Query().Get("year")
+
+	if offset == "" {
+		offset = "0"
+	}
+	if limit == "" {
+		limit = "21"
+	}
+	if ageRating == "" {
+		ageRating = "false"
+	}
+	if year == "" {
+		year = "false"
+	}
+	log.Println(limit, offset, genre)
+
+	movies := []*neshto.SearchMovie{}
+	movieRows, err := neshto.MovieDB.Query(ctx, `
+		SELECT pf.tconst, tb.primaryTitle, p.posterId, tr.averageRating FROM popular_films pf
+		JOIN title_basics tb ON pf.tconst = tb.tconst 
+		JOIN posters p ON tb.tconst = p.titleId
+		JOIN title_ratings tr ON tb.tconst = tr.tconst
+		WHERE (($1 = 'true' AND tb.startYear >= 2024)
+    OR ($1 = 'false' AND tb.startYear <= 2000))
+  	AND(($2 = 'true'  AND tb.isAdult = true)
+    OR ($2 = 'false' AND tb.isAdult = false))
+  	AND($3 = '' OR $3 = ANY(genres))
+		ORDER BY tr.numVotes DESC
+		OFFSET $4
+		LIMIT $5;`, year, ageRating, genre, offset, limit)
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("a")
+		keycloak.SendErrorResponse(w, 400, "Database error")
+		return
+	}
+	defer movieRows.Close()
+	for movieRows.Next() {
+		var movie neshto.SearchMovie
+		err := movieRows.Scan(
+			&movie.Id,
+			&movie.Title,
+			&movie.PosterUrl,
+			&movie.AverageRating,
+		)
+
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("b")
+			keycloak.SendErrorResponse(w, 400, "Got an error in the db ")
+			return
+		}
+		movies = append(movies, &movie)
+	}
+	log.Println("mazna")
+	webscraper.C.ScrapeSearchResultDetails(&movies)
+
+	log.Println("mazna  done")
+
+	keycloak.SendJSONResponse(w, http.StatusOK, movies)

@@ -198,6 +198,19 @@ func ChangeMovieStatus(w http.ResponseWriter, r *http.Request) {
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Invalid param")
 		return
 	}
+	if Params.Status == 3 {
+		_, err := neshto.MovieDB.Exec(r.Context(), `
+			DELETE FROM watchlist 
+			WHERE filmId = $1 AND userId = $2;`, Params.MovieId, userId)
+		if err != nil {
+			log.Println(err)
+			keycloak.SendErrorResponse(w, http.StatusInternalServerError, "DB error")
+			return
+		}
+
+		keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Edited watchlist status successfully"})
+		return
+	}
 	//TODO: if params.status is 3 then remove the watchlist item
 	_, err := neshto.MovieDB.Exec(r.Context(), `
     WITH updated_status AS (
@@ -229,15 +242,15 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
+		log.Println(err)
 		keycloak.SendErrorResponse(w, http.StatusBadRequest, "Error parsing the form ")
 		return
 	}
 
-	var picutreUrl string
 	var s3key string
 
 	bio := r.FormValue("bio")
-	NewPassword := r.FormValue("NewPassword")
+	NewPassword := r.FormValue("newPassword")
 	file, handler, err := r.FormFile("pfp")
 	if err == nil {
 		defer file.Close()
@@ -263,9 +276,7 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		picutreUrl = s3helper.S3Instance.GetPictureURL(s3key)
 	} else {
-		picutreUrl = ""
 		s3key = ""
 	}
 
@@ -310,5 +321,5 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Edited user data successfully", "pfpUrl": picutreUrl})
+	keycloak.SendJSONResponse(w, http.StatusOK, map[string]string{"message": "Edited user data successfully", "pfpUrl": s3key})
 }

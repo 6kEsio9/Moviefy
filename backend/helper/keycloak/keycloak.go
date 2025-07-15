@@ -191,28 +191,6 @@ func (a *AuthService) logout(refreshToken string) error {
 	return a.client.Logout(a.ctx, a.config.ClientID, a.config.ClientSecret, a.config.KeycloakRealm, refreshToken)
 }
 
-func (a *AuthService) getTokenAndInspect() error {
-
-	token, err := a.client.GetToken(a.ctx, a.config.KeycloakRealm, gocloak.TokenOptions{
-		ClientID:     gocloak.StringP("your-client-id"),
-		ClientSecret: gocloak.StringP("your-client-secret"),
-		Username:     gocloak.StringP("username"),
-		Password:     gocloak.StringP("password"),
-	})
-	if err != nil {
-		return err
-	}
-
-	_, claims, err := a.client.DecodeAccessToken(a.ctx, token.AccessToken, a.config.KeycloakRealm)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("Token claims: %+v\n", claims)
-
-	return nil
-}
-
 func SendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	log.Println("status code : ", statusCode)
@@ -308,8 +286,9 @@ func (a *AuthService) LoselyGetAuth(next http.Handler) http.Handler {
 		}
 
 		if thereIsToken {
+
 			ctx := context.WithValue(r.Context(), "user_claims", claims)
-			ctx = context.WithValue(ctx, "thereIsToke", thereIsToken)
+			ctx = context.WithValue(ctx, "thereIsToken", thereIsToken)
 			ctx = context.WithValue(ctx, "user_id", claims.Subject)
 			ctx = context.WithValue(ctx, "username", claims.PreferredUsername)
 			ctx = context.WithValue(ctx, "AuthService", a)
