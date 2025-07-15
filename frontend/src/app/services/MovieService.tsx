@@ -339,6 +339,6 @@ export type MovieFilers = {
 }
 
 export async function filterMovies(filter: MovieFilers, limit?: number, offset?: number) {
-  const res = await instance.get('/movies/filter', {params: {genre: filter.genre, ageRating: filter.isAdult, year: filter.year, limit: limit, offset: offset}});
+  const res = await instance.get('/movies', {params: {genre: filter.genre, ageRating: filter.isAdult, year: filter.year, limit: limit, offset: offset}});
   return res;
 }
