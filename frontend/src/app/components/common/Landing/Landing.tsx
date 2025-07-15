@@ -77,7 +77,7 @@ export default function Landing() {
               onChange={handleSearch}
             />
           </Stack>
-          {movies.length > 0 && debouncedInput && (
+          {movies && movies.length > 0 && debouncedInput && (
             <SearchMenuLanding movies={movies} />
           )}
           {!user && <AuthButton />}
