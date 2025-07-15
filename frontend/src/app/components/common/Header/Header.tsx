@@ -4,7 +4,19 @@ import * as React from "react";
 import SearchBar from "./SearchBar";
 import Link from "next/link";
 import { useAuth } from "@/app/hooks/useAuth";
-import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Menu as MenuIcon, Adb as AdbIcon } from "@mui/icons-material";
 import { redirect } from "next/navigation";
 
@@ -40,7 +52,6 @@ function Header() {
   const handleLogout = (e: any) => {
     if (e.currentTarget.textContent === "Logout") {
       onLogout();
-      //redirect...
     }
   };
 
@@ -95,12 +106,12 @@ function Header() {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem 
+                <MenuItem
                   key={page}
                   onClick={() => {
                     handleCloseNavMenu();
-                    redirect(`/${page.toLowerCase()}`)}
-                  }
+                    redirect(`/${page.toLowerCase()}`);
+                  }}
                 >
                   <Typography sx={{ textAlign: "center" }}>{page}</Typography>
                 </MenuItem>
@@ -128,7 +139,14 @@ function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src={user ? user.pfp : "pfp"} />
+                <Avatar
+                  alt=""
+                  src={
+                    user
+                      ? `ht tps://moviefy-bucket.s3.amazonaws.com/%${user.pfp}`
+                      : "https://www.pngarts.com/files/10/Default-Profile-Picture-Download-PNG-Image.png"
+                  }
+                />
               </IconButton>
             </Tooltip>
             <Menu

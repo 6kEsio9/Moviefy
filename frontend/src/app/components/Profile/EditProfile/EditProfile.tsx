@@ -45,32 +45,33 @@ export default function EditProfile() {
     fetched();
   }, [user]);
 
-  const onSubmitHandler = (formData: FormData) => {
-    const username = formData.get("username")?.toString() || "";
-    const email = formData.get("email")?.toString() || "";
-    const bio = formData.get("bio")?.toString() || "";
-    const pfp = formData.get("pfp") as File;
-    const password = formData.get("password")?.toString() || "";
+  const onSubmitHandler = async (formData: FormData) => {
+    const newPassword = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
-    if (password !== confirm) {
+    if (newPassword !== confirm) {
       alert("Passwords don't match!");
       return;
     }
 
+    const submitData = new FormData();
+    submitData.append("username", formData.get("username") || "");
+    submitData.append("email", formData.get("email") || "");
+    submitData.append("bio", formData.get("bio") || "");
+    submitData.append("password", newPassword);
+    submitData.append("confirm", confirm);
+
+    const pfp = formData.get("pfp") as File;
+    if (pfp && pfp.size > 0) {
+      submitData.append("pfp", pfp);
+    }
+
     const fetched = async () => {
-      await AuthService.editUser({
-        username,
-        email,
-        bio,
-        pfp,
-        password,
-        confirm,
-      });
+      const res = await AuthService.editUser(submitData);
+      console.log(res);
+      redirect(`/profile/${editUser?.id}`);
     };
     fetched();
-
-    redirect(`/profile/${editUser?.id}`);
   };
 
   return (
@@ -101,7 +102,7 @@ export default function EditProfile() {
               fullWidth
               autoComplete="email"
               autoFocus
-              defaultValue={editUser && editUser.email}
+              value={editUser && editUser.email}
               placeholder="Email"
               required
             />

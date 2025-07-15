@@ -25,7 +25,7 @@ export default function AgeRating({ setMovies }: AgeRatingProps) {
     const ages = e.currentTarget.textContent;
     const fetched = async () => {
       const res = await MovieService.filterMovies("ages", ages);
-      setMovies(res);
+      // setMovies(res);
     };
     fetched();
   };

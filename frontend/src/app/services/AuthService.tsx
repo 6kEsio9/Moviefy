@@ -83,13 +83,17 @@ interface RegisterDto {
   password: string;
 }
 
+// interface EditDto {
+//   username: FormDataEntryValue | null;
+//   email: FormDataEntryValue | null;
+//   bio: FormDataEntryValue | null;
+//   pfp: File | null;
+//   newPassword?: FormDataEntryValue | null;
+//   confirm?: FormDataEntryValue | null;
+// }
+
 interface EditDto {
-  username: string;
-  email: string;
-  bio: string;
-  pfp: File;
-  password?: string;
-  confirm?: string;
+  formData: FormData;
 }
 
 export async function login(formData: LoginDto) {
@@ -149,13 +153,16 @@ export async function editReview(movieId: string, comment: string) {
     comment: comment,
   });
   return res;
+  //done
 }
 
-export async function editUser(formData: EditDto) {
-  const res = await instance.put("/users/edit", { ...formData });
+export async function editUser(formData: FormData) {
+  const res = await instance.put("/users/edit", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res;
-
-  console.log(formData);
 }
 
 export function statusToNum(watchStatus: string) {

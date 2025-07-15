@@ -51,19 +51,18 @@ export type Movie = {
 };
 
 export type SearchMovie = {
-    id: string;
-    title: string;
-    posterUrl: string;
-    startYear: number
-    averageRating: number;
-}
+  id: string;
+  title: string;
+  posterUrl: string;
+  startYear: number;
+  averageRating: number;
+};
 
 export type SearchUser = {
-    id: string;
-    username: string;
-    pfpUrl: string;
-}
-
+  id: string;
+  username: string;
+  pfpUrl: string;
+};
 
 // const movies: Movie[] = [
 //   {
@@ -231,7 +230,12 @@ export async function getMovie(movieId: string) {
   //done
 }
 
-export async function search(searchInput: string, usersB: boolean, limit?: number, offset?: number) {
+export async function search(
+  searchInput: string,
+  usersB: boolean,
+  limit?: number,
+  offset?: number
+) {
   // const req = await fetch(
   //   `${url}/search?` +
   //     new URLSearchParams({
@@ -266,12 +270,14 @@ export async function search(searchInput: string, usersB: boolean, limit?: numbe
 
   // return fetch(url + '/search' + '/searchInput')
   //   .then(res => res.json());
-  const res = await instance.get('/search', {params: {
-    input: searchInput,
-    limit: limit,
-    offset: offset,
-    users: usersB
-  }});
+  const res = await instance.get("/search", {
+    params: {
+      input: searchInput,
+      limit: limit,
+      offset: offset,
+      users: usersB,
+    },
+  });
   return res;
 }
 
@@ -286,27 +292,15 @@ export async function rate(movieId: string, rating: number, comment?: string) {
 }
 
 export async function deleteReview(movieId: string) {
-  const res = await instance.post('/users/reviews/delete', {
-    movieId
+  const res = await instance.post("/users/reviews/delete", {
+    movieId,
   });
   return res;
 }
 
-export async function like(
-  commentId: string,
-) {
-  // const req = await fetch(`${url}/movies/like`, {
-  //   method: "POST",
-  //   headers: {
-  //     "content-type": "application/json",
-  //     Authorization: "Bearer " + authToken,
-  //   },
-  //   body: JSON.stringify({ userId, movieId, like }),
-  // });
-  // const res = await req.json();
-  // return res;
-  const res = await instance.post('/users/reviews/like', {
-    commentId
+export async function like(commentId: string) {
+  const res = await instance.post("/users/reviews/like", {
+    commentId,
   });
   return res;
 }
