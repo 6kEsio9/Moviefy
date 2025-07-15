@@ -17,10 +17,13 @@ export default function MoviesPage() {
   const [page, setPage] = useState(1);
   const { user } = useAuth();
   const [userReviews, setUserReviews] = useState([])
+  const [filter, setFilter] = useState<MovieService.MovieFilers>({ genre: "", isAdult: false, year: false})
+  
 
   useEffect(() => {
     const fetched = async () => {
       const res = await MovieService.getAll(movieCountPerPage, (page - 1) * movieCountPerPage);
+      // const res = await MovieService.filterMovies(filter, movieCountPerPage, (page - 1) * movieCountPerPage)
       setMovies(res.data as Movie[]);
     };
     fetched();
@@ -53,7 +56,7 @@ export default function MoviesPage() {
         marginBottom: "30px",
       }}
     >
-      {movies && <Sidebar setMovies={setMovies} />}
+      {movies && <Sidebar setFilter={setFilter} />}
 
       <Stack>
         <div

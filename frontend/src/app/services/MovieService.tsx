@@ -179,9 +179,13 @@ export async function addMovie(formData: FormData) {
   return res;
 }
 
-export async function filterMovies(filterType: string, filter: string) {
-  const res = await instance.get(`/movies/${filterType}`, {
-    params: { genre: filter },
-  });
+export type MovieFilers = {
+  genre: string;
+  year: boolean;
+  isAdult: boolean;
+}
+
+export async function filterMovies(filter: MovieFilers, limit?: number, offset?: number) {
+  const res = await instance.get('/movies', {params: {genre: filter.genre, ageRating: filter.isAdult, year: filter.year, limit: limit, offset: offset}});
   return res;
 }

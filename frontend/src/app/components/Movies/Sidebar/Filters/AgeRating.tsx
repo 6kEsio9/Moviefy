@@ -9,10 +9,10 @@ import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../../../services/MovieService";
 
 interface AgeRatingProps {
-  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+  setFilter: React.Dispatch<React.SetStateAction<MovieService.MovieFilers>>
 }
 
-export default function AgeRating({ setMovies }: AgeRatingProps) {
+export default function AgeRating({ setFilter }: AgeRatingProps) {
   const [openAge, setOpenAge] = React.useState(false);
 
   const handleClickOpenAge = () => {
@@ -22,12 +22,15 @@ export default function AgeRating({ setMovies }: AgeRatingProps) {
   const ages = ["<18", ">18"];
 
   const agesHandler = (e: any) => {
-    const ages = e.currentTarget.textContent;
-    const fetched = async () => {
-      const res = await MovieService.filterMovies("ages", ages);
-      // setMovies(res);
-    };
-    fetched();
+    // const ages = e.currentTarget.textContent;
+    // const fetched = async () => {
+    //   const res = await MovieService.filterMovies("ages", ages);
+    //   // setMovies(res);
+    // };
+    // fetched();
+    setFilter((prevFilter) => {
+      return {...prevFilter, year: e.currentTarget.textContent === ">18"}
+    });
   };
 
   return (

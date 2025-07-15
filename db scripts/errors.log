@@ -1,0 +1,34 @@
+
+Importing title_basics...
+COPY 11749834
+Importing name_basics...
+COPY 14522359
+Importing title_akas...
+ERROR:  insert or update on table "title_akas" violates foreign key constraint "title_akas_titleid_fkey"
+DETAIL:  Key (titleid)=(tt14575894) is not present in table "title_basics".
+Importing title_crew...
+ERROR:  insert or update on table "title_crew" violates foreign key constraint "title_crew_tconst_fkey"
+DETAIL:  Key (tconst)=(tt14575894) is not present in table "title_basics".
+Importing title_episode...
+ERROR:  null value in column "seasonnumber" of relation "title_episode" violates not-null constraint
+DETAIL:  Failing row contains (tt0031458, tt32857063, null, null).
+CONTEXT:  COPY title_episode, line 1: "tt0031458        tt32857063      \N      \N"
+Importing title_principals...
+ERROR:  insert or update on table "title_principals" violates foreign key constraint "title_principals_nconst_fkey"
+DETAIL:  Key (nconst)=(nm17368089) is not present in table "name_basics".
+Importing title_ratings...
+ERROR:  invalid input syntax for type integer: "5.7"
+CONTEXT:  COPY title_ratings, line 1, column averagerating: "5.7"
+Import completed!
+Row counts:
+    table_name    |  count   
+------------------+----------
+ title_crew       |        0
+ title_akas       |        0
+ title_episode    |        0
+ title_ratings    |        0
+ title_basics     | 11749834
+ name_basics      | 14522359
+ title_principals |        0
+(7 rows)
+

@@ -4,13 +4,13 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 // import Trending from "./Trending";
 import Filters from "./Filters/Filters";
-import { Movie } from "@/app/services/MovieService";
+import { MovieFilers } from "@/app/services/MovieService";
 
 interface NestedListProps {
-  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+  setFilter: React.Dispatch<React.SetStateAction<MovieFilers>>
 }
 
-export default function NestedList({ setMovies }: NestedListProps) {
+export default function NestedList({ setFilter }: NestedListProps) {
   return (
     <List
       sx={{
@@ -26,7 +26,7 @@ export default function NestedList({ setMovies }: NestedListProps) {
         <ListItemText primary="Popular" />
       </ListItemButton>
       {/* <Trending setMovies={setMovies} /> */}
-      <Filters setMovies={setMovies} />
+      <Filters setFilter={setFilter} />
     </List>
   );
 }

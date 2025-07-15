@@ -5,14 +5,13 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { Movie } from "@/app/services/MovieService";
 import * as MovieService from "../../../../services/MovieService";
 
 interface GenreProps {
-  setMovies: React.Dispatch<React.SetStateAction<Movie[] | undefined>>;
+  setFilter: React.Dispatch<React.SetStateAction<MovieService.MovieFilers>>
 }
 
-export default function Genre({ setMovies }: GenreProps) {
+export default function Genre({ setFilter }: GenreProps) {
   const [openGenre, setOpenGenre] = React.useState(false);
 
   const genres = ["Horror", "Sci-Fi", "Comedy", "Fantasy"];
@@ -22,14 +21,18 @@ export default function Genre({ setMovies }: GenreProps) {
   };
 
   const genreHandler = (e: any) => {
-    const genre = e.currentTarget.textContent;
-    console.log(genre);
-    const fetched = async () => {
-      const res = await MovieService.filterMovies("genres", genre);
-      console.log(res);
-      setMovies(res.data);
-    };
-    fetched();
+    // const genre = e.currentTarget.textContent.toLowerCase();
+    // console.log(genre);
+    // const fetched = async () => {
+    //   const res = await MovieService.filterMovies(fi);
+    //   // setMovies(res);
+    // };
+    // fetched();
+    setFilter((prevFilter) => {
+      const genre = e.currentTarget.textContent;
+      console.log(genre);
+      return {...prevFilter, genre: genre}
+    });
   };
 
   return (
