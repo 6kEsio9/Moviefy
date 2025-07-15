@@ -34,16 +34,10 @@ export default function SearchMenuLanding({ movies }: SearchMenuProps) {
           href={`/movies/${x.id}`}
         >
           <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <img
-                  style={{ width: "100%", height: "100%" }}
-                  src={x.posterUrl}
-                  alt={x.title}
-                ></img>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={x.title} secondary={`Premiere: ${x.startYear}`} />
+            <ListItemText
+              primary={x.title}
+              secondary={`Premiere: ${x.startYear}`}
+            />
           </ListItem>
         </Link>
       ))}
