@@ -37,7 +37,7 @@ export default function HomePage() {
             />
 
             {genreList.map((x) => (
-              <GenreSelection key={x} movies={movies} genre={x} />
+              <GenreSelection key={x} genre={x} />
             ))}
           </>
         )}
