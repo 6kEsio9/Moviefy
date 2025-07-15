@@ -45,11 +45,7 @@ export default function EditProfile() {
     fetched();
   }, [user]);
 
-  const onSubmitHandler = (formData: FormData) => {
-    const username = formData.get("username")?.toString() || "";
-    const email = formData.get("email")?.toString() || "";
-    const bio = formData.get("bio")?.toString() || "";
-    const pfp = formData.get("pfp") as File;
+  const onSubmitHandler = async (formData: FormData) => {
     const newPassword = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
@@ -58,19 +54,24 @@ export default function EditProfile() {
       return;
     }
 
+    const submitData = new FormData();
+    submitData.append("username", formData.get("username") || "");
+    submitData.append("email", formData.get("email") || "");
+    submitData.append("bio", formData.get("bio") || "");
+    submitData.append("password", newPassword);
+    submitData.append("confirm", confirm);
+
+    const pfp = formData.get("pfp") as File;
+    if (pfp && pfp.size > 0) {
+      submitData.append("pfp", pfp);
+    }
+
     const fetched = async () => {
-      await AuthService.editUser({
-        username,
-        email,
-        bio,
-        pfp,
-        newPassword,
-        confirm,
-      });
+      const res = await AuthService.editUser(submitData);
+      console.log(res);
+      redirect(`/profile/${editUser?.id}`);
     };
     fetched();
-
-    redirect(`/profile/${editUser?.id}`);
   };
 
   return (
