@@ -1,38 +1,28 @@
 "use client";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { Image } from "@mui/icons-material";
-import GenreSelect from "../components/AddMovie/GenreSelect";
-import { getGenreList, addMovie } from "../services/MovieService";
-import { useAuth } from "../hooks/useAuth";
-import { useEffect } from "react";
-import { redirect } from "next/navigation";
+
+import * as MovieSerivce from "../services/MovieService";
 
 export default function AddMoviePage() {
-  const possibleGenres = getGenreList();
-
-  const { user } = useAuth();
-
   const submitHandler = (formData: FormData) => {
-    const imageUrl = formData.get("imageUrl")?.toString() || "";
-    const title = formData.get("title")?.toString() || "";
-    const summary = formData.get("summary")?.toString() || "";
-    const year = Number(formData.get("year")?.toString() || "");
-    const ageRating = Number(formData.get("ageRating")?.toString() || "");
-    const director = formData.get("director")?.toString() || "";
-    const cast = (formData.get("cast")?.toString() || "").split(", ");
-    const crew = (formData.get("crew")?.toString() || "").split(", ");
+    const submitData = new FormData();
+    submitData.append("title", formData.get("title") || "");
+    submitData.append("summary", formData.get("summary") || "");
+    submitData.append("startYear", formData.get("year") || "");
+    submitData.append("isAdult", formData.get("ageRating") || "");
+    submitData.append("director", formData.get("director") || "");
+    submitData.append("cast", formData.get("cast") || "");
+    submitData.append("crew", formData.get("crew") || "");
+    submitData.append("genre", formData.get("genre") || "");
+
+    const posterUrl = formData.get("imageUrl") as File;
+    if (posterUrl && posterUrl.size > 0) {
+      submitData.append("posterUrl", posterUrl);
+    }
 
     const fetched = async () => {
-      await addMovie(user?.id!, {
-        posterUrl,
-        title,
-        summary,
-        year,
-        ageRating,
-        director,
-        cast,
-        crew,
-      }).catch((err) => console.log(err));
+      const res = await MovieSerivce.addMovie(formData);
+      console.log(res);
     };
     fetched();
   };
@@ -75,7 +65,7 @@ export default function AddMoviePage() {
           <TextField required name="summary" label="Summary" multiline />
           <TextField required name="year" label="Year" />
           <TextField required name="ageRating" label="Age rating" />
-          <Typography>Genre</Typography>
+          <TextField required name="genre" label="Genre" />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }} marginRight={4}>
