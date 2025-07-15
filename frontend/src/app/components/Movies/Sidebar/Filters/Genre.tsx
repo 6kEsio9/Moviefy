@@ -26,7 +26,7 @@ export default function Genre({ setMovies }: GenreProps) {
     console.log(genre);
     const fetched = async () => {
       const res = await MovieService.filterMovies("genre", genre);
-      setMovies(res);
+      // setMovies(res);
     };
     fetched();
   };

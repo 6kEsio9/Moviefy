@@ -25,7 +25,7 @@ export default function Year({ setMovies }: YearProps) {
     const year = e.currentTarget.textContent.toLowerCase();
     const fetched = async () => {
       const res = await MovieService.filterMovies("year", year);
-      setMovies(res);
+      // setMovies(res);
     };
     fetched();
   };

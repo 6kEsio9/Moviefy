@@ -50,10 +50,10 @@ export default function EditProfile() {
     const email = formData.get("email")?.toString() || "";
     const bio = formData.get("bio")?.toString() || "";
     const pfp = formData.get("pfp") as File;
-    const password = formData.get("password")?.toString() || "";
+    const newPassword = formData.get("password")?.toString() || "";
     const confirm = formData.get("confirm")?.toString() || "";
 
-    if (password !== confirm) {
+    if (newPassword !== confirm) {
       alert("Passwords don't match!");
       return;
     }
@@ -64,7 +64,7 @@ export default function EditProfile() {
         email,
         bio,
         pfp,
-        password,
+        newPassword,
         confirm,
       });
     };
@@ -101,7 +101,7 @@ export default function EditProfile() {
               fullWidth
               autoComplete="email"
               autoFocus
-              defaultValue={editUser && editUser.email}
+              value={editUser && editUser.email}
               placeholder="Email"
               required
             />
