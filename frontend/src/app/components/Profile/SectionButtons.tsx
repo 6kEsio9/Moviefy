@@ -47,7 +47,9 @@ export default function SectionButtons({
       case "watching": {
         setWatchList((prevWatchlist) => {
           return {
-            watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
+            watched: prevWatchlist!.watched.filter(
+              (x) => x.id !== movie.id
+            ),
             isWatching: [...prevWatchlist!.isWatching, movie],
             willWatch: prevWatchlist!.willWatch.filter(
               (x) => x.id !== movie.id
@@ -59,7 +61,9 @@ export default function SectionButtons({
       case "plan": {
         setWatchList((prevWatchlist) => {
           return {
-            watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
+            watched: prevWatchlist!.watched.filter(
+              (x) => x.id !== movie.id
+            ),
             isWatching: prevWatchlist!.isWatching.filter(
               (x) => x.id !== movie.id
             ),
@@ -71,7 +75,9 @@ export default function SectionButtons({
       case "remove": {
         setWatchList((prevWatchlist) => {
           return {
-            watched: prevWatchlist!.watched.filter((x) => x.id !== movie.id),
+            watched: prevWatchlist!.watched.filter(
+              (x) => x.id !== movie.id
+            ),
             isWatching: prevWatchlist!.isWatching.filter(
               (x) => x.id !== movie.id
             ),
@@ -84,9 +90,7 @@ export default function SectionButtons({
       }
     }
 
-    const index = AuthService.statusToNum(
-      state === watchStatus ? "none" : state
-    );
+    const index = AuthService.statusToNum(state);
 
     const fetched = async () => {
       const req = await AuthService.changeMovieStatus(movie.id!, index);

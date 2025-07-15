@@ -21,7 +21,7 @@ export default function GenreSelection({
 
   useEffect(() => {
     const fetched = async () => {
-      const res = await MovieService.getAll(10);
+      const res = await MovieService.getAll(10, 0);
       setDisplayMovies(res.data);
     };
     if(!movies)fetched();
